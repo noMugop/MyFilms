@@ -50,8 +50,8 @@ class FilmsFragment : Fragment() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1)) {
-                    PAGE ++
                     binding.progressBar.visibility = View.VISIBLE
+                    PAGE++
                     downloadData()
                 }
             }
@@ -75,12 +75,11 @@ class FilmsFragment : Fragment() {
             val result = apiService.getMovies(page = PAGE)
             list += result.movies
             data.value = list
-            delay(500)
             binding.progressBar.visibility = View.GONE
         }
     }
 
-    private  fun launchDetailFragment(movie: Movie) {
+    private fun launchDetailFragment(movie: Movie) {
         val args = Bundle().apply {
             putParcelable(DetailsFragment.KEY_MOVIE, movie)
         }
