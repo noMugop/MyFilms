@@ -27,9 +27,6 @@ class FilmsFragment : Fragment() {
     private val adapter = FilmsAdapter()
     private val apiService = ApiFactory.getInstance()
     private val scope = CoroutineScope(Dispatchers.Main)
-    private var list = listOf<Movie>()
-    private var data: MutableLiveData<List<Movie>> = MutableLiveData()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,10 +46,17 @@ class FilmsFragment : Fragment() {
         binding.rvMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (!recyclerView.canScrollVertically(1)) {
+                if (!recyclerView.canScrollVertically(RecyclerView.FOCUS_DOWN)
+                    && recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE
+                    && !isLoaded
+                ) {
+                    isLoaded = true
                     binding.progressBar.visibility = View.VISIBLE
+                    oldList = newList
                     PAGE++
                     downloadData()
+                } else {
+                    recyclerView.stopNestedScroll()
                 }
             }
         })
@@ -73,9 +77,12 @@ class FilmsFragment : Fragment() {
     private fun downloadData() {
         scope.launch {
             val result = apiService.getMovies(page = PAGE)
-            list += result.movies
-            data.value = list
+            newList = result.movies as MutableList<Movie>
+            val list = oldList + newList
+            newList = list as MutableList<Movie>
+            data.value = newList
             binding.progressBar.visibility = View.GONE
+            isLoaded = false
         }
     }
 
@@ -89,6 +96,11 @@ class FilmsFragment : Fragment() {
     companion object {
 
         private var PAGE = 1
+        private var isLoaded = false
+
+        private var oldList = mutableListOf<Movie>()
+        private var newList = mutableListOf<Movie>()
+        private var data: MutableLiveData<List<Movie>> = MutableLiveData()
     }
 
     override fun onDestroyView() {
