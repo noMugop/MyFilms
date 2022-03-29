@@ -14,15 +14,13 @@ import java.lang.RuntimeException
 
 class FavoritesFragment : Fragment() {
 
-    private var _binding: FragmentFavoritesBinding? = null
-    private val binding: FragmentFavoritesBinding
-        get() = _binding ?: throw RuntimeException("FavoritesFragment is null")
+    private lateinit var binding: FragmentFavoritesBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -31,10 +29,5 @@ class FavoritesFragment : Fragment() {
 
         val adapter = FilmsAdapter()
         binding.rvFavorites.adapter = adapter
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/filmsFragment"
+        android:id="@+id/films_fragment"
         android:enabled="true"
         android:icon="@drawable/ic_home"
         android:title="@string/main"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/favoritesFragment"
+        android:id="@+id/favorites_fragment"
         android:enabled="true"
         android:icon="@drawable/ic_menu"
         android:title="@string/favorites"

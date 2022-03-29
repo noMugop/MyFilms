@@ -9,7 +9,4 @@
         android:name="com.example.myfilms.presentation.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites" />
-    <action
-        android:id="@+id/action_global_favoritesFragment"
-        app:popUpTo="@id/favoritesFragment" />
 </navigation>

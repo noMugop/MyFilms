@@ -11,13 +11,29 @@
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_movies.xml" value="0.24230072463768115" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/item_movie.xml" value="0.327445652173913" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.37447916666666664" />
+        <entry key="app/src/main/res/drawable/ic_home.xml" value="0.197" />
+        <entry key="app/src/main/res/drawable/selector_background.xml" value="0.128" />
+        <entry key="app/src/main/res/drawable/selector_bottom_navigation.xml" value="0.128" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.20153985507246377" />
+        <entry key="app/src/main/res/layout/fragment_details.xml" value="0.2677083333333333" />
+        <entry key="app/src/main/res/layout/fragment_favorites.xml" value="0.13019250253292808" />
+        <entry key="app/src/main/res/layout/fragment_movies.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_movie.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.15277099609375003" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.13019250253292808" />
+      </ProjectState>
+    </option>
   </component>
 </project>
