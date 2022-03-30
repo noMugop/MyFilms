@@ -12,9 +12,9 @@ import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.presentation.adapter.favorites_adapter.FavoritesAdapter
 import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
-import com.example.myfilms.presentation.models.LoginApprove
-import com.example.myfilms.presentation.models.Movie
-import com.example.myfilms.presentation.models.PostMovie
+import com.example.myfilms.data.models.LoginApprove
+import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.PostMovie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,8 +66,8 @@ class FavoritesFragment : Fragment() {
             val tokenNotVal = apiService.getToken()
             val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
             val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            val sessionId = apiService.makeSession(token = tokenVal)
-            data.value = apiService.getFavorite(
+            val sessionId = apiService.createSession(token = tokenVal)
+            data.value = apiService.getFavorites(
                 session_id = sessionId.session_id,
                 page = PAGE
             ).movies

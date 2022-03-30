@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.myfilms.databinding.ItemMovieBinding
-import com.example.myfilms.presentation.models.Movie
+import com.example.myfilms.data.models.Movie
 import com.squareup.picasso.Picasso
 
 class FavoritesAdapter : ListAdapter<Movie, FavoriteMovieViewHolder>(FavoriteMovieDiffCallback) {

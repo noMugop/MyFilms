@@ -10,9 +10,9 @@ import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentDetailsBinding
 import com.example.myfilms.databinding.FragmentFavoritesBinding
-import com.example.myfilms.presentation.models.LoginApprove
-import com.example.myfilms.presentation.models.Movie
-import com.example.myfilms.presentation.models.PostMovie
+import com.example.myfilms.data.models.LoginApprove
+import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.PostMovie
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +67,7 @@ class DetailsFragment : Fragment() {
             val tokenNotVal = apiService.getToken()
             val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
             val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            val sessionId = apiService.makeSession(token = tokenVal)
+            val sessionId = apiService.createSession(token = tokenVal)
             apiService.addFavorite(
                 session_id = sessionId.session_id,
                 postMovie = postMovie

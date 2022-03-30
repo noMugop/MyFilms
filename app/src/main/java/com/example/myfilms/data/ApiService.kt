@@ -1,6 +1,6 @@
 package com.example.myfilms.data
 
-import com.example.myfilms.presentation.models.*
+import com.example.myfilms.data.models.*
 import retrofit2.http.*
 
 interface ApiService {
@@ -26,7 +26,7 @@ interface ApiService {
     ): Token
 
     @POST("authentication/session/new")
-    suspend fun makeSession(
+    suspend fun createSession(
         @Query("api_key") apiKey: String = API_KEY,
         @Body token: Token
     ): Session
@@ -40,10 +40,10 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID,
         @Body postMovie: PostMovie
-    ): FavoriteStatus
+    )
 
     @GET("account/{account_id}/favorite/movies")
-    suspend fun getFavorite(
+    suspend fun getFavorites(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID,
         @Query("language") language: String = PARAMS_LANGUAGE,

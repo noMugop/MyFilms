@@ -12,9 +12,9 @@ import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
-import com.example.myfilms.presentation.models.LoginApprove
-import com.example.myfilms.presentation.models.Movie
-import com.example.myfilms.presentation.models.PostMovie
+import com.example.myfilms.data.models.LoginApprove
+import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.PostMovie
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.RuntimeException
