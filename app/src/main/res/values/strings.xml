@@ -6,4 +6,5 @@
     <string name="main">Main</string>
     <string name="favorites">Favorites</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="add_to_favorite">Добавить в избранные</string>
 </resources>

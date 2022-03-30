@@ -50,7 +50,7 @@ class DetailsFragment : Fragment() {
 
         getSessionId()
 
-        binding.button.setOnClickListener {
+        binding.buttonAddFavorite.setOnClickListener {
             sessionId.observe(viewLifecycleOwner) {
                 addFavorite(movie.value as Movie)
             }
