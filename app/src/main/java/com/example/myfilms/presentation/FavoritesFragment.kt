@@ -15,6 +15,7 @@ import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
 import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.PostMovie
+import com.example.myfilms.data.models.Session
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +45,12 @@ class FavoritesFragment : Fragment() {
 
         binding.progressBar.visibility = View.VISIBLE
 
-        downloadData()
+        getSessionId()
+
+        sessionId.observe(viewLifecycleOwner) {
+
+            downloadData()
+        }
 
         data.observe(viewLifecycleOwner) {
 
@@ -60,15 +66,25 @@ class FavoritesFragment : Fragment() {
         binding.rvFavorites.adapter = adapter
     }
 
-    private fun downloadData() {
+    private fun getSessionId() {
 
         scope.launch {
+
             val tokenNotVal = apiService.getToken()
             val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
             val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            val sessionId = apiService.createSession(token = tokenVal)
+            sessionId.value = apiService.createSession(token = tokenVal)
+        }
+    }
+
+    private fun downloadData() {
+
+        scope.launch {
+
+            val session = sessionId.value as Session
+
             data.value = apiService.getFavorites(
-                session_id = sessionId.session_id,
+                session_id = session.session_id,
                 page = PAGE
             ).movies
             binding.progressBar.visibility = View.GONE
@@ -86,5 +102,6 @@ class FavoritesFragment : Fragment() {
 
         private var PAGE = 1
         private var data: MutableLiveData<List<Movie>> = MutableLiveData()
+        private var sessionId: MutableLiveData<Session> = MutableLiveData()
     }
 }

@@ -10,5 +10,5 @@ data class Session(
 //    val success: Boolean,
     @SerializedName("session_id")
     @Expose
-    val session_id: String
+    val session_id: String = ""
 )

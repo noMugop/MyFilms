@@ -13,6 +13,7 @@ import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.PostMovie
+import com.example.myfilms.data.models.Session
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +48,14 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getSessionId()
+
+        binding.button.setOnClickListener {
+            sessionId.observe(viewLifecycleOwner) {
+                addFavorite(movie.value as Movie)
+            }
+        }
+
         movie.observe(viewLifecycleOwner) {
 
             Picasso.get().load(IMG_URL + it.backdropPath).into(binding.ivPoster)
@@ -54,22 +63,27 @@ class DetailsFragment : Fragment() {
             binding.tvOverview.text = it.overview
         }
 
-//        onClick() {
-//            addFavorite(movie)
-//        }
+    }
+
+    private fun getSessionId() {
+
+        scope.launch {
+
+            val tokenNotVal = apiService.getToken()
+            val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
+            val tokenVal = apiService.approveToken(loginApprove = loginApprove)
+            sessionId.value = apiService.createSession(token = tokenVal)
+        }
     }
 
     private fun addFavorite(movie: Movie) {
 
         scope.launch {
 
+            val session = sessionId.value as Session
             val postMovie = PostMovie(media_id = movie.id, favorite = true)
-            val tokenNotVal = apiService.getToken()
-            val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
-            val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            val sessionId = apiService.createSession(token = tokenVal)
             apiService.addFavorite(
-                session_id = sessionId.session_id,
+                session_id = session.session_id,
                 postMovie = postMovie
             )
         }
@@ -86,5 +100,6 @@ class DetailsFragment : Fragment() {
 
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
         const val KEY_MOVIE = "Movie"
+        private var sessionId: MutableLiveData<Session> = MutableLiveData()
     }
 }
