@@ -1,12 +1,11 @@
 package com.example.myfilms.data
 
-import com.example.myfilms.presentation.models.Result
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.example.myfilms.presentation.models.*
+import retrofit2.http.*
 
 interface ApiService {
 
-    @GET("movie")
+    @GET("discover/movie")
     suspend fun getMovies(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE,
@@ -15,8 +14,46 @@ interface ApiService {
         @Query("page") page: Int = PARAMS_PAGE
     ): Result
 
+    @GET("authentication/token/new")
+    suspend fun getToken(
+        @Query("api_key") apiKey: String = API_KEY,
+    ): Token
+
+    @POST("authentication/token/validate_with_login")
+    suspend fun approveToken(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Body loginApprove: LoginApprove
+    ): Token
+
+    @POST("authentication/session/new")
+    suspend fun makeSession(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Body token: Token
+    ): Session
+
+    @Headers(
+        "Accept: application/json;charset=utf-8",
+        "Content-type: application/json;charset=utf-8"
+    )
+    @POST("account/{account_id}/favorite")
+    suspend fun addFavorite(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("session_id") session_id: String = SESSION_ID,
+        @Body postMovie: PostMovie
+    ): FavoriteStatus
+
+    @GET("account/{account_id}/favorite/movies")
+    suspend fun getFavorite(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("session_id") session_id: String = SESSION_ID,
+        @Query("language") language: String = PARAMS_LANGUAGE,
+        @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
+        @Query("page") page: Int = PARAMS_PAGE
+    ): Result
+
     companion object {
 
+        private var SESSION_ID = ""
         private var API_KEY = "a14a376a2704b9c91446a56f236f5b50"
         private var PARAMS_LANGUAGE = "ru"
         private var SORT_BY_POPULARITY = "popularity.desc"

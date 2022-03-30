@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 
 class FavoritesAdapter : ListAdapter<Movie, FavoriteMovieViewHolder>(FavoriteMovieDiffCallback) {
 
-    private val onFilmClickListener: OnFilmClickListener? = null
+    var onFilmClickListener: OnFilmClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteMovieViewHolder {
         return FavoriteMovieViewHolder(

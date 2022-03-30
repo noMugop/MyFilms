@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-//        binding.bottomNavigationView.labelVisibilityMode =
-//            NavigationBarView.LABEL_VISIBILITY_LABELED
+        binding.bottomNavigationView.labelVisibilityMode =
+            NavigationBarView.LABEL_VISIBILITY_LABELED
         binding.bottomNavigationView.setupWithNavController(navController)
     }
 }
