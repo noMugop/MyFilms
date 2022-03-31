@@ -14,6 +14,7 @@ import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.PostMovie
 import com.example.myfilms.data.models.Session
+import com.example.myfilms.databinding.FragmentFavoriteDetailsBinding
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,11 +22,11 @@ import kotlinx.coroutines.launch
 import java.lang.RuntimeException
 
 
-class DetailsFragment : Fragment() {
+class FavoriteDetailsFragment : Fragment() {
 
-    private var _binding: FragmentDetailsBinding? = null
-    private val binding: FragmentDetailsBinding
-        get() = _binding ?: throw RuntimeException("DetailsFragment is null")
+    private var _binding: FragmentFavoriteDetailsBinding? = null
+    private val binding: FragmentFavoriteDetailsBinding
+        get() = _binding ?: throw RuntimeException("FragmentFavoriteDetailsBinding is null")
 
     private val apiService = ApiFactory.getInstance()
     private val scope = CoroutineScope(Dispatchers.Main)
@@ -41,7 +42,7 @@ class DetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoriteDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -49,9 +50,8 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.ivAddFavorite.setOnClickListener {
-
-            binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
-            addFavorite(movie.value as Movie)
+            binding.ivAddFavorite.setImageResource(R.drawable.ic_star_grey)
+            //deleteFavorite(movie.value as Movie)
         }
 
         movie.observe(viewLifecycleOwner) {
@@ -63,7 +63,7 @@ class DetailsFragment : Fragment() {
 
     }
 
-    private fun addFavorite(movie: Movie) {
+    private fun deleteFavorite(movie: Movie) {
 
         scope.launch {
 
@@ -73,10 +73,6 @@ class DetailsFragment : Fragment() {
             val sessionId = apiService.createSession(token = tokenVal)
 
             val postMovie = PostMovie(media_id = movie.id, favorite = true)
-            apiService.addFavorite(
-                session_id = sessionId.session_id,
-                postMovie = postMovie
-            )
         }
     }
 

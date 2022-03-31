@@ -45,12 +45,7 @@ class FavoritesFragment : Fragment() {
 
         binding.progressBar.visibility = View.VISIBLE
 
-        getSessionId()
-
-        sessionId.observe(viewLifecycleOwner) {
-
-            downloadData()
-        }
+        downloadData()
 
         data.observe(viewLifecycleOwner) {
 
@@ -66,25 +61,17 @@ class FavoritesFragment : Fragment() {
         binding.rvFavorites.adapter = adapter
     }
 
-    private fun getSessionId() {
+    private fun downloadData() {
 
         scope.launch {
 
             val tokenNotVal = apiService.getToken()
             val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
             val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            sessionId.value = apiService.createSession(token = tokenVal)
-        }
-    }
-
-    private fun downloadData() {
-
-        scope.launch {
-
-            val session = sessionId.value as Session
+            val sessionId = apiService.createSession(token = tokenVal)
 
             data.value = apiService.getFavorites(
-                session_id = session.session_id,
+                session_id = sessionId.session_id,
                 page = PAGE
             ).movies
             binding.progressBar.visibility = View.GONE
@@ -93,15 +80,14 @@ class FavoritesFragment : Fragment() {
 
     private fun launchDetailFragment(movie: Movie) {
         val args = Bundle().apply {
-            putParcelable(DetailsFragment.KEY_MOVIE, movie)
+            putParcelable(FavoriteDetailsFragment.KEY_MOVIE, movie)
         }
-        findNavController().navigate(R.id.action_favoritesFragment_to_detailsFragment, args)
+        findNavController().navigate(R.id.action_favoritesFragment_to_favoriteDetailsFragment, args)
     }
 
     companion object {
 
         private var PAGE = 1
         private var data: MutableLiveData<List<Movie>> = MutableLiveData()
-        private var sessionId: MutableLiveData<Session> = MutableLiveData()
     }
 }

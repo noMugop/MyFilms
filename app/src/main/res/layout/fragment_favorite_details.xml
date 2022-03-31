@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    tools:context=".presentation.DetailsFragment">
+    tools:context=".presentation.FavoriteDetailsFragment">
 
     <ImageView
         android:id="@+id/ivPoster"
@@ -70,8 +70,8 @@
     <ImageView
         android:id="@+id/ivAddFavorite"
         android:layout_width="40dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_star_grey"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_star_yellow"
         app:layout_constraintEnd_toEndOf="@+id/ivPoster"
         app:layout_constraintHorizontal_bias="0.956"
         app:layout_constraintStart_toStartOf="@+id/ivPoster"
