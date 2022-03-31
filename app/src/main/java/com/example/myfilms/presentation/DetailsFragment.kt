@@ -50,7 +50,9 @@ class DetailsFragment : Fragment() {
 
         getSessionId()
 
-        binding.buttonAddFavorite.setOnClickListener {
+        binding.ivFavorite.setOnClickListener {
+            binding.ivFavorite.setImageResource(R.mipmap.ic_favorite)
+
             sessionId.observe(viewLifecycleOwner) {
                 addFavorite(movie.value as Movie)
             }
