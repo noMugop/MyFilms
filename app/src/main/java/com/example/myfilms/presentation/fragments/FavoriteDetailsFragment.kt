@@ -1,5 +1,7 @@
 package com.example.myfilms.presentation.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -29,10 +31,12 @@ class FavoriteDetailsFragment : Fragment() {
     private val apiService = ApiFactory.getInstance()
     private val scope = CoroutineScope(Dispatchers.Main)
 
-    private var movie: MutableLiveData<Movie> = MutableLiveData()
+    private lateinit var movie: Movie
+    private lateinit var prefSettings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefSettings = context?.getSharedPreferences(LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
         parseArgs()
     }
 
@@ -49,15 +53,16 @@ class FavoriteDetailsFragment : Fragment() {
 
         binding.ivAddFavorite.setOnClickListener {
             binding.ivAddFavorite.setImageResource(R.drawable.ic_star_grey)
-            deleteFavorite(movie.value as Movie, "")
+
+            val sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+            if (sessionId.isNotEmpty()) {
+                deleteFavorite(movie, sessionId)
+            }
         }
 
-        movie.observe(viewLifecycleOwner) {
-
-            Picasso.get().load(IMG_URL + it.backdropPath).into(binding.ivPoster)
-            binding.tvTitle.text = it.title
-            binding.tvOverview.text = it.overview
-        }
+            Picasso.get().load(IMG_URL + movie.backdropPath).into(binding.ivPoster)
+            binding.tvTitle.text = movie.title
+            binding.tvOverview.text = movie.overview
 
     }
 
@@ -76,7 +81,7 @@ class FavoriteDetailsFragment : Fragment() {
     private fun parseArgs() {
 
         requireArguments().getParcelable<Movie>(KEY_MOVIE)?.let {
-            movie.value = it
+            movie = it
         }
     }
 

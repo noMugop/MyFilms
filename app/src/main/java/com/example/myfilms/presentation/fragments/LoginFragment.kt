@@ -3,6 +3,7 @@ package com.example.myfilms.presentation.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -35,7 +36,15 @@ class LoginFragment : Fragment(), CoroutineScope {
 
     private val apiService = ApiFactory.getInstance()
     override val coroutineContext: CoroutineContext = Dispatchers.Main
-    lateinit var sessionId: Session
+
+    private lateinit var prefSettings: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        prefSettings = context?.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
+        editor = prefSettings.edit()
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,14 +92,22 @@ class LoginFragment : Fragment(), CoroutineScope {
                 return@launch
             }
             if (tokenVal.request_token != "") {
-                sessionId = apiService.createSession(token = tokenVal)
-                binding.pbLoading.visibility = View.GONE
-                val args = Bundle().apply {
-                    putParcelable(FilmsFragment.SESSION_ID_KEY, sessionId)
-                }
-                findNavController().navigate(R.id.action_loginFragment_to_films_fragment, args)
+                val session = apiService.createSession(token = tokenVal)
+                val sessionId = session.session_id
+
+                putDataIntoPref(sessionId)
+
+                findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
             }
         }
+    }
+
+    private fun putDataIntoPref(string: String) {
+        binding.pbLoading.visibility = View.GONE
+        editor.putString(SESSION_ID_KEY, string)
+        editor.commit()
+        binding.etUsername.text = null
+        binding.etPassword.text = null
     }
 
     private fun hideKeyboard(activity: Activity) {
@@ -100,6 +117,12 @@ class LoginFragment : Fragment(), CoroutineScope {
             activity.currentFocus?.windowToken,
             InputMethodManager.HIDE_NOT_ALWAYS
         )
+    }
+
+    companion object {
+
+        const val APP_SETTINGS = "Settings"
+        const val SESSION_ID_KEY = "SESSION_ID"
     }
 }
 

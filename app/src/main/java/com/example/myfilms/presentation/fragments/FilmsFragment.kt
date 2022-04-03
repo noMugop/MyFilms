@@ -97,7 +97,6 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
         private var PAGE = 1
         private var isLoaded = false
-        const val SESSION_ID_KEY = "SESSION_ID"
 
         private var oldList = mutableListOf<Movie>()
         private var newList = mutableListOf<Movie>()

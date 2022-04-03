@@ -1,5 +1,7 @@
 package com.example.myfilms.presentation.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +30,13 @@ class FavoritesFragment : Fragment() {
     private val apiService = ApiFactory.getInstance()
     private val scope = CoroutineScope(Dispatchers.Main)
 
+    private lateinit var prefSettings: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        prefSettings = context?.getSharedPreferences(LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,7 +50,11 @@ class FavoritesFragment : Fragment() {
 
         binding.progressBar.visibility = View.VISIBLE
 
-        downloadData("")
+        val sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+
+        if (sessionId.isNotEmpty()) {
+            downloadData(sessionId)
+        }
 
         data.observe(viewLifecycleOwner) {
 
