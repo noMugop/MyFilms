@@ -14,15 +14,12 @@ import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
 
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
-    private val navController by lazy {
-        findNavController(R.id.main_container)
-    }
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
         bottomBarVisibility()
@@ -45,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        navController = findNavController(R.id.main_container)
         binding.bottomNavigationView.labelVisibilityMode =
             NavigationBarView.LABEL_VISIBILITY_LABELED
         binding.bottomNavigationView.setupWithNavController(navController)

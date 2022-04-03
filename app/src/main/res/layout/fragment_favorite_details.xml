@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    tools:context=".presentation.FavoriteDetailsFragment">
+    tools:context=".presentation.fragments.FavoriteDetailsFragment">
 
     <ImageView
         android:id="@+id/ivPoster"

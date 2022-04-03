@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation
+package com.example.myfilms.presentation.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,22 +12,21 @@ import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
-import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.PostMovie
 import kotlinx.coroutines.*
-import java.lang.Exception
 import java.lang.RuntimeException
+import kotlin.coroutines.CoroutineContext
 
-class FilmsFragment : Fragment() {
+class FilmsFragment : Fragment(), CoroutineScope {
 
     private var _binding: FragmentMoviesBinding? = null
     private val binding: FragmentMoviesBinding
         get() = _binding ?: throw RuntimeException("FragmentFilmsBinding is null")
 
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
+
     private val adapter = FilmsAdapter()
     private val apiService = ApiFactory.getInstance()
-    private val scope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +75,7 @@ class FilmsFragment : Fragment() {
     }
 
     private fun downloadData() {
-        scope.launch {
+        launch {
             val result = apiService.getMovies(page = PAGE)
             newList = result.movies as MutableList<Movie>
             val list = oldList + newList
@@ -98,6 +97,7 @@ class FilmsFragment : Fragment() {
 
         private var PAGE = 1
         private var isLoaded = false
+        const val SESSION_ID_KEY = "SESSION_ID"
 
         private var oldList = mutableListOf<Movie>()
         private var newList = mutableListOf<Movie>()

@@ -6,4 +6,9 @@
     app:startDestination="@id/films_fragment">
     <include app:graph="@navigation/films_fragment" />
     <include app:graph="@navigation/favorites_fragment" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.myfilms.presentation.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
 </navigation>

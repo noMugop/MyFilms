@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation
+package com.example.myfilms.presentation.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
-import com.example.myfilms.databinding.FragmentDetailsBinding
-import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.PostMovie
@@ -51,7 +49,7 @@ class FavoriteDetailsFragment : Fragment() {
 
         binding.ivAddFavorite.setOnClickListener {
             binding.ivAddFavorite.setImageResource(R.drawable.ic_star_grey)
-            //deleteFavorite(movie.value as Movie)
+            deleteFavorite(movie.value as Movie, "")
         }
 
         movie.observe(viewLifecycleOwner) {
@@ -63,16 +61,15 @@ class FavoriteDetailsFragment : Fragment() {
 
     }
 
-    private fun deleteFavorite(movie: Movie) {
+    private fun deleteFavorite(movie: Movie, sessionId: String) {
 
         scope.launch {
 
-            val tokenNotVal = apiService.getToken()
-            val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
-            val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            val sessionId = apiService.createSession(token = tokenVal)
-
-            val postMovie = PostMovie(media_id = movie.id, favorite = true)
+            val postMovie = PostMovie(media_id = movie.id, favorite = false)
+            apiService.addFavorite(
+                session_id = sessionId,
+                postMovie = postMovie
+            )
         }
     }
 

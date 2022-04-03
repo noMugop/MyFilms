@@ -7,10 +7,10 @@ data class LoginApprove(
 
     @SerializedName("username")
     @Expose
-    var username: String = "noMugop",
+    var username: String,
     @SerializedName("password")
     @Expose
-    var password: String = "10poguMon",
+    var password: String,
     @SerializedName("request_token")
     @Expose
     var request_token: String

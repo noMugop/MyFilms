@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation
+package com.example.myfilms.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,15 +11,11 @@ import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.presentation.adapter.favorites_adapter.FavoritesAdapter
-import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
 import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.PostMovie
-import com.example.myfilms.data.models.Session
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.lang.RuntimeException
 
 class FavoritesFragment : Fragment() {
@@ -45,7 +41,7 @@ class FavoritesFragment : Fragment() {
 
         binding.progressBar.visibility = View.VISIBLE
 
-        downloadData()
+        downloadData("")
 
         data.observe(viewLifecycleOwner) {
 
@@ -61,17 +57,12 @@ class FavoritesFragment : Fragment() {
         binding.rvFavorites.adapter = adapter
     }
 
-    private fun downloadData() {
+    private fun downloadData(sessionId: String) {
 
         scope.launch {
 
-            val tokenNotVal = apiService.getToken()
-            val loginApprove = LoginApprove(request_token = tokenNotVal.request_token)
-            val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            val sessionId = apiService.createSession(token = tokenVal)
-
             data.value = apiService.getFavorites(
-                session_id = sessionId.session_id,
+                session_id = sessionId,
                 page = PAGE
             ).movies
             binding.progressBar.visibility = View.GONE
