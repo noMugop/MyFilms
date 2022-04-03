@@ -7,9 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
@@ -35,6 +38,10 @@ class FilmsFragment : Fragment(), CoroutineScope {
     private val apiService = ApiFactory.getInstance()
     private lateinit var prefSettings: SharedPreferences
 
+    private var oldList = mutableListOf<Movie>()
+    private var newList = mutableListOf<Movie>()
+    private var movies: MutableLiveData<List<Movie>> = MutableLiveData()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefSettings = context?.getSharedPreferences(
@@ -54,57 +61,50 @@ class FilmsFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.progressBar.visibility = View.VISIBLE
-
         downloadData()
+        onScrollListener()
         onBackPressed()
+        onMovieClickListener()
 
-        binding.rvMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (!recyclerView.canScrollVertically(RecyclerView.FOCUS_DOWN)
-                    && recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE
-                    && !isLoaded
-                ) {
-                    isLoaded = true
-                    binding.progressBar.visibility = View.VISIBLE
-                    oldList = newList
-                    PAGE++
-                    downloadData()
-                } else {
-                    recyclerView.stopNestedScroll()
-                }
-            }
-        })
-
-        data.observe(viewLifecycleOwner) {
+        movies.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 
         binding.rvMovies.adapter = adapter
 
+
+        //binding.rvMovies.scrollToPosition(adapter.itemCount - 2)
+    }
+
+    private fun downloadData() {
+
+        binding.progressBar.visibility = View.VISIBLE
+        launch {
+            val result = apiService.getMovies(page = PAGE)
+
+            newList.clear()
+            for (movie in result.movies) {
+                newList.add(movie)
+            }
+            oldList.addAll(newList)
+            movies.value = oldList
+
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun onMovieClickListener() {
+
         adapter.onFilmClickListener = object : FilmsAdapter.OnFilmClickListener {
             override fun onFilmClick(movie: Movie) {
-                launchDetailFragment(movie)
+                launchDetailFragment(movie.id)
             }
         }
     }
 
-    private fun downloadData() {
-        launch {
-            val result = apiService.getMovies(page = PAGE)
-            newList = result.movies as MutableList<Movie>
-            val list = oldList + newList
-            newList = list as MutableList<Movie>
-            data.value = newList
-            binding.progressBar.visibility = View.GONE
-            isLoaded = false
-        }
-    }
-
-    private fun launchDetailFragment(movie: Movie) {
+    private fun launchDetailFragment(movieId: Int) {
         val args = Bundle().apply {
-            putParcelable(DetailsFragment.KEY_MOVIE, movie)
+            putInt(DetailsFragment.KEY_MOVIE, movieId)
         }
         findNavController().navigate(R.id.action_filmsFragment_to_detailsFragment, args)
     }
@@ -114,8 +114,9 @@ class FilmsFragment : Fragment(), CoroutineScope {
             override fun handleOnBackPressed() {
 
                 launch {
-                    val sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-                    apiService.deleteSession(session_id = Session(session_id = sessionId))
+                    val sessionId =
+                        prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+                    apiService.deleteSession(sessionId = Session(session_id = sessionId))
                     findNavController().popBackStack()
                 }
             }
@@ -123,13 +124,18 @@ class FilmsFragment : Fragment(), CoroutineScope {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
+    private fun onScrollListener() {
+
+        adapter.onReachEndListener = object : FilmsAdapter.OnReachEndListener {
+            override fun onReachEnd() {
+                PAGE++
+                downloadData()
+            }
+        }
+    }
+
     companion object {
 
-        private var PAGE = 1
-        private var isLoaded = false
-
-        private var oldList = mutableListOf<Movie>()
-        private var newList = mutableListOf<Movie>()
-        private var data: MutableLiveData<List<Movie>> = MutableLiveData()
+        var PAGE = 1
     }
 }

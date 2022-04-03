@@ -5,11 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.myfilms.databinding.ItemMovieBinding
 import com.example.myfilms.data.models.Movie
+import com.example.myfilms.presentation.fragments.FilmsFragment
 import com.squareup.picasso.Picasso
 
 class FilmsAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
 
     var onFilmClickListener: OnFilmClickListener? = null
+    var onReachEndListener: OnReachEndListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         return MovieViewHolder(
@@ -23,8 +25,11 @@ class FilmsAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = getItem(position)
-        with(holder.binding) {
+        if (position >= (itemCount - 3) && onReachEndListener != null) {
+            onReachEndListener?.onReachEnd()
+        }
 
+        with(holder.binding) {
             Picasso.get().load(IMG_URL + movie.posterPath).into(ivMovie)
             movieItemID.setOnClickListener {
 
@@ -41,5 +46,10 @@ class FilmsAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
     interface OnFilmClickListener {
 
         fun onFilmClick(movie: Movie)
+    }
+
+    interface OnReachEndListener {
+
+        fun onReachEnd()
     }
 }

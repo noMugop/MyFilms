@@ -2,6 +2,7 @@ package com.example.myfilms.data
 
 import com.example.myfilms.data.models.*
 import com.google.gson.JsonObject
+import okhttp3.internal.http.hasBody
 import retrofit2.http.*
 
 interface ApiService {
@@ -11,9 +12,16 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
-        @Query("vote_count.gte") vote_count: Int = MIN_VOTE_COUNT_VALUE,
+        //@Query("vote_count.gte") vote_count: Int = MIN_VOTE_COUNT_VALUE,
         @Query("page") page: Int = PARAMS_PAGE
     ): Result
+
+    @GET("movie/{movie_id}")
+    suspend fun getById(
+        @Path("movie_id") id: Int,
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("language") language: String = PARAMS_LANGUAGE
+    ): Movie
 
     @GET("authentication/token/new")
     suspend fun getToken(
@@ -55,7 +63,7 @@ interface ApiService {
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
     suspend fun deleteSession(
         @Query("api_key") apiKey: String = API_KEY,
-        @Body session_id: Session
+        @Body sessionId: Session
     )
 
     companion object {

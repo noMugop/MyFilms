@@ -57,6 +57,11 @@ class LoginFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        onLoginClick()
+    }
+
+    private fun onLoginClick() {
+
         binding.btnLogin.setOnClickListener {
             hideKeyboard(requireActivity())
             if (!binding.etUsername.text.isNullOrBlank() && !binding.etPassword.text.isNullOrBlank()) {
@@ -70,6 +75,7 @@ class LoginFragment : Fragment(), CoroutineScope {
                 Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     private fun login(data: LoginApprove) {
@@ -94,7 +100,6 @@ class LoginFragment : Fragment(), CoroutineScope {
             if (tokenVal.request_token != "") {
                 val session = apiService.createSession(token = tokenVal)
                 val sessionId = session.session_id
-                println("SESSION_ID $sessionId")
                 putDataIntoPref(sessionId)
 
                 findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
