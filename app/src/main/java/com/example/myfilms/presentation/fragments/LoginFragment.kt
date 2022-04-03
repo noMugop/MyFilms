@@ -1,60 +1,64 @@
-package com.example.myfilms.presentation
+package com.example.myfilms.presentation.fragments
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.TokenWatcher
-import android.util.Log
-import android.util.Log.d
-import android.util.Log.i
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import androidx.startup.StartupLogger.i
+import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.data.models.LoginApprove
-import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.Session
 import com.example.myfilms.data.models.Token
-import com.example.myfilms.databinding.ActivityLoginBinding
-import com.example.myfilms.databinding.ActivityMainBinding
-import com.example.myfilms.presentation.fragments.FilmsFragment
+import com.example.myfilms.databinding.FragmentLoginBinding
+import com.example.myfilms.databinding.FragmentMoviesBinding
+import com.example.myfilms.presentation.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
-class LoginActivity : AppCompatActivity(), CoroutineScope {
+class LoginFragment : Fragment(), CoroutineScope {
 
-    lateinit var binding: ActivityLoginBinding
+    private var _binding: FragmentLoginBinding? = null
+    private val binding: FragmentLoginBinding
+        get() = _binding ?: throw RuntimeException("FragmentLoginBinding is null")
+
     private val apiService = ApiFactory.getInstance()
     override val coroutineContext: CoroutineContext = Dispatchers.Main
-    private var sessionId: MutableLiveData<String> = MutableLiveData()
+    lateinit var sessionId: Session
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogin.setOnClickListener {
-            hideKeyboard(this)
+            hideKeyboard(requireActivity())
             if (!binding.etUsername.text.isNullOrBlank() && !binding.etPassword.text.isNullOrBlank()) {
                 val data = LoginApprove(
-                    username = binding.etUsername.text.toString(),
-                    password = binding.etPassword.text.toString(),
-                    request_token = "")
+                    username = binding.etUsername.text.toString().trim(),
+                    password = binding.etPassword.text.toString().trim(),
+                    request_token = ""
+                )
                 login(data)
-                sessionId.observe(this) {
-                    binding.pbLoading.visibility = View.GONE
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra(FilmsFragment.SESSION_ID_KEY, sessionId.value)
-                    startActivity(intent)
-                }
+            } else {
+                Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -75,12 +79,16 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
                 tokenVal = apiService.approveToken(loginApprove = loginApprove)
             } catch (e: Exception) {
                 binding.pbLoading.visibility = View.GONE
-                Toast.makeText(applicationContext, "Неверные данные", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT).show()
                 return@launch
             }
             if (tokenVal.request_token != "") {
-                val session = apiService.createSession(token = tokenVal)
-                sessionId.value = session.session_id
+                sessionId = apiService.createSession(token = tokenVal)
+                binding.pbLoading.visibility = View.GONE
+                val args = Bundle().apply {
+                    putParcelable(FilmsFragment.SESSION_ID_KEY, sessionId)
+                }
+                findNavController().navigate(R.id.action_loginFragment_to_films_fragment, args)
             }
         }
     }
@@ -94,3 +102,4 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
         )
     }
 }
+
