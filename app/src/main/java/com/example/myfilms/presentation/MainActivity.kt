@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.detailsFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                 }
+                R.id.loginFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
             }
         }
     }

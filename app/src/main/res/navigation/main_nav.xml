@@ -3,12 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_fragment"
-    app:startDestination="@id/films_fragment">
+    app:startDestination="@id/loginFragment">
     <include app:graph="@navigation/films_fragment" />
     <include app:graph="@navigation/favorites_fragment" />
-    <activity
-        android:id="@+id/loginActivity"
-        android:name="com.example.myfilms.presentation.LoginActivity"
-        android:label="activity_login"
-        tools:layout="@layout/activity_login" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.myfilms.presentation.fragments.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_films_fragment"
+            app:destination="@id/films_fragment" />
+    </fragment>
 </navigation>
