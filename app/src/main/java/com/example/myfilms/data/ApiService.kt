@@ -1,6 +1,7 @@
 package com.example.myfilms.data
 
 import com.example.myfilms.data.models.*
+import com.google.gson.JsonObject
 import retrofit2.http.*
 
 interface ApiService {
@@ -50,6 +51,12 @@ interface ApiService {
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
     ): Result
+
+    @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
+    suspend fun deleteSession(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Body session_id: Session
+    )
 
     companion object {
 

@@ -94,7 +94,7 @@ class LoginFragment : Fragment(), CoroutineScope {
             if (tokenVal.request_token != "") {
                 val session = apiService.createSession(token = tokenVal)
                 val sessionId = session.session_id
-
+                println("SESSION_ID $sessionId")
                 putDataIntoPref(sessionId)
 
                 findNavController().navigate(R.id.action_loginFragment_to_films_fragment)

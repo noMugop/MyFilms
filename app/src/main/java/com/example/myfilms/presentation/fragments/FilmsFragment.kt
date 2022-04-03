@@ -1,10 +1,13 @@
 package com.example.myfilms.presentation.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +16,9 @@ import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
 import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.Session
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
@@ -27,6 +33,15 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
     private val adapter = FilmsAdapter()
     private val apiService = ApiFactory.getInstance()
+    private lateinit var prefSettings: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        prefSettings = context?.getSharedPreferences(
+            LoginFragment.APP_SETTINGS,
+            Context.MODE_PRIVATE
+        ) as SharedPreferences
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +57,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
         binding.progressBar.visibility = View.VISIBLE
 
         downloadData()
+        onBackPressed()
 
         binding.rvMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -91,6 +107,20 @@ class FilmsFragment : Fragment(), CoroutineScope {
             putParcelable(DetailsFragment.KEY_MOVIE, movie)
         }
         findNavController().navigate(R.id.action_filmsFragment_to_detailsFragment, args)
+    }
+
+    private fun onBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+
+                launch {
+                    val sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+                    apiService.deleteSession(session_id = Session(session_id = sessionId))
+                    findNavController().popBackStack()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
     companion object {
