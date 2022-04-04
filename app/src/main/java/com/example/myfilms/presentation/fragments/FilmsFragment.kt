@@ -38,6 +38,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
     private val apiService = ApiFactory.getInstance()
     private lateinit var prefSettings: SharedPreferences
 
+    private var templateList = mutableListOf<Movie>()
     private var oldList = mutableListOf<Movie>()
     private var newList = mutableListOf<Movie>()
     private var movies: MutableLiveData<List<Movie>> = MutableLiveData()
@@ -71,23 +72,22 @@ class FilmsFragment : Fragment(), CoroutineScope {
         }
 
         binding.rvMovies.adapter = adapter
-
-
-        //binding.rvMovies.scrollToPosition(adapter.itemCount - 2)
     }
 
     private fun downloadData() {
 
         binding.progressBar.visibility = View.VISIBLE
         launch {
-            val result = apiService.getMovies(page = PAGE)
+            val result = apiService.getMovies(page = PAGE).movies
 
             newList.clear()
-            for (movie in result.movies) {
+            for (movie in result) {
                 newList.add(movie)
             }
-            oldList.addAll(newList)
-            movies.value = oldList
+
+            oldList += newList
+
+            movies.postValue(oldList.toList())
 
             binding.progressBar.visibility = View.GONE
         }

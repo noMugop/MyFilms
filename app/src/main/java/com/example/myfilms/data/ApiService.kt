@@ -12,7 +12,7 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
-        //@Query("vote_count.gte") vote_count: Int = MIN_VOTE_COUNT_VALUE,
+        @Query("vote_count.gte") vote_count: Int = MIN_VOTE_COUNT_VALUE,
         @Query("page") page: Int = PARAMS_PAGE
     ): Result
 
