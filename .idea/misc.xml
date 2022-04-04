@@ -9,12 +9,13 @@
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/activity_login.xml" value="0.2677083333333333" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/activity_main.xml" value="0.327445652173913" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_details.xml" value="0.327445652173913" />
-        <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_favorite_details.xml" value="0.3432971014492754" />
+        <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_favorite_details.xml" value="0.33" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_favorites.xml" value="0.28125" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_films.xml" value="0.327445652173913" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_login.xml" value="0.2677083333333333" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/fragment_movies.xml" value="0.24230072463768115" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/item_movie.xml" value="0.327445652173913" />
+        <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/layout/item_trailer.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.37447916666666664" />
         <entry key="..\:/Users/Tom/AndroidStudioProjects/MyFilms/app/src/main/res/mipmap-anydpi-v26/star_yellow.xml" value="0.104" />
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.197" />

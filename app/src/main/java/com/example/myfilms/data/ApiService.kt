@@ -66,6 +66,13 @@ interface ApiService {
         @Body sessionId: Session
     )
 
+    @GET("movie/{movie_id}/videos")
+    suspend fun getVideos(
+        @Path("movie_id") id: Int,
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("language") language: String = PARAMS_LANGUAGE
+    ): MovieVideos
+
     companion object {
 
         private var SESSION_ID = ""

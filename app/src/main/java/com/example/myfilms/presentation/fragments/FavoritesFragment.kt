@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -20,6 +21,7 @@ import com.example.myfilms.data.models.Session
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
@@ -34,9 +36,15 @@ class FavoritesFragment : Fragment(), CoroutineScope {
     private val apiService = ApiFactory.getInstance()
 
     private lateinit var prefSettings: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+
+    private var movies: MutableLiveData<List<Movie>> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        prefSettings = context?.getSharedPreferences(LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
+        prefSettings = context?.getSharedPreferences(
+            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE
+        ) as SharedPreferences
+        editor = prefSettings.edit()
         super.onCreate(savedInstanceState)
     }
 
@@ -55,7 +63,7 @@ class FavoritesFragment : Fragment(), CoroutineScope {
         onMovieClickListener()
         onBackPressed()
 
-        data.observe(viewLifecycleOwner) {
+        movies.observe(viewLifecycleOwner) {
             adapter.submitList(it)
             binding.rvFavorites.adapter = adapter
         }
@@ -64,17 +72,26 @@ class FavoritesFragment : Fragment(), CoroutineScope {
     private fun downloadData() {
 
         binding.progressBar.visibility = View.VISIBLE
-        val sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-        if (sessionId.isNotEmpty()) {
-            launch {
+        try {
+            sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+        } catch (e: Exception) {
+        }
 
-                data.value = apiService.getFavorites(
+        if (sessionId != "") {
+            launch {
+                movies.value = apiService.getFavorites(
                     session_id = sessionId,
                     page = PAGE
                 ).movies
-                binding.progressBar.visibility = View.GONE
             }
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Требуется авторизация",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun onMovieClickListener() {
@@ -96,22 +113,27 @@ class FavoritesFragment : Fragment(), CoroutineScope {
     private fun onBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-
                 launch {
-                    val sessionId =
-                        prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-                    apiService.deleteSession(sessionId = Session(session_id = sessionId))
-                    findNavController().popBackStack()
+                    try {
+                        sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+                    } catch (e: Exception) {
+                    }
+                    if (sessionId != "") {
+                        apiService.deleteSession(sessionId = Session(session_id = sessionId))
+                        editor.clear().commit()
+                        findNavController().popBackStack()
+                    } else {
+                        findNavController().popBackStack()
+                    }
                 }
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
-
     companion object {
 
+        private var sessionId: String = ""
         private var PAGE = 1
-        private var data: MutableLiveData<List<Movie>> = MutableLiveData()
     }
 }

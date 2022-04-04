@@ -3,6 +3,7 @@
     package="com.example.myfilms">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyFilms">
-        <activity
-            android:name=".presentation.LoginActivity"
-            android:exported="false" >
-        </activity>
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true">

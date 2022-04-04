@@ -23,6 +23,7 @@ import com.example.myfilms.data.models.Session
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
+import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
@@ -37,6 +38,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
     private val adapter = FilmsAdapter()
     private val apiService = ApiFactory.getInstance()
     private lateinit var prefSettings: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
 
     private var oldList = mutableListOf<Movie>()
     private var newList = mutableListOf<Movie>()
@@ -45,9 +47,8 @@ class FilmsFragment : Fragment(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefSettings = context?.getSharedPreferences(
-            LoginFragment.APP_SETTINGS,
-            Context.MODE_PRIVATE
-        ) as SharedPreferences
+            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
+        editor = prefSettings.edit()
     }
 
     override fun onCreateView(
@@ -111,12 +112,18 @@ class FilmsFragment : Fragment(), CoroutineScope {
     private fun onBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-
                 launch {
-                    val sessionId =
-                        prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-                    apiService.deleteSession(sessionId = Session(session_id = sessionId))
-                    findNavController().popBackStack()
+                    try {
+                        sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+                    } catch (e: Exception) {
+                    }
+                    if (sessionId != "") {
+                        apiService.deleteSession(sessionId = Session(session_id = sessionId))
+                        editor.clear().commit()
+                        findNavController().popBackStack()
+                    } else {
+                        findNavController().popBackStack()
+                    }
                 }
             }
         }
@@ -135,6 +142,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
     companion object {
 
+        private var sessionId: String = ""
         var PAGE = 1
     }
 }

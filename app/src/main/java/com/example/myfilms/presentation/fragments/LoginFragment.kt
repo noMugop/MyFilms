@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.method.TextKeyListener.clear
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +42,8 @@ class LoginFragment : Fragment(), CoroutineScope {
     private lateinit var editor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        prefSettings = context?.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
+        prefSettings =
+            context?.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
         editor = prefSettings.edit()
         super.onCreate(savedInstanceState)
     }
@@ -76,6 +78,11 @@ class LoginFragment : Fragment(), CoroutineScope {
             }
         }
 
+        binding.btnLogin2.setOnClickListener {
+            hideKeyboard(requireActivity())
+            deleteSessionId()
+        }
+
     }
 
     private fun login(data: LoginApprove) {
@@ -107,6 +114,22 @@ class LoginFragment : Fragment(), CoroutineScope {
         }
     }
 
+    private fun deleteSessionId() {
+        launch {
+            try {
+                sessionId = prefSettings.getString(SESSION_ID_KEY, null) as String
+            } catch (e: Exception) {
+            }
+            if (sessionId != "") {
+                apiService.deleteSession(sessionId = Session(session_id = sessionId))
+                editor.clear().commit()
+                findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
+            } else {
+                findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
+            }
+        }
+    }
+
     private fun putDataIntoPref(string: String) {
         binding.pbLoading.visibility = View.GONE
         editor.putString(SESSION_ID_KEY, string)
@@ -126,6 +149,7 @@ class LoginFragment : Fragment(), CoroutineScope {
 
     companion object {
 
+        private var sessionId: String = ""
         const val APP_SETTINGS = "Settings"
         const val SESSION_ID_KEY = "SESSION_ID"
     }
