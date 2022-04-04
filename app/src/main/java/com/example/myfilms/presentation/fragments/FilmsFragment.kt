@@ -38,7 +38,6 @@ class FilmsFragment : Fragment(), CoroutineScope {
     private val apiService = ApiFactory.getInstance()
     private lateinit var prefSettings: SharedPreferences
 
-    private var templateList = mutableListOf<Movie>()
     private var oldList = mutableListOf<Movie>()
     private var newList = mutableListOf<Movie>()
     private var movies: MutableLiveData<List<Movie>> = MutableLiveData()
