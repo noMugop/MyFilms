@@ -69,14 +69,14 @@ class DetailsFragment : Fragment(), CoroutineScope {
             if (binding.ivAddFavorite.tag == TAG_WHITE) {
                 addFavorite(movieId, sessionId)
 
-                if (sessionId != "") {
+                if (sessionId != "" && sessionId.isNotEmpty()) {
                     binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                     binding.ivAddFavorite.tag = TAG_YELLOW
                 }
             } else {
                 deleteFavorite(movieId, sessionId)
 
-                if (sessionId != "") {
+                if (sessionId != "" && sessionId.isNotEmpty()) {
                     binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                     binding.ivAddFavorite.tag = TAG_WHITE
                 }

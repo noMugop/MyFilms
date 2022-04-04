@@ -47,7 +47,8 @@ class FilmsFragment : Fragment(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefSettings = context?.getSharedPreferences(
-            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
+            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE
+        ) as SharedPreferences
         editor = prefSettings.edit()
     }
 
@@ -77,6 +78,10 @@ class FilmsFragment : Fragment(), CoroutineScope {
     private fun downloadData() {
 
         binding.progressBar.visibility = View.VISIBLE
+        try {
+            sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+        } catch (e: Exception) {
+        }
         launch {
             val result = apiService.getMovies(page = PAGE).movies
 
@@ -114,14 +119,10 @@ class FilmsFragment : Fragment(), CoroutineScope {
             override fun handleOnBackPressed() {
                 launch {
                     try {
-                        sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-                    } catch (e: Exception) {
-                    }
-                    if (sessionId != "") {
                         apiService.deleteSession(sessionId = Session(session_id = sessionId))
                         editor.clear().commit()
                         findNavController().popBackStack()
-                    } else {
+                    } catch (e: Exception) {
                         findNavController().popBackStack()
                     }
                 }

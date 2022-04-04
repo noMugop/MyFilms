@@ -76,21 +76,22 @@ class FavoritesFragment : Fragment(), CoroutineScope {
             sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
         } catch (e: Exception) {
         }
-
-        if (sessionId != "") {
-            launch {
+        launch {
+            try {
                 movies.value = apiService.getFavorites(
                     session_id = sessionId,
                     page = PAGE
                 ).movies
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Требуется авторизация",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "Требуется авторизация",
-                Toast.LENGTH_SHORT
-            ).show()
         }
+
         binding.progressBar.visibility = View.GONE
     }
 
@@ -115,14 +116,10 @@ class FavoritesFragment : Fragment(), CoroutineScope {
             override fun handleOnBackPressed() {
                 launch {
                     try {
-                        sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-                    } catch (e: Exception) {
-                    }
-                    if (sessionId != "") {
                         apiService.deleteSession(sessionId = Session(session_id = sessionId))
                         editor.clear().commit()
                         findNavController().popBackStack()
-                    } else {
+                    } catch (e: Exception) {
                         findNavController().popBackStack()
                     }
                 }

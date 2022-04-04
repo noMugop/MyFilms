@@ -104,7 +104,7 @@ class LoginFragment : Fragment(), CoroutineScope {
                 Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT).show()
                 return@launch
             }
-            if (tokenVal.request_token != "") {
+            if (tokenVal.request_token != "" && tokenVal.request_token.isNotEmpty()) {
                 val session = apiService.createSession(token = tokenVal)
                 val sessionId = session.session_id
                 putDataIntoPref(sessionId)
@@ -120,11 +120,11 @@ class LoginFragment : Fragment(), CoroutineScope {
                 sessionId = prefSettings.getString(SESSION_ID_KEY, null) as String
             } catch (e: Exception) {
             }
-            if (sessionId != "") {
+            try {
                 apiService.deleteSession(sessionId = Session(session_id = sessionId))
                 editor.clear().commit()
                 findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
-            } else {
+            } catch (e: Exception) {
                 findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
             }
         }
