@@ -68,18 +68,8 @@ class DetailsFragment : Fragment(), CoroutineScope {
 
             if (binding.ivAddFavorite.tag == TAG_WHITE) {
                 addFavorite(movieId, sessionId)
-
-                if (sessionId != "" && sessionId.isNotEmpty()) {
-                    binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
-                    binding.ivAddFavorite.tag = TAG_YELLOW
-                }
             } else {
                 deleteFavorite(movieId, sessionId)
-
-                if (sessionId != "" && sessionId.isNotEmpty()) {
-                    binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
-                    binding.ivAddFavorite.tag = TAG_WHITE
-                }
             }
         }
     }
@@ -94,6 +84,8 @@ class DetailsFragment : Fragment(), CoroutineScope {
                     session_id = sessionId,
                     postMovie = postMovie
                 )
+                binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
+                binding.ivAddFavorite.tag = TAG_WHITE
             } catch (e: Exception) {
                 Toast.makeText(
                     requireContext(),
@@ -114,6 +106,8 @@ class DetailsFragment : Fragment(), CoroutineScope {
                     session_id = sessionId,
                     postMovie = postMovie
                 )
+                binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
+                binding.ivAddFavorite.tag = TAG_YELLOW
             } catch (e: Exception) {
                 Toast.makeText(
                     requireContext(),
@@ -140,7 +134,6 @@ class DetailsFragment : Fragment(), CoroutineScope {
             val video = apiService.getVideos(movieId)
             video.list.map {
                 binding.textViewNameOfVideo.text = it.name
-                key = it.key
             }
             binding.progressBar.visibility = View.GONE
         }
@@ -150,7 +143,9 @@ class DetailsFragment : Fragment(), CoroutineScope {
 
         launch {
             val video = apiService.getVideos(movieId)
-            key = video.list.first().key
+            video.list.map {
+                key = it.key
+            }
             val intent = Intent(Intent.ACTION_VIEW)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.data = Uri.parse(YOUTUBE_URL + key)
