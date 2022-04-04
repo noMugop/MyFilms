@@ -94,6 +94,8 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
             movies.postValue(oldList.toList())
 
+            movies.value = result
+
             binding.progressBar.visibility = View.GONE
         }
     }
@@ -135,14 +137,20 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
         adapter.onReachEndListener = object : FilmsAdapter.OnReachEndListener {
             override fun onReachEnd() {
-                PAGE++
-                downloadData()
+                isLoading = true
+                if (isLoading) {
+                    PAGE++
+                    isLoading = false
+                    downloadData()
+                    binding.rvMovies.scrollToPosition((adapter.itemCount * PAGE) - (adapter.itemCount - 2))
+                }
             }
         }
     }
 
     companion object {
 
+        var isLoading = false
         private var sessionId: String = ""
         var PAGE = 1
     }

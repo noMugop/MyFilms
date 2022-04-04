@@ -25,8 +25,8 @@ class FilmsAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = getItem(position)
-        if (position >= (itemCount - 3) && onReachEndListener != null) {
-            onReachEndListener?.onReachEnd()
+        if (position > (itemCount - 2) && onReachEndListener != null) {
+                onReachEndListener?.onReachEnd()
         }
 
         with(holder.binding) {
