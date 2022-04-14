@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.details_fragment -> {
                     bottomNavigation.visibility = View.GONE
-                    toolbarLayout.visibility = View.VISIBLE
+                    toolbarLayout.visibility = View.GONE
                 }
                 R.id.login_fragment -> {
                     bottomNavigation.visibility = View.GONE

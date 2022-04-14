@@ -14,7 +14,7 @@
             app:destination="@id/favorite_details_fragment"
             app:launchSingleTop="false"
             app:popUpTo="@id/favorites_fragment"
-            app:popUpToInclusive="false" />
+            app:popUpToInclusive="false"/>
     </fragment>
     <fragment
         android:id="@+id/favorite_details_fragment"
