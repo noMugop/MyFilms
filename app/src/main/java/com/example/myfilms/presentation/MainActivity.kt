@@ -2,6 +2,7 @@ package com.example.myfilms.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -10,25 +11,30 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.ActivityMainBinding
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private lateinit var bottomNavigation: BottomNavigationView
+    //    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        navController = findNavController(R.id.main_container)
-        bottomBarInit()
+        init()
+        bottomNavInit()
         sideBarInit()
         setVisibility()
     }
@@ -37,54 +43,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
                 R.id.filmsFragment -> {
-                    binding.bottomNavigationView.visibility = View.VISIBLE
-                    binding.sideNavigation.visibility = View.VISIBLE
+                    bottomNavigation.visibility = View.VISIBLE
+                    binding.appBarMain.toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.favoritesFragment -> {
-                    binding.bottomNavigationView.visibility = View.VISIBLE
-                    binding.sideNavigation.visibility = View.VISIBLE
+                    bottomNavigation.visibility = View.VISIBLE
+                    binding.appBarMain.toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.detailsFragment -> {
-                    binding.bottomNavigationView.visibility = View.GONE
-                    binding.sideNavigation.visibility = View.GONE
+                    bottomNavigation.visibility = View.GONE
+                    binding.appBarMain.toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.loginFragment -> {
-                    binding.bottomNavigationView.visibility = View.GONE
-                    binding.sideNavigation.visibility = View.GONE
+                    bottomNavigation.visibility = View.GONE
+                    binding.appBarMain.toolbarLayout.visibility = View.GONE
                 }
             }
         }
+    }
+
+    private fun init() {
+
+        navController = findNavController(R.id.main_container)
+//        setSupportActionBar(binding.appBarMain.topToolbar)
+        bottomNavigation = binding.appBarMain.contentFragments.bottomNavigationView
     }
 
     private fun sideBarInit() {
 
-        binding.sideNavigation.setNavigationItemSelectedListener(this)
+        binding.sideNavigation.setupWithNavController(navController)
 
-        binding.topAppbar.setNavigationOnClickListener { object : View.OnClickListener {
-            override fun onClick(p0: View?) {
+        binding.appBarMain.topToolbar.setNavigationOnClickListener {
+            it.setOnClickListener {
                 binding.drawerMainActivity.openDrawer(GravityCompat.START)
             }
-        } }
-//        binding.sideNavigation.setupWithNavController(navController)
-    }
-
-    private fun bottomBarInit() {
-        binding.bottomNavigationView.labelVisibilityMode =
-            NavigationBarView.LABEL_VISIBILITY_LABELED
-        binding.bottomNavigationView.setupWithNavController(navController)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.side_films -> Toast.makeText(applicationContext, "Home", Toast.LENGTH_SHORT).show()
-            R.id.side_favorite -> Toast.makeText(applicationContext, "Favorites", Toast.LENGTH_SHORT).show()
-            R.id.settings -> Toast.makeText(applicationContext, "Settings", Toast.LENGTH_SHORT).show()
-            R.id.about -> Toast.makeText(applicationContext, "About", Toast.LENGTH_SHORT).show()
-            R.id.exit -> Toast.makeText(applicationContext, "Exit", Toast.LENGTH_SHORT).show()
-            R.id.share -> Toast.makeText(applicationContext, "Share", Toast.LENGTH_SHORT).show()
-            R.id.rate_us -> Toast.makeText(applicationContext, "Rate_us", Toast.LENGTH_SHORT).show()
-            else -> Toast.makeText(applicationContext, "Nothing Clicked", Toast.LENGTH_SHORT).show()
         }
-        return true
     }
+
+    private fun bottomNavInit() {
+        bottomNavigation.labelVisibilityMode =
+            NavigationBarView.LABEL_VISIBILITY_LABELED
+        bottomNavigation.setupWithNavController(navController)
+    }
+
+//    override fun onSupportNavigateUp(): Boolean {
+//        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+//    }
 }
