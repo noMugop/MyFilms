@@ -7,27 +7,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentMoviesBinding
-import com.example.myfilms.presentation.adapter.films_adapter.FilmsAdapter
+import com.example.myfilms.presentation.adapter.films_adapter.MoviesAdapter
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.Session
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.example.myfilms.presentation.MainActivity
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
-class FilmsFragment : Fragment(), CoroutineScope {
+class MoviesFragment : Fragment(), CoroutineScope {
 
     private var _binding: FragmentMoviesBinding? = null
     private val binding: FragmentMoviesBinding
@@ -35,7 +30,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main
 
-    private val adapter = FilmsAdapter()
+    private val adapter = MoviesAdapter()
     private val apiService = ApiFactory.getInstance()
     private lateinit var prefSettings: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
@@ -102,7 +97,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
     private fun onMovieClickListener() {
 
-        adapter.onFilmClickListener = object : FilmsAdapter.OnFilmClickListener {
+        adapter.onFilmClickListener = object : MoviesAdapter.OnFilmClickListener {
             override fun onFilmClick(movie: Movie) {
                 launchDetailFragment(movie.id)
             }
@@ -113,7 +108,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
         val args = Bundle().apply {
             putInt(DetailsFragment.KEY_MOVIE, movieId)
         }
-        findNavController().navigate(R.id.action_filmsFragment_to_detailsFragment, args)
+        findNavController().navigate(R.id.action_movies_fragment_to_details_fragment, args)
     }
 
     private fun onBackPressed() {
@@ -135,7 +130,7 @@ class FilmsFragment : Fragment(), CoroutineScope {
 
     private fun onScrollListener() {
 
-        adapter.onReachEndListener = object : FilmsAdapter.OnReachEndListener {
+        adapter.onReachEndListener = object : MoviesAdapter.OnReachEndListener {
             override fun onReachEnd() {
                 isLoading = true
                 if (isLoading) {

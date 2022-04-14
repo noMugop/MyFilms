@@ -78,7 +78,7 @@ class LoginFragment : Fragment(), CoroutineScope {
             }
         }
 
-        binding.btnLogin2.setOnClickListener {
+        binding.btnGuest.setOnClickListener {
             hideKeyboard(requireActivity())
             deleteSessionId()
         }
@@ -109,7 +109,7 @@ class LoginFragment : Fragment(), CoroutineScope {
                 val sessionId = session.session_id
                 putDataIntoPref(sessionId)
 
-                findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
+                findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
             }
         }
     }
@@ -123,9 +123,9 @@ class LoginFragment : Fragment(), CoroutineScope {
             try {
                 apiService.deleteSession(sessionId = Session(session_id = sessionId))
                 editor.clear().commit()
-                findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
+                findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
             } catch (e: Exception) {
-                findNavController().navigate(R.id.action_loginFragment_to_films_fragment)
+                findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
             }
         }
     }

@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_fragment"
-    app:startDestination="@id/loginFragment">
-    <include app:graph="@navigation/films_fragment" />
-    <include app:graph="@navigation/favorites_fragment" />
+    app:startDestination="@id/login_fragment">
+    <include app:graph="@navigation/movies_nav" />
+    <include app:graph="@navigation/favorites_nav" />
     <fragment
-        android:id="@+id/loginFragment"
+        android:id="@+id/login_fragment"
         android:name="com.example.myfilms.presentation.fragments.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment_to_films_fragment"
-            app:destination="@id/films_fragment" />
+            android:id="@+id/action_login_fragment_to_movies_nav"
+            app:destination="@id/movies_nav"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

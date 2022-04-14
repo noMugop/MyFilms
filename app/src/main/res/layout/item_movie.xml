@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
-    tools:context=".presentation.fragments.FilmsFragment">
+    tools:context=".presentation.fragments.MoviesFragment">
 
     <ImageView
         android:id="@+id/ivMovie"

@@ -108,7 +108,7 @@ class FavoritesFragment : Fragment(), CoroutineScope {
         val args = Bundle().apply {
             putInt(FavoriteDetailsFragment.KEY_MOVIE, movieId)
         }
-        findNavController().navigate(R.id.action_favoritesFragment_to_favoriteDetailsFragment, args)
+        findNavController().navigate(R.id.action_favorites_fragment_to_favorite_details_fragment, args)
     }
 
     private fun onBackPressed() {

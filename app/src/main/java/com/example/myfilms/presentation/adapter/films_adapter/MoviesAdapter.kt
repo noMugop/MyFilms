@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.myfilms.databinding.ItemMovieBinding
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.presentation.fragments.FilmsFragment
 import com.squareup.picasso.Picasso
 
-class FilmsAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
+class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
 
     var onFilmClickListener: OnFilmClickListener? = null
     var onReachEndListener: OnReachEndListener? = null

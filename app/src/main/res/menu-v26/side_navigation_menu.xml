@@ -10,7 +10,8 @@
     <item
         android:id="@+id/movies_nav"
         android:icon="@drawable/ic_home"
-        android:title="@string/home"/>
+        android:title="@string/home"
+        android:iconTint="@color/white"/>
 
     <item
         android:id="@+id/favorites_nav"
