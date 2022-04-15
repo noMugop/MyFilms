@@ -13,22 +13,12 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
-import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.data.models.LoginApprove
-import com.example.myfilms.data.models.Session
-import com.example.myfilms.data.models.Token
 import com.example.myfilms.databinding.FragmentLoginBinding
-import com.example.myfilms.databinding.FragmentMoviesBinding
-import com.example.myfilms.presentation.MainActivity
 import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.favorites.FavoritesFragment
-import com.example.myfilms.presentation.fragments.favorites.ViewModelFavorites
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import java.lang.Exception
 import java.lang.RuntimeException
-import kotlin.coroutines.CoroutineContext
 
 class LoginFragment : Fragment() {
 
@@ -36,7 +26,6 @@ class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding
         get() = _binding ?: throw RuntimeException("FragmentLoginBinding is null")
 
-    private val apiService = ApiFactory.getInstance()
     private lateinit var viewModel: ViewModelLogin
 
     private lateinit var prefSettings: SharedPreferences
@@ -66,7 +55,10 @@ class LoginFragment : Fragment() {
 
     private fun initViewModel() {
         viewModel =
-            ViewModelProvider(this)[ViewModelLogin(requireActivity().application)::class.java]
+            ViewModelProvider(
+                this,
+                AndroidViewModelFactory.getInstance(requireActivity().application)
+            )[ViewModelLogin::class.java]
     }
 
     private fun onLoginClick() {
@@ -78,7 +70,8 @@ class LoginFragment : Fragment() {
                     password = binding.etPassword.text.toString().trim(),
                     request_token = ""
                 )
-                login(data)
+                viewModel.login(data)
+                observeLoadingState()
             } else {
                 Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT).show()
             }
@@ -90,22 +83,22 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun login(data: LoginApprove) {
-        viewModel.login(data)
+    private fun observeLoadingState() {
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
-                LoadingState.IS_LOADING -> {
-                    binding.pbLoading.visibility = View.VISIBLE
-                }
+                LoadingState.IS_LOADING -> binding.pbLoading.visibility = View.VISIBLE
                 LoadingState.FINISHED -> binding.pbLoading.visibility = View.GONE
                 LoadingState.SUCCESS -> {
                     viewModel.sessionId.observe(viewLifecycleOwner) {
                         sessionId = it
                         putDataIntoPref(sessionId)
-                        findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
+                        try {
+                            findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
+                        } catch (e: Exception) {
+                        }
                     }
                 }
-                else -> throw RuntimeException("Error")
+                else -> Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -121,7 +114,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun putDataIntoPref(string: String) {
-        binding.pbLoading.visibility = View.GONE
         editor.putString(SESSION_ID_KEY, string)
         editor.commit()
         binding.etUsername.text = null

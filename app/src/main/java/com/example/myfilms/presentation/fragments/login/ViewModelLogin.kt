@@ -29,27 +29,25 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            val tokenNotVal = apiService.getToken()
-            if (tokenNotVal.isSuccessful) {
+            val responseGet = apiService.getToken()
+            if (responseGet.isSuccessful) {
                 val loginApprove = LoginApprove(
                     username = data.username,
                     password = data.password,
-                    request_token = tokenNotVal.body()?.request_token as String
+                    request_token = responseGet.body()?.request_token as String
                 )
-                try {
-                    val tokenVal = apiService.approveToken(loginApprove = loginApprove)
-                    if (tokenNotVal.isSuccessful) {
-                        val session = apiService.createSession(token = tokenVal.body() as Token)
-                        if (session.isSuccessful) {
-                            _sessionId.value = session.body()?.session_id
-                            _loadingState.value = LoadingState.FINISHED
-                            _loadingState.value = LoadingState.SUCCESS
-                        }
+                val responseApprove = apiService.approveToken(loginApprove = loginApprove)
+                if (responseApprove.isSuccessful) {
+                    val session =
+                        apiService.createSession(token = responseApprove.body() as Token)
+                    if (session.isSuccessful) {
+                        _sessionId.value = session.body()?.session_id
+                        _loadingState.value = LoadingState.FINISHED
+                        _loadingState.value = LoadingState.SUCCESS
                     }
-                } catch (e: Exception) {
+                } else {
                     _loadingState.value = LoadingState.FINISHED
                     Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
-                    return@launch
                 }
             }
         }
