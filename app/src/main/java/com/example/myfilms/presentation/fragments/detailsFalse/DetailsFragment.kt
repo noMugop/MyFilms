@@ -1,37 +1,32 @@
-package com.example.myfilms.presentation.fragments
+package com.example.myfilms.presentation.fragments.detailsFalse
 
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.Fragment
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
-import com.example.myfilms.data.models.LoginApprove
-import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.PostMovie
-import com.example.myfilms.data.models.Session
-import com.example.myfilms.databinding.FragmentFavoriteDetailsBinding
+import com.example.myfilms.databinding.FragmentDetailsBinding
+import com.example.myfilms.presentation.fragments.login.LoginFragment
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
 
-class FavoriteDetailsFragment : Fragment(), CoroutineScope {
+class DetailsFragment : Fragment(), CoroutineScope {
 
-    private var _binding: FragmentFavoriteDetailsBinding? = null
-    private val binding: FragmentFavoriteDetailsBinding
-        get() = _binding ?: throw RuntimeException("FragmentFavoriteDetailsBinding is null")
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding: FragmentDetailsBinding
+        get() = _binding ?: throw RuntimeException("DetailsFragment is null")
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main
     private val apiService = ApiFactory.getInstance()
@@ -41,8 +36,7 @@ class FavoriteDetailsFragment : Fragment(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefSettings = context?.getSharedPreferences(
-            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE
-        ) as SharedPreferences
+            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
         parseArgs()
     }
 
@@ -50,7 +44,7 @@ class FavoriteDetailsFragment : Fragment(), CoroutineScope {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFavoriteDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -60,7 +54,6 @@ class FavoriteDetailsFragment : Fragment(), CoroutineScope {
         getMovieById(movieId)
         onFavoriteClickListener()
         onTrailerClick()
-
     }
 
     private fun onTrailerClick() {
@@ -74,10 +67,10 @@ class FavoriteDetailsFragment : Fragment(), CoroutineScope {
 
         binding.ivAddFavorite.setOnClickListener {
 
-            if (binding.ivAddFavorite.tag == TAG_YELLOW) {
-                deleteFavorite(movieId, sessionId)
-            } else {
+            if (binding.ivAddFavorite.tag == TAG_WHITE) {
                 addFavorite(movieId, sessionId)
+            } else {
+                deleteFavorite(movieId, sessionId)
             }
         }
     }
@@ -92,7 +85,6 @@ class FavoriteDetailsFragment : Fragment(), CoroutineScope {
                     session_id = sessionId,
                     postMovie = postMovie
                 )
-
                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                 binding.ivAddFavorite.tag = TAG_WHITE
             } catch (e: Exception) {

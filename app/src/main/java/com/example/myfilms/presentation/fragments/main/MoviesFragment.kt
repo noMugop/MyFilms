@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation.fragments
+package com.example.myfilms.presentation.fragments.main
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
@@ -16,28 +17,27 @@ import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.adapter.films_adapter.MoviesAdapter
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.Session
-import com.example.myfilms.presentation.MainActivity
+import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.fragments.login.LoginFragment
+import com.example.myfilms.presentation.fragments.detailsFalse.DetailsFragment
+import com.example.myfilms.presentation.fragments.favorites.FavoritesFragment
+import com.example.myfilms.presentation.fragments.favorites.ViewModelFavorites
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
-class MoviesFragment : Fragment(), CoroutineScope {
+class MoviesFragment : Fragment() {
 
     private var _binding: FragmentMoviesBinding? = null
     private val binding: FragmentMoviesBinding
         get() = _binding ?: throw RuntimeException("FragmentFilmsBinding is null")
 
-    override val coroutineContext: CoroutineContext = Dispatchers.Main
-
     private val adapter = MoviesAdapter()
-    private val apiService = ApiFactory.getInstance()
+    private lateinit var viewModel: ViewModelMovie
+
     private lateinit var prefSettings: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
-
-    private var oldList = mutableListOf<Movie>()
-    private var newList = mutableListOf<Movie>()
-    private var movies: MutableLiveData<List<Movie>> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,40 +58,36 @@ class MoviesFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        downloadData()
-        onScrollListener()
-        onBackPressed()
+        getSessionId()
+        initAndObserveViewModel()
         onMovieClickListener()
-
-        movies.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
-
-        binding.rvMovies.adapter = adapter
+//        onScrollListener()
+        onBackPressed()
     }
 
-    private fun downloadData() {
+    private fun initAndObserveViewModel() {
 
-        binding.progressBar.visibility = View.VISIBLE
+        viewModel = ViewModelProvider(this)[ViewModelMovie()::class.java]
+
+        viewModel.downloadData(PAGE)
+
+        viewModel.loadingState.observe(viewLifecycleOwner) {
+            when (it) {
+                LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
+                LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
+                LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
+                    adapter.submitList(it)
+                    binding.rvMovies.adapter = adapter
+                }
+                else -> throw RuntimeException("Error")
+            }
+        }
+    }
+
+    private fun getSessionId() {
         try {
             sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
         } catch (e: Exception) {
-        }
-        launch {
-            val result = apiService.getMovies(page = PAGE).movies
-
-            newList.clear()
-            for (movie in result) {
-                newList.add(movie)
-            }
-
-            oldList += newList
-
-            movies.postValue(oldList.toList())
-
-            movies.value = result
-
-            binding.progressBar.visibility = View.GONE
         }
     }
 
@@ -111,36 +107,34 @@ class MoviesFragment : Fragment(), CoroutineScope {
         findNavController().navigate(R.id.action_movies_fragment_to_details_fragment, args)
     }
 
+//    private fun onScrollListener() {
+//
+//        adapter.onReachEndListener = object : MoviesAdapter.OnReachEndListener {
+//            override fun onReachEnd() {
+//                isLoading = true
+//                if (viewModel.movies.value?.size!! > (adapter.itemCount * PAGE) - (adapter.itemCount) && isLoading) {
+//                    PAGE++
+//                    isLoading = false
+//                    viewModel.downloadData(PAGE)
+//                    binding.rvMovies.scrollToPosition((adapter.itemCount * PAGE) - (adapter.itemCount - 2))
+//                }
+//            }
+//        }
+//    }
+
     private fun onBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                launch {
-                    try {
-                        apiService.deleteSession(sessionId = Session(session_id = sessionId))
-                        editor.clear().commit()
-                        findNavController().popBackStack()
-                    } catch (e: Exception) {
-                        findNavController().popBackStack()
-                    }
+                try {
+                    viewModel.deleteSession(sessionId)
+                    editor.clear().commit()
+                    findNavController().popBackStack()
+                } catch (e: Exception) {
+                    findNavController().popBackStack()
                 }
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-    }
-
-    private fun onScrollListener() {
-
-        adapter.onReachEndListener = object : MoviesAdapter.OnReachEndListener {
-            override fun onReachEnd() {
-                isLoading = true
-                if (isLoading) {
-                    PAGE++
-                    isLoading = false
-                    downloadData()
-                    binding.rvMovies.scrollToPosition((adapter.itemCount * PAGE) - (adapter.itemCount - 2))
-                }
-            }
-        }
     }
 
     companion object {

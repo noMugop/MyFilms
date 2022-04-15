@@ -3,6 +3,7 @@ package com.example.myfilms.data
 import com.example.myfilms.data.models.*
 import com.google.gson.JsonObject
 import okhttp3.internal.http.hasBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
@@ -14,7 +15,7 @@ interface ApiService {
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("vote_count.gte") vote_count: Int = MIN_VOTE_COUNT_VALUE,
         @Query("page") page: Int = PARAMS_PAGE
-    ): Result
+    ):Response<Result>
 
     @GET("movie/{movie_id}")
     suspend fun getById(
@@ -26,19 +27,19 @@ interface ApiService {
     @GET("authentication/token/new")
     suspend fun getToken(
         @Query("api_key") apiKey: String = API_KEY,
-    ): Token
+    ): Response<Token>
 
     @POST("authentication/token/validate_with_login")
     suspend fun approveToken(
         @Query("api_key") apiKey: String = API_KEY,
         @Body loginApprove: LoginApprove
-    ): Token
+    ): Response<Token>
 
     @POST("authentication/session/new")
     suspend fun createSession(
         @Query("api_key") apiKey: String = API_KEY,
         @Body token: Token
-    ): Session
+    ): Response<Session>
 
     @Headers(
         "Accept: application/json;charset=utf-8",
@@ -58,7 +59,7 @@ interface ApiService {
         @Query("language") language: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
-    ): Result
+    ): Response<Result>
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
     suspend fun deleteSession(

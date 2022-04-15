@@ -1,18 +1,16 @@
-package com.example.myfilms.presentation.fragments
+package com.example.myfilms.presentation.fragments.login
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.method.TextKeyListener.clear
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.data.ApiFactory
@@ -22,6 +20,9 @@ import com.example.myfilms.data.models.Token
 import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.MainActivity
+import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.fragments.favorites.FavoritesFragment
+import com.example.myfilms.presentation.fragments.favorites.ViewModelFavorites
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,14 +30,14 @@ import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
-class LoginFragment : Fragment(), CoroutineScope {
+class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding: FragmentLoginBinding
         get() = _binding ?: throw RuntimeException("FragmentLoginBinding is null")
 
     private val apiService = ApiFactory.getInstance()
-    override val coroutineContext: CoroutineContext = Dispatchers.Main
+    private lateinit var viewModel: ViewModelLogin
 
     private lateinit var prefSettings: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
@@ -59,11 +60,16 @@ class LoginFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViewModel()
         onLoginClick()
     }
 
-    private fun onLoginClick() {
+    private fun initViewModel() {
+        viewModel =
+            ViewModelProvider(this)[ViewModelLogin(requireActivity().application)::class.java]
+    }
 
+    private fun onLoginClick() {
         binding.btnLogin.setOnClickListener {
             hideKeyboard(requireActivity())
             if (!binding.etUsername.text.isNullOrBlank() && !binding.etPassword.text.isNullOrBlank()) {
@@ -82,51 +88,35 @@ class LoginFragment : Fragment(), CoroutineScope {
             hideKeyboard(requireActivity())
             deleteSessionId()
         }
-
     }
 
     private fun login(data: LoginApprove) {
-
-        launch {
-
-            var tokenVal = Token("")
-            binding.pbLoading.visibility = View.VISIBLE
-            val tokenNotVal = apiService.getToken()
-            val loginApprove = LoginApprove(
-                username = data.username,
-                password = data.password,
-                request_token = tokenNotVal.request_token
-            )
-            try {
-                tokenVal = apiService.approveToken(loginApprove = loginApprove)
-            } catch (e: Exception) {
-                binding.pbLoading.visibility = View.GONE
-                Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-            if (tokenVal.request_token != "" && tokenVal.request_token.isNotEmpty()) {
-                val session = apiService.createSession(token = tokenVal)
-                val sessionId = session.session_id
-                putDataIntoPref(sessionId)
-
-                findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
+        viewModel.login(data)
+        viewModel.loadingState.observe(viewLifecycleOwner) {
+            when (it) {
+                LoadingState.IS_LOADING -> {
+                    binding.pbLoading.visibility = View.VISIBLE
+                }
+                LoadingState.FINISHED -> binding.pbLoading.visibility = View.GONE
+                LoadingState.SUCCESS -> {
+                    viewModel.sessionId.observe(viewLifecycleOwner) {
+                        sessionId = it
+                        putDataIntoPref(sessionId)
+                        findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
+                    }
+                }
+                else -> throw RuntimeException("Error")
             }
         }
     }
 
     private fun deleteSessionId() {
-        launch {
-            try {
-                sessionId = prefSettings.getString(SESSION_ID_KEY, null) as String
-            } catch (e: Exception) {
-            }
-            try {
-                apiService.deleteSession(sessionId = Session(session_id = sessionId))
-                editor.clear().commit()
-                findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
-            } catch (e: Exception) {
-                findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
-            }
+        try {
+            viewModel.deleteSession(sessionId)
+            editor.clear().commit()
+            findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
+        } catch (e: Exception) {
+            findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
         }
     }
 
@@ -138,6 +128,7 @@ class LoginFragment : Fragment(), CoroutineScope {
         binding.etPassword.text = null
     }
 
+    //скрыть клавиатуру
     private fun hideKeyboard(activity: Activity) {
         val inputMethodManager =
             activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
