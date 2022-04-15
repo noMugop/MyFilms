@@ -17,6 +17,8 @@ import com.example.myfilms.data.models.Movie
 import com.example.myfilms.presentation.Utils.LoadingState
 import com.example.myfilms.presentation.fragments.detailsTrue.FavoriteDetailsFragment
 import com.example.myfilms.presentation.fragments.login.LoginFragment
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import com.example.myfilms.presentation.fragments.login.ViewModelLogin
 import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.coroutines.CoroutineContext
@@ -59,12 +61,23 @@ class FavoritesFragment : Fragment() {
 
     }
 
+    //получить session id из SharedPreference
+    private fun getSessionId() {
+        try {
+            sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
+        } catch (e: Exception) {
+        }
+    }
+
     //создаем ViewModel и устанвливаем observe на наши LiveData
     private fun initAndObserveViewModel() {
 
         //создаем ViewModel текущего фрагмента
         viewModel =
-            ViewModelProvider(this)[ViewModelFavorites(requireActivity().application)::class.java]
+            ViewModelProvider(
+                this,
+                AndroidViewModelFactory.getInstance(requireActivity().application)
+            )[ViewModelFavorites::class.java]
 
         //один раз прогружаем данные (это можно сделать внутри ViewModel через init(), но в моем случае так не получистя)
         viewModel.downloadData(sessionId, PAGE)
@@ -82,14 +95,6 @@ class FavoritesFragment : Fragment() {
                 }
                 else -> throw RuntimeException("Error")
             }
-        }
-    }
-
-    //получить session id из SharedPreference
-    private fun getSessionId() {
-        try {
-            sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-        } catch (e: Exception) {
         }
     }
 

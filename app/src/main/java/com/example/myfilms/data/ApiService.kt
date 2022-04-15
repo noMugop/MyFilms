@@ -22,7 +22,7 @@ interface ApiService {
         @Path("movie_id") id: Int,
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE
-    ): Movie
+    ): Response<Movie>
 
     @GET("authentication/token/new")
     suspend fun getToken(
@@ -50,7 +50,7 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID,
         @Body postMovie: PostMovie
-    )
+    ): Response<FavoriteResult>
 
     @GET("account/{account_id}/favorite/movies")
     suspend fun getFavorites(
@@ -72,7 +72,7 @@ interface ApiService {
         @Path("movie_id") id: Int,
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE
-    ): MovieVideos
+    ): Response<MovieVideos>
 
     companion object {
 
