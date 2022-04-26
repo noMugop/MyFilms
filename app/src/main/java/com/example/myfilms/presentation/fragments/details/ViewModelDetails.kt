@@ -8,13 +8,14 @@ import com.example.myfilms.data.models.MovieVideos
 import com.example.myfilms.data.models.PostMovie
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ViewModelDetails(application: Application) : AndroidViewModel(application) {
 
     private val context = application
-    private val repository = Repository(application)
-    private val apiService = ApiFactory.getInstance()
+    private val repository = Repository(context)
 
     private val _movie = MutableLiveData<Movie>()
     val movie: LiveData<Movie>
@@ -36,52 +37,30 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
 
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            val responseMovie = apiService.getMovieById(movieId)
-            if (responseMovie.isSuccessful) {
-                _movie.value = responseMovie.body()
+            withContext(Dispatchers.IO) {
+                _movie.postValue(repository.getMovieById(movieId))
             }
-            val responseVideo = apiService.getTrailer(movieId)
-            if (responseVideo.isSuccessful) {
-                _trailer.value = responseVideo.body()
+            _trailer.value = repository.getTrailer(movieId)
+            if (_movie.value != null && _trailer.value != null) {
+                _loadingState.value = LoadingState.FINISHED
+                _loadingState.value = LoadingState.SUCCESS
             }
-            _loadingState.value = LoadingState.FINISHED
-            _loadingState.value = LoadingState.SUCCESS
         }
     }
 
-    fun deleteFavorites(movieId: Int, sessionId: String) {
-
+    fun deleteFavorites(movieId: Int) {
         viewModelScope.launch {
             val postMovie = PostMovie(media_id = movieId, favorite = false)
-            val response = apiService.addFavorite(
-                session_id = sessionId,
-                postMovie = postMovie
-            )
-            if (response.isSuccessful) {
-                _addFavoriteState.value = LoadingState.SUCCESS
-                _addFavoriteState.value = LoadingState.IS_LOADING
-            } else {
-                _addFavoriteState.value = LoadingState.FINISHED
-                _addFavoriteState.value = LoadingState.IS_LOADING
-
-            }
+            _addFavoriteState.value = repository.addFavorite(postMovie)
+            _addFavoriteState.value = LoadingState.IS_LOADING
         }
     }
 
-    fun addFavorite(movieId: Int, sessionId: String) {
+    fun addFavorite(movieId: Int) {
         viewModelScope.launch {
             val postMovie = PostMovie(media_id = movieId, favorite = true)
-            val response = apiService.addFavorite(
-                session_id = sessionId,
-                postMovie = postMovie
-            )
-            if (response.isSuccessful) {
-                _addFavoriteState.value = LoadingState.SUCCESS
-                _addFavoriteState.value = LoadingState.IS_LOADING
-            } else {
-                _addFavoriteState.value = LoadingState.FINISHED
-                _addFavoriteState.value = LoadingState.IS_LOADING
-            }
+            _addFavoriteState.value = repository.addFavorite(postMovie)
+            _addFavoriteState.value = LoadingState.IS_LOADING
         }
     }
 }

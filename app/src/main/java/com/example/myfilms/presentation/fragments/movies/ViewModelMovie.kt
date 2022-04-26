@@ -34,7 +34,6 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
     fun getMoviesList() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

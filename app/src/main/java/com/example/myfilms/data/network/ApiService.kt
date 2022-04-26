@@ -15,12 +15,12 @@ interface ApiService {
         @Query("page") page: Int = PARAMS_PAGE
     ):Response<Result>
 
-    @GET("movie/{movie_id}")
-    suspend fun getMovieById(
-        @Path("movie_id") id: Int,
-        @Query("api_key") apiKey: String = API_KEY,
-        @Query("language") language: String = PARAMS_LANGUAGE
-    ): Response<Movie>
+//    @GET("movie/{movie_id}")
+//    suspend fun getMovieById(
+//        @Path("movie_id") id: Int,
+//        @Query("api_key") apiKey: String = API_KEY,
+//        @Query("language") language: String = PARAMS_LANGUAGE
+//    ): Response<Movie>
 
     @GET("movie/{movie_id}/videos")
     suspend fun getTrailer(

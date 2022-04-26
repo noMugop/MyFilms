@@ -28,13 +28,8 @@ class DetailsFragment : Fragment() {
 
     private lateinit var viewModel: ViewModelDetails
 
-    private lateinit var prefSettings: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        prefSettings = context?.getSharedPreferences(
-            Repository.APP_SETTINGS, Context.MODE_PRIVATE
-        ) as SharedPreferences
         parseArgs()
     }
 
@@ -49,18 +44,10 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getSessionId()
         initViewModel()
         getMovieById(movieId)
         onFavoriteClickListener()
         onTrailerClick()
-    }
-
-    private fun getSessionId() {
-        try {
-            sessionId = prefSettings.getString(Repository.SESSION_ID_KEY, null) as String
-        } catch (e: java.lang.Exception) {
-        }
     }
 
     private fun initViewModel() {
@@ -71,7 +58,6 @@ class DetailsFragment : Fragment() {
     }
 
     private fun getMovieById(movieId: Int) {
-
         viewModel.getMovieById(movieId)
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
@@ -85,7 +71,7 @@ class DetailsFragment : Fragment() {
                         binding.tvOverview.text = it.overview
                     }
                     viewModel.trailer.observe(viewLifecycleOwner) {
-                        it.list.map {
+                        it.list?.map {
                             binding.textViewNameOfVideo.text = it.name
                         }
                     }
@@ -96,27 +82,24 @@ class DetailsFragment : Fragment() {
     }
 
     private fun onTrailerClick() {
-
         binding.clTrailer.setOnClickListener {
             getTrailer()
         }
     }
 
     private fun onFavoriteClickListener() {
-
         binding.ivAddFavorite.setOnClickListener {
 
             if (binding.ivAddFavorite.tag == TAG_WHITE) {
-                addFavorite(movieId, sessionId)
+                addFavorite(movieId)
             } else {
-                deleteFavorite(movieId, sessionId)
+                deleteFavorite(movieId)
             }
         }
     }
 
-    private fun deleteFavorite(movieId: Int, sessionId: String) {
-
-        viewModel.deleteFavorites(movieId, sessionId)
+    private fun deleteFavorite(movieId: Int) {
+        viewModel.deleteFavorites(movieId)
 
         viewModel.addFavoriteState.observe(viewLifecycleOwner) {
             when (it) {
@@ -132,9 +115,8 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun addFavorite(movieId: Int, sessionId: String) {
-
-        viewModel.addFavorite(movieId, sessionId)
+    private fun addFavorite(movieId: Int) {
+        viewModel.addFavorite(movieId)
         viewModel.addFavoriteState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.SUCCESS -> {
@@ -151,7 +133,7 @@ class DetailsFragment : Fragment() {
 
     private fun getTrailer() {
         viewModel.trailer.observe(viewLifecycleOwner) {
-            it.list.map {
+            it.list?.map {
                 key = it.key
             }
         }
@@ -162,7 +144,6 @@ class DetailsFragment : Fragment() {
     }
 
     private fun parseArgs() {
-
         requireArguments().getInt(KEY_MOVIE).apply {
             movieId = this
         }
@@ -171,8 +152,6 @@ class DetailsFragment : Fragment() {
     companion object {
 
         private var movieId: Int = 0
-
-        private var sessionId: String = ""
         private var key: String = ""
         private const val YOUTUBE_URL = "https://www.youtube.com/watch?v="
         private const val TAG_WHITE = "white"

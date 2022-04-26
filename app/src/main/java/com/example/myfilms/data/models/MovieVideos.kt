@@ -7,9 +7,9 @@ data class MovieVideos(
 
     @SerializedName("id")
     @Expose
-    val id: Int,
+    val id: Int? = null,
 
     @SerializedName("results")
     @Expose
-    val list: List<ResultVideos>
+    val list: List<ResultVideos>? = null
 )

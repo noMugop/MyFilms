@@ -1,7 +1,5 @@
 package com.example.myfilms.presentation.fragments.movies
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,11 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentMoviesBinding
-import com.example.myfilms.presentation.fragments.movies.movie_adapter.MoviesAdapter
+import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.login.LoginFragment
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
@@ -72,7 +68,6 @@ class MoviesFragment : Fragment() {
     }
 
     private fun onMovieClickListener() {
-
         adapter.onFilmClickListener = object : MoviesAdapter.OnFilmClickListener {
             override fun onFilmClick(movie: Movie) {
                 launchDetailFragment(movie.id)

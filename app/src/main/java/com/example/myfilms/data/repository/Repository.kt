@@ -4,13 +4,12 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myfilms.data.database.MovieDatabase
-import com.example.myfilms.data.models.LoginApprove
-import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.Session
-import com.example.myfilms.data.models.Token
+import com.example.myfilms.data.models.*
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class Repository(application: Application) {
@@ -35,8 +34,8 @@ class Repository(application: Application) {
         return db.getMovieList()
     }
 
-    fun getMovieById() {
-
+    suspend fun getMovieById(movieId: Int): Movie {
+        return db.getMovieById(movieId)
     }
 
     suspend fun loadData(page: Int): LoadingState {
@@ -52,8 +51,13 @@ class Repository(application: Application) {
         return loadingState as LoadingState
     }
 
-    fun getTrailer() {
-
+    suspend fun getTrailer(movieId: Int): MovieVideos {
+        var result = MovieVideos()
+        val responseVideo = apiService.getTrailer(movieId)
+        if (responseVideo.isSuccessful) {
+            result = responseVideo.body() as MovieVideos
+        }
+        return result
     }
 
     suspend fun login(data: LoginApprove): String {
@@ -97,12 +101,17 @@ class Repository(application: Application) {
         return movie
     }
 
-    fun addFavorite() {
-
-    }
-
-    fun deleteFavorite() {
-
+    suspend fun addFavorite(postMovie: PostMovie): LoadingState {
+        val response = apiService.addFavorite(
+            session_id = SESSION_ID,
+            postMovie = postMovie
+        )
+        val loadingState = if (response.isSuccessful) {
+            LoadingState.SUCCESS
+        } else {
+            LoadingState.FINISHED
+        }
+        return loadingState
     }
 
     companion object {

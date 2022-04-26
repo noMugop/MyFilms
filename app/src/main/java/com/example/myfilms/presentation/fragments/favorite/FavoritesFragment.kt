@@ -1,7 +1,5 @@
 package com.example.myfilms.presentation.fragments.favorite
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentFavoritesBinding
-import com.example.myfilms.presentation.fragments.favorite.favorite_adapter.FavoritesAdapter
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.login.LoginFragment
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import com.example.myfilms.data.repository.Repository
+import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
@@ -28,7 +24,7 @@ class FavoritesFragment : Fragment() {
     private val binding: FragmentFavoritesBinding
         get() = _binding ?: throw RuntimeException("FavoritesFragment is null")
 
-    private val adapter = FavoritesAdapter()
+    private val adapter = MoviesAdapter()
     private lateinit var viewModel: ViewModelFavorites
 
     override fun onCreateView(
@@ -45,7 +41,6 @@ class FavoritesFragment : Fragment() {
         initAndObserveViewModel()
         onMovieClickListener()
         onBackPressed()
-
     }
 
     private fun initAndObserveViewModel() {
@@ -72,7 +67,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun onMovieClickListener() {
-        adapter.onFilmClickListener = object : FavoritesAdapter.OnFilmClickListener {
+        adapter.onFilmClickListener = object : MoviesAdapter.OnFilmClickListener {
             override fun onFilmClick(movie: Movie) {
                 launchDetailFragment(movie.id)
             }

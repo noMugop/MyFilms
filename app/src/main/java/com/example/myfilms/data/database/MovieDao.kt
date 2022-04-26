@@ -14,7 +14,7 @@ interface MovieDao {
     suspend fun getMovieList(): List<Movie>
 
     @Query("SELECT * FROM movie_table WHERE id == :movieId")
-    fun getMovieById(movieId: Int): LiveData<Movie>
+    suspend fun getMovieById(movieId: Int): Movie
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun loadData(movies: List<Movie>)
