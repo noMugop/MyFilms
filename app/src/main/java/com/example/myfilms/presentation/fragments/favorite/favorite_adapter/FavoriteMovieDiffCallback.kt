@@ -1,9 +1,9 @@
-package com.example.myfilms.presentation.adapter.films_adapter
+package com.example.myfilms.presentation.fragments.favorite.favorite_adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.myfilms.data.models.Movie
 
-object MovieDiffCallback: DiffUtil.ItemCallback<Movie>() {
+object FavoriteMovieDiffCallback: DiffUtil.ItemCallback<Movie>() {
 
     override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
         return oldItem.id == newItem.id

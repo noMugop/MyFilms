@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation.fragments.favorites
+package com.example.myfilms.presentation.fragments.favorite
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,16 +12,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentFavoritesBinding
-import com.example.myfilms.presentation.adapter.favorites_adapter.FavoritesAdapter
+import com.example.myfilms.presentation.fragments.favorite.favorite_adapter.FavoritesAdapter
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.detailsTrue.FavoriteDetailsFragment
 import com.example.myfilms.presentation.fragments.login.LoginFragment
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import com.example.myfilms.presentation.fragments.login.ViewModelLogin
+import com.example.myfilms.data.repository.Repository
+import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
-import kotlin.coroutines.CoroutineContext
 
 class FavoritesFragment : Fragment() {
 
@@ -31,17 +30,6 @@ class FavoritesFragment : Fragment() {
 
     private val adapter = FavoritesAdapter()
     private lateinit var viewModel: ViewModelFavorites
-
-    private lateinit var prefSettings: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        prefSettings = context?.getSharedPreferences(
-            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE
-        ) as SharedPreferences
-        editor = prefSettings.edit()
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,42 +42,27 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getSessionId()
         initAndObserveViewModel()
         onMovieClickListener()
         onBackPressed()
 
     }
 
-    //получить session id из SharedPreference
-    private fun getSessionId() {
-        try {
-            sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-        } catch (e: Exception) {
-        }
-    }
-
-    //создаем ViewModel и устанвливаем observe на наши LiveData
     private fun initAndObserveViewModel() {
 
-        //создаем ViewModel текущего фрагмента
         viewModel =
             ViewModelProvider(
                 this,
                 AndroidViewModelFactory.getInstance(requireActivity().application)
             )[ViewModelFavorites::class.java]
 
-        //один раз прогружаем данные (это можно сделать внутри ViewModel через init(), но в моем случае так не получистя)
-        viewModel.downloadData(sessionId, PAGE)
+        viewModel.getFavorites(PAGE)
 
-        //следим за loadingState внутри ViewModel
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
                 LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
-                //если loadingState == SUCCESS, то устанавливаем слежку за movies
                 LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
-                    //если данные в movie изменились, то отправляем их в adapter, чтобы обновить RecyclerView
                     adapter.submitList(it)
                     binding.rvFavorites.adapter = adapter
                 }
@@ -98,7 +71,6 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    //следим за нажатием на фильм
     private fun onMovieClickListener() {
         adapter.onFilmClickListener = object : FavoritesAdapter.OnFilmClickListener {
             override fun onFilmClick(movie: Movie) {
@@ -107,25 +79,19 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    //перейти в детали, если сработал onMovieClickListener()
     private fun launchDetailFragment(movieId: Int) {
         val args = Bundle().apply {
-            putInt(FavoriteDetailsFragment.KEY_MOVIE, movieId)
+            putInt(DetailsFragment.KEY_MOVIE, movieId)
         }
-        findNavController().navigate(
-            R.id.action_favorites_fragment_to_favorite_details_fragment,
-            args
-        )
+
+        findNavController().navigate(R.id.action_favoritesFragment_to_detailsFragment, args)
     }
 
-    //переопределяем нажатие на кнопку назад
-    //при нажатии на кнопку назад удаляем session id и переходим на экран авторизации
     private fun onBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 try {
-                    viewModel.deleteSession(sessionId)
-                    editor.clear().commit()
+                    viewModel.deleteSession()
                     findNavController().popBackStack()
                 } catch (e: Exception) {
                     findNavController().popBackStack()
@@ -137,7 +103,6 @@ class FavoritesFragment : Fragment() {
 
     companion object {
 
-        private var sessionId: String = ""
         private var PAGE = 1
     }
 }

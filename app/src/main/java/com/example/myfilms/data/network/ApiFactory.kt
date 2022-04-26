@@ -1,4 +1,4 @@
-package com.example.myfilms.data
+package com.example.myfilms.data.network
 
 import android.util.Log
 import okhttp3.OkHttpClient

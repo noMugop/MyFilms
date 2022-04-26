@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
@@ -17,6 +18,7 @@ import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.presentation.Utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import com.example.myfilms.presentation.fragments.favorite.FavoritesFragment
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -27,16 +29,6 @@ class LoginFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentLoginBinding is null")
 
     private lateinit var viewModel: ViewModelLogin
-
-    private lateinit var prefSettings: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        prefSettings =
-            context?.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE) as SharedPreferences
-        editor = prefSettings.edit()
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +43,8 @@ class LoginFragment : Fragment() {
 
         initViewModel()
         onLoginClick()
+        onGuestClick()
+        onBackPressed()
     }
 
     private fun initViewModel() {
@@ -76,10 +70,17 @@ class LoginFragment : Fragment() {
                 Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
+    private fun onGuestClick() {
         binding.btnGuest.setOnClickListener {
             hideKeyboard(requireActivity())
-            deleteSessionId()
+            try {
+                viewModel.deleteSession()
+                findNavController().navigate(R.id.movies_nav)
+            } catch (e: Exception) {
+                findNavController().navigate(R.id.movies_nav)
+            }
         }
     }
 
@@ -90,10 +91,10 @@ class LoginFragment : Fragment() {
                 LoadingState.FINISHED -> binding.pbLoading.visibility = View.GONE
                 LoadingState.SUCCESS -> {
                     viewModel.sessionId.observe(viewLifecycleOwner) {
-                        sessionId = it
-                        putDataIntoPref(sessionId)
+                        binding.etUsername.text = null
+                        binding.etPassword.text = null
                         try {
-                            findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
+                            findNavController().navigate(R.id.movies_nav)
                         } catch (e: Exception) {
                         }
                     }
@@ -103,24 +104,6 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun deleteSessionId() {
-        try {
-            viewModel.deleteSession(sessionId)
-            editor.clear().commit()
-            findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
-        } catch (e: Exception) {
-            findNavController().navigate(R.id.action_login_fragment_to_movies_nav)
-        }
-    }
-
-    private fun putDataIntoPref(string: String) {
-        editor.putString(SESSION_ID_KEY, string)
-        editor.commit()
-        binding.etUsername.text = null
-        binding.etPassword.text = null
-    }
-
-    //скрыть клавиатуру
     private fun hideKeyboard(activity: Activity) {
         val inputMethodManager =
             activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -130,11 +113,13 @@ class LoginFragment : Fragment() {
         )
     }
 
-    companion object {
-
-        private var sessionId: String = ""
-        const val APP_SETTINGS = "Settings"
-        const val SESSION_ID_KEY = "SESSION_ID"
+    private fun onBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }
 

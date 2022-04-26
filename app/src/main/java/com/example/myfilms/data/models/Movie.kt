@@ -1,12 +1,16 @@
 package com.example.myfilms.data.models
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
+@Entity(tableName = "movie_table")
 @Parcelize
 data class Movie(
 
+    @PrimaryKey(autoGenerate = false)
     @SerializedName("id")
     @Expose
     var id: Int,
@@ -45,5 +49,8 @@ data class Movie(
 
     @SerializedName("tagline")
     @Expose
-    val tagline: String? = null
+    val tagline: String? = null,
+
+    var isFavorite: Boolean = false
+
 ): Parcelable

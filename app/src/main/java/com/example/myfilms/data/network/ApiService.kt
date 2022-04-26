@@ -1,8 +1,6 @@
-package com.example.myfilms.data
+package com.example.myfilms.data.network
 
 import com.example.myfilms.data.models.*
-import com.google.gson.JsonObject
-import okhttp3.internal.http.hasBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -18,11 +16,18 @@ interface ApiService {
     ):Response<Result>
 
     @GET("movie/{movie_id}")
-    suspend fun getById(
+    suspend fun getMovieById(
         @Path("movie_id") id: Int,
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE
     ): Response<Movie>
+
+    @GET("movie/{movie_id}/videos")
+    suspend fun getTrailer(
+        @Path("movie_id") id: Int,
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("language") language: String = PARAMS_LANGUAGE
+    ): Response<MovieVideos>
 
     @GET("authentication/token/new")
     suspend fun getToken(
@@ -40,6 +45,12 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Body token: Token
     ): Response<Session>
+
+    @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
+    suspend fun deleteSession(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Body sessionId: Session
+    )
 
     @Headers(
         "Accept: application/json;charset=utf-8",
@@ -60,19 +71,6 @@ interface ApiService {
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
     ): Response<Result>
-
-    @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
-    suspend fun deleteSession(
-        @Query("api_key") apiKey: String = API_KEY,
-        @Body sessionId: Session
-    )
-
-    @GET("movie/{movie_id}/videos")
-    suspend fun getVideos(
-        @Path("movie_id") id: Int,
-        @Query("api_key") apiKey: String = API_KEY,
-        @Query("language") language: String = PARAMS_LANGUAGE
-    ): Response<MovieVideos>
 
     companion object {
 

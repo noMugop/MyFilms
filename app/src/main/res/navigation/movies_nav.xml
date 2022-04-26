@@ -3,21 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/movies_nav"
-    app:startDestination="@id/movies_fragment">
+    app:startDestination="@id/moviesFragment">
     <fragment
-        android:id="@+id/movies_fragment"
-        android:name="com.example.myfilms.presentation.fragments.main.MoviesFragment"
-        android:label="My movies"
-        tools:layout="@layout/fragment_movies">
+        android:id="@+id/moviesFragment"
+        android:name="com.example.myfilms.presentation.fragments.movies.MoviesFragment"
+        android:label="Movies"
+        tools:layout="@layout/fragment_movies" >
         <action
-            android:id="@+id/action_movies_fragment_to_details_fragment"
-            app:destination="@id/details_fragment"
-            app:popUpTo="@id/movies_fragment"
-            app:popUpToInclusive="false" />
+            android:id="@+id/action_moviesFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/details_fragment"
-        android:name="com.example.myfilms.presentation.fragments.detailsFalse.DetailsFragment"
-        android:label="My movies"
+        android:id="@+id/detailsFragment"
+        android:name="com.example.myfilms.presentation.fragments.details.DetailsFragment"
+        android:label="Details"
         tools:layout="@layout/fragment_details" />
 </navigation>

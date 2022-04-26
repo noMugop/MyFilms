@@ -1,19 +1,19 @@
-package com.example.myfilms.presentation.fragments.favorites
+package com.example.myfilms.presentation.fragments.favorite
 
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.myfilms.data.ApiFactory
+import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.Session
+import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class ViewModelFavorites(application: Application) : AndroidViewModel(application) {
 
     private val context = application
-    private val apiService = ApiFactory.getInstance()
+    private val repository = Repository(context)
 
     private val _movies = MutableLiveData<List<Movie>>()
     val movies: LiveData<List<Movie>>
@@ -23,16 +23,14 @@ class ViewModelFavorites(application: Application) : AndroidViewModel(applicatio
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
-    fun downloadData(session: String, page: Int) {
+    fun getFavorites(page: Int) {
 
-        //у ViewModel есть встроенные корутины, их не нужно создавать отдельно
         viewModelScope.launch {
-
             _loadingState.value = LoadingState.IS_LOADING
-            val response = apiService.getFavorites(session_id = session, page = page)
+            val result = repository.getFavorites(page)
 
-            if (response.isSuccessful) {
-                _movies.value = response.body()?.movies
+            if (!result.isNullOrEmpty()) {
+                _movies.value = repository.getFavorites(page)
                 _loadingState.value = LoadingState.FINISHED
                 _loadingState.value = LoadingState.SUCCESS
             } else {
@@ -47,9 +45,9 @@ class ViewModelFavorites(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun deleteSession(session: String) {
+    fun deleteSession() {
         viewModelScope.launch {
-            apiService.deleteSession(sessionId = Session(session_id = session))
+            repository.deleteSession()
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation.fragments.main
+package com.example.myfilms.presentation.fragments.movies
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -8,24 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
-import com.example.myfilms.data.ApiFactory
 import com.example.myfilms.databinding.FragmentMoviesBinding
-import com.example.myfilms.presentation.adapter.films_adapter.MoviesAdapter
+import com.example.myfilms.presentation.fragments.movies.movie_adapter.MoviesAdapter
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.Session
+import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
 import com.example.myfilms.presentation.fragments.login.LoginFragment
-import com.example.myfilms.presentation.fragments.detailsFalse.DetailsFragment
-import com.example.myfilms.presentation.fragments.favorites.FavoritesFragment
-import com.example.myfilms.presentation.fragments.favorites.ViewModelFavorites
-import kotlinx.coroutines.*
+import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
-import kotlin.coroutines.CoroutineContext
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 
 class MoviesFragment : Fragment() {
 
@@ -35,17 +30,6 @@ class MoviesFragment : Fragment() {
 
     private val adapter = MoviesAdapter()
     private lateinit var viewModel: ViewModelMovie
-
-    private lateinit var prefSettings: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        prefSettings = context?.getSharedPreferences(
-            LoginFragment.APP_SETTINGS, Context.MODE_PRIVATE
-        ) as SharedPreferences
-        editor = prefSettings.edit()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,36 +42,31 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getSessionId()
-        initAndObserveViewModel()
+        init()
         onMovieClickListener()
 //        onScrollListener()
         onBackPressed()
     }
 
-    private fun initAndObserveViewModel() {
+    private fun init() {
 
-        viewModel = ViewModelProvider(this)[ViewModelMovie()::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[ViewModelMovie::class.java]
 
-        viewModel.downloadData(PAGE)
+        viewModel.loadData(PAGE)
 
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
                 LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
-                LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
+                LoadingState.SUCCESS -> viewModel.getMoviesList().observe(viewLifecycleOwner) {
                     adapter.submitList(it)
                     binding.rvMovies.adapter = adapter
                 }
                 else -> throw RuntimeException("Error")
             }
-        }
-    }
-
-    private fun getSessionId() {
-        try {
-            sessionId = prefSettings.getString(LoginFragment.SESSION_ID_KEY, null) as String
-        } catch (e: Exception) {
         }
     }
 
@@ -104,30 +83,15 @@ class MoviesFragment : Fragment() {
         val args = Bundle().apply {
             putInt(DetailsFragment.KEY_MOVIE, movieId)
         }
-        findNavController().navigate(R.id.action_movies_fragment_to_details_fragment, args)
-    }
 
-//    private fun onScrollListener() {
-//
-//        adapter.onReachEndListener = object : MoviesAdapter.OnReachEndListener {
-//            override fun onReachEnd() {
-//                isLoading = true
-//                if (viewModel.movies.value?.size!! > (adapter.itemCount * PAGE) - (adapter.itemCount) && isLoading) {
-//                    PAGE++
-//                    isLoading = false
-//                    viewModel.downloadData(PAGE)
-//                    binding.rvMovies.scrollToPosition((adapter.itemCount * PAGE) - (adapter.itemCount - 2))
-//                }
-//            }
-//        }
-//    }
+        findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment, args)
+    }
 
     private fun onBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 try {
-                    viewModel.deleteSession(sessionId)
-                    editor.clear().commit()
+                    viewModel.deleteSession()
                     findNavController().popBackStack()
                 } catch (e: Exception) {
                     findNavController().popBackStack()
@@ -139,8 +103,6 @@ class MoviesFragment : Fragment() {
 
     companion object {
 
-        var isLoading = false
-        private var sessionId: String = ""
         var PAGE = 1
     }
 }

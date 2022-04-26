@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation.adapter.films_adapter
+package com.example.myfilms.presentation.fragments.favorite.favorite_adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,13 +7,12 @@ import com.example.myfilms.databinding.ItemMovieBinding
 import com.example.myfilms.data.models.Movie
 import com.squareup.picasso.Picasso
 
-class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
+class FavoritesAdapter : ListAdapter<Movie, FavoriteMovieViewHolder>(FavoriteMovieDiffCallback) {
 
     var onFilmClickListener: OnFilmClickListener? = null
-    var onReachEndListener: OnReachEndListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteMovieViewHolder {
+        return FavoriteMovieViewHolder(
             ItemMovieBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -22,12 +21,10 @@ class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
         )
     }
 
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+    override fun onBindViewHolder(holderFavorite: FavoriteMovieViewHolder, position: Int) {
         val movie = getItem(position)
-//        if (position > (itemCount - 2) && onReachEndListener != null) {
-//                onReachEndListener?.onReachEnd()
-//        }
-        with(holder.binding) {
+        with(holderFavorite.binding) {
+
             Picasso.get().load(IMG_URL + movie.posterPath).into(ivMovie)
             movieItemID.setOnClickListener {
 
@@ -44,10 +41,5 @@ class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
     interface OnFilmClickListener {
 
         fun onFilmClick(movie: Movie)
-    }
-
-    interface OnReachEndListener {
-
-        fun onReachEnd()
     }
 }

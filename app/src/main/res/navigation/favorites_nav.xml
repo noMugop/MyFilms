@@ -3,22 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/favorites_nav"
-    app:startDestination="@id/favorites_fragment">
+    app:startDestination="@id/favoritesFragment">
     <fragment
-        android:id="@+id/favorites_fragment"
-        android:name="com.example.myfilms.presentation.fragments.favorites.FavoritesFragment"
-        android:label="Favorites"
-        tools:layout="@layout/fragment_favorites">
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.myfilms.presentation.fragments.favorite.FavoritesFragment"
+        android:label="Favorites">
         <action
-            android:id="@+id/action_favorites_fragment_to_favorite_details_fragment"
-            app:destination="@id/favorite_details_fragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/favorites_fragment"
-            app:popUpToInclusive="false"/>
+            android:id="@+id/action_favoritesFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/favorite_details_fragment"
-        android:name="com.example.myfilms.presentation.fragments.detailsTrue.FavoriteDetailsFragment"
-        android:label="My movies"
-        tools:layout="@layout/fragment_favorite_details" />
+        android:id="@+id/detailsFragment"
+        android:name="com.example.myfilms.presentation.fragments.details.DetailsFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_details" />
 </navigation>

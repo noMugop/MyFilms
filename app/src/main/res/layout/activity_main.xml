@@ -20,6 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:itemIconTint="@drawable/selector_bottom_navigation"
+        app:itemTextColor="@drawable/selector_bottom_navigation"
+        android:itemBackground="@color/white"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/side_nav_header"
         app:menu="@menu/side_navigation_menu" />

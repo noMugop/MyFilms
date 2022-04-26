@@ -1,4 +1,4 @@
-package com.example.myfilms.presentation.adapter.favorites_adapter
+package com.example.myfilms.presentation.fragments.favorite.favorite_adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfilms.databinding.ItemMovieBinding
