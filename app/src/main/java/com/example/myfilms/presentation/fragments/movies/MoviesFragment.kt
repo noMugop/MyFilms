@@ -60,10 +60,11 @@ class MoviesFragment : Fragment() {
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
-                LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
-                LoadingState.SUCCESS -> viewModel.getMoviesList().observe(viewLifecycleOwner) {
+                LoadingState.FINISHED -> viewModel.getMoviesList()
+                LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
                     adapter.submitList(it)
                     binding.rvMovies.adapter = adapter
+                    binding.progressBar.visibility = View.GONE
                 }
                 else -> throw RuntimeException("Error")
             }

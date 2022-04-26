@@ -8,7 +8,9 @@ import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.Session
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class ViewModelMovie(application: Application) : AndroidViewModel(application) {
@@ -20,25 +22,28 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
+    private val _movies = MutableLiveData<List<Movie>>()
+    val movies: LiveData<List<Movie>>
+        get() = _movies
+
     fun loadData(page: Int) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            _loadingState.value = repository.loadData(page)
+            withContext(Dispatchers.IO) {
+                _loadingState.postValue(repository.loadData(page))
+            }
         }
     }
 
-    fun getMoviesList(): LiveData<List<Movie>> {
-
-        _loadingState.value = LoadingState.IS_LOADING
-        val result = repository.getMovieList()
-        if (result.value != null) {
-            _loadingState.value = LoadingState.FINISHED
-            _loadingState.value = LoadingState.SUCCESS
-        } else {
-            println("RESULT IS: ${result.value}")
+    fun getMoviesList() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _movies.postValue(repository.getMovieList())
+            }
+            if (!movies.value.isNullOrEmpty()) {
+                _loadingState.value = LoadingState.SUCCESS
+            }
         }
-
-        return result
     }
 
     fun deleteSession() {

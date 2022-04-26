@@ -11,7 +11,7 @@ import com.example.myfilms.data.models.Movie
 interface MovieDao {
 
     @Query("SELECT * FROM movie_table")
-    fun getMovieList(): LiveData<List<Movie>>
+    suspend fun getMovieList(): List<Movie>
 
     @Query("SELECT * FROM movie_table WHERE id == :movieId")
     fun getMovieById(movieId: Int): LiveData<Movie>

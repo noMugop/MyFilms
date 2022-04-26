@@ -31,7 +31,7 @@ class Repository(application: Application) {
         }
     }
 
-    fun getMovieList(): LiveData<List<Movie>> {
+    suspend fun getMovieList(): List<Movie> {
         return db.getMovieList()
     }
 
@@ -41,19 +41,14 @@ class Repository(application: Application) {
 
     suspend fun loadData(page: Int): LoadingState {
         var loadingState: LoadingState? = null
-        try {
-            val response = apiService.getMovies(page = page)
-            if (response.isSuccessful) {
-                val result = response.body()?.movies
-                if (!result.isNullOrEmpty()) {
-                    println("LOAD IS: $result")
-                    db.loadData(result)
-                    loadingState = LoadingState.SUCCESS
-                }
+        val response = apiService.getMovies(page = page)
+        if (response.isSuccessful) {
+            val result = response.body()?.movies
+            if (!result.isNullOrEmpty()) {
+                db.loadData(result)
+                loadingState = LoadingState.FINISHED
             }
-        } catch (e: Exception) {
         }
-
         return loadingState as LoadingState
     }
 
