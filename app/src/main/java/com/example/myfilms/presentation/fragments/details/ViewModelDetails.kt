@@ -50,7 +50,7 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
     fun deleteFavorites(movieId: Int) {
         viewModelScope.launch {
             val postMovie = PostMovie(media_id = movieId, isFavorite = false)
-            _addFavoriteState.value = repository.addFavorite(postMovie)
+            _addFavoriteState.value = repository.addOrDeleteFavorite(postMovie)
             _addFavoriteState.value = LoadingState.IS_LOADING
         }
     }
@@ -58,7 +58,7 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
     fun addFavorite(movieId: Int) {
         viewModelScope.launch {
             val postMovie = PostMovie(media_id = movieId, isFavorite = true)
-            _addFavoriteState.value = repository.addFavorite(postMovie)
+            _addFavoriteState.value = repository.addOrDeleteFavorite(postMovie)
             _addFavoriteState.value = LoadingState.IS_LOADING
         }
     }

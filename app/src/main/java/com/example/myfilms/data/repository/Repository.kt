@@ -48,6 +48,10 @@ class Repository(application: Application) {
         return LoadingState.FINISHED
     }
 
+    suspend fun updateMovie(updateMovie: MovieUpdate) {
+        db.update(updateMovie)
+    }
+
     suspend fun getTrailer(movieId: Int): MovieVideos {
         var result = MovieVideos()
         val responseVideo = apiService.getTrailer(movieId)
@@ -55,10 +59,6 @@ class Repository(application: Application) {
             result = responseVideo.body() as MovieVideos
         }
         return result
-    }
-
-    suspend fun updateMovie(updateMovie: MovieUpdate) {
-        db.update(updateMovie)
     }
 
     suspend fun login(data: LoginApprove): String {
@@ -116,7 +116,7 @@ class Repository(application: Application) {
         return movie
     }
 
-    suspend fun addFavorite(postMovie: PostMovie): LoadingState {
+    suspend fun addOrDeleteFavorite(postMovie: PostMovie): LoadingState {
         val response = apiService.addFavorite(
             session_id = SESSION_ID,
             postMovie = postMovie
