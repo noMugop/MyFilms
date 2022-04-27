@@ -56,6 +56,9 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
                                     val updateMovie =
                                         MovieUpdate(id = movie.id as Int, isFavorite = true)
                                     repository.updateMovie(updateMovie)
+                                } else {
+                                    it.isFavorite = true
+                                    repository.insertMovie(it)
                                 }
                             }
                         }
