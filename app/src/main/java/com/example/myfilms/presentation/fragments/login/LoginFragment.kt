@@ -89,12 +89,13 @@ class LoginFragment : Fragment() {
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.IS_LOADING -> binding.pbLoading.visibility = View.VISIBLE
-                LoadingState.FINISHED -> binding.pbLoading.visibility = View.GONE
+                LoadingState.FINISHED -> viewModel.loadData(MoviesFragment.PAGE)
                 LoadingState.SUCCESS -> {
+                    binding.pbLoading.visibility = View.GONE
                     viewModel.sessionId.observe(viewLifecycleOwner) {
                         binding.etUsername.text = null
                         binding.etPassword.text = null
-                        viewModel.loadData(MoviesFragment.PAGE)
+                        binding.pbLoading.visibility = View.GONE
                         try {
                             findNavController().navigate(R.id.movies_nav)
                         } catch (e: Exception) {

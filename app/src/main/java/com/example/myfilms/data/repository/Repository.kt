@@ -57,8 +57,11 @@ class Repository(application: Application) {
         return result
     }
 
-    suspend fun login(data: LoginApprove): String {
+    suspend fun updateMovie(updateMovie: MovieUpdate) {
+        db.update(updateMovie)
+    }
 
+    suspend fun login(data: LoginApprove): String {
         var sessionId = String()
         val responseGet = apiService.getToken()
         if (responseGet.isSuccessful) {
@@ -105,7 +108,6 @@ class Repository(application: Application) {
     }
 
     suspend fun getFavorites(page: Int): List<Movie> {
-
         var movie = listOf<Movie>()
         val response = apiService.getFavorites(session_id = SESSION_ID, page = page)
         if (response.isSuccessful) {
@@ -119,8 +121,8 @@ class Repository(application: Application) {
             session_id = SESSION_ID,
             postMovie = postMovie
         )
-        val updateMovie = MovieUpdate(id = postMovie.media_id, isFavorite = postMovie.isFavorite)
-        db.update(updateMovie)
+        val movie = MovieUpdate(id = postMovie.media_id, isFavorite = postMovie.isFavorite)
+        updateMovie(movie)
         val loadingState = if (response.isSuccessful) {
             LoadingState.SUCCESS
         } else {

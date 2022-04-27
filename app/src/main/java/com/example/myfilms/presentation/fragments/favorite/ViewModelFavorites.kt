@@ -28,10 +28,8 @@ class ViewModelFavorites(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getFavorites(page: Int) {
-
         viewModelScope.launch {
             val result = repository.getFavorites(page)
-
             if (!result.isNullOrEmpty()) {
                 _movies.value = result
                 _loadingState.value = LoadingState.SUCCESS
