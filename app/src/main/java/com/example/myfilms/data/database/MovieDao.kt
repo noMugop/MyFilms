@@ -8,7 +8,7 @@ import com.example.myfilms.data.models.MovieUpdate
 @Dao
 interface MovieDao {
 
-    @Query("SELECT * FROM movie_table")
+    @Query("SELECT * FROM movie_table GROUP BY popularity")
     suspend fun getMovieList(): List<Movie>
 
     @Query("SELECT * FROM movie_table WHERE id == :movieId")

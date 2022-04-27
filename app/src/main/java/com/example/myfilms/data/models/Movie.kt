@@ -31,6 +31,10 @@ data class Movie(
     @Expose
     val overview: String? = null,
 
+    @SerializedName("popularity")
+    @Expose
+    val popularity: Float? = null,
+
     @SerializedName("poster_path")
     @Expose
     val posterPath: String? = null,

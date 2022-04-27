@@ -22,11 +22,7 @@ class Repository(application: Application) {
     private var editor: SharedPreferences.Editor = prefSettings.edit()
 
     init {
-        try {
-            SESSION_ID =
-                prefSettings.getString(SESSION_ID_KEY, null) as String
-        } catch (e: Exception) {
-        }
+        SESSION_ID = getSessionId()
     }
 
     suspend fun getMovieList(): List<Movie> {
@@ -37,17 +33,14 @@ class Repository(application: Application) {
         return db.getMovieById(movieId)
     }
 
-    suspend fun loadData(page: Int): LoadingState {
-        var loadingState: LoadingState? = null
+    suspend fun loadData(page: Int) {
         val response = apiService.getMovies(page = page)
         if (response.isSuccessful) {
             val result = response.body()?.movies
             if (!result.isNullOrEmpty()) {
                 db.insertMovieList(result)
-                loadingState = LoadingState.FINISHED
             }
         }
-        return loadingState as LoadingState
     }
 
     suspend fun insertMovie(movie: Movie): LoadingState {
@@ -87,8 +80,24 @@ class Repository(application: Application) {
         return sessionId
     }
 
+    private fun getSessionId(): String {
+        var session = ""
+        try {
+            session =
+                prefSettings.getString(SESSION_ID_KEY, "") as String
+        } catch (e: Exception) {
+        }
+        return session
+    }
+
+    fun checkSessionId(): String {
+        SESSION_ID = getSessionId()
+        return SESSION_ID
+    }
+
     suspend fun deleteSession() {
         try {
+            SESSION_ID = getSessionId()
             apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
             editor.clear().commit()
         } catch (e: Exception) {
@@ -110,9 +119,7 @@ class Repository(application: Application) {
             session_id = SESSION_ID,
             postMovie = postMovie
         )
-        val movie = getMovieById(postMovie.media_id)
-        movie.isFavorite = postMovie.isFavorite
-        val updateMovie = MovieUpdate(id = movie.id as Int, isFavorite = movie.isFavorite)
+        val updateMovie = MovieUpdate(id = postMovie.media_id, isFavorite = postMovie.isFavorite)
         db.update(updateMovie)
         val loadingState = if (response.isSuccessful) {
             LoadingState.SUCCESS

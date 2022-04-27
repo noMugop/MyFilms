@@ -23,24 +23,27 @@ class ViewModelFavorites(application: Application) : AndroidViewModel(applicatio
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
+    fun isLoading() {
+        _loadingState.value = LoadingState.IS_LOADING
+    }
+
     fun getFavorites(page: Int) {
 
         viewModelScope.launch {
-            _loadingState.value = LoadingState.IS_LOADING
             val result = repository.getFavorites(page)
 
             if (!result.isNullOrEmpty()) {
-                _movies.value = repository.getFavorites(page)
-                _loadingState.value = LoadingState.FINISHED
+                _movies.value = result
                 _loadingState.value = LoadingState.SUCCESS
-            } else {
+            } else if (repository.checkSessionId() == "") {
                 Toast.makeText(
                     context,
                     "Требуется авторизация",
                     Toast.LENGTH_SHORT
                 ).show()
                 _loadingState.value = LoadingState.FINISHED
-                _loadingState.value = LoadingState.SUCCESS
+            } else {
+                _loadingState.value = LoadingState.FINISHED
             }
         }
     }

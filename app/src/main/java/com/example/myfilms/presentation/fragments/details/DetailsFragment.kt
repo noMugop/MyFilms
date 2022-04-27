@@ -67,16 +67,19 @@ class DetailsFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     viewModel.movie.observe(viewLifecycleOwner) {
                         if (it != null) {
+                            println("FAVORITE IS: ${it.isFavorite}")
                             Picasso.get().load(IMG_URL + it.backdropPath)
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = it.title
                             binding.tvOverview.text = it.overview
-                            if (!it.isFavorite) {
+                            if (it.isFavorite != FAVORITE) {
                                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                                 binding.ivAddFavorite.tag = TAG_WHITE
+                                println("FAVORITE IS W: ${it.isFavorite}")
                             } else {
                                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                                 binding.ivAddFavorite.tag = TAG_YELLOW
+                                println("FAVORITE IS Y: ${it.isFavorite}")
                             }
                             viewModel.trailer.observe(
                                 viewLifecycleOwner
@@ -167,6 +170,7 @@ class DetailsFragment : Fragment() {
 
     companion object {
 
+        private const val FAVORITE = true
         private var movie = Movie()
         private var key: String = ""
         private const val YOUTUBE_URL = "https://www.youtube.com/watch?v="

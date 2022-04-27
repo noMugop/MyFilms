@@ -19,6 +19,7 @@ import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.presentation.Utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.myfilms.presentation.fragments.favorite.FavoritesFragment
+import com.example.myfilms.presentation.fragments.movies.MoviesFragment
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -93,6 +94,7 @@ class LoginFragment : Fragment() {
                     viewModel.sessionId.observe(viewLifecycleOwner) {
                         binding.etUsername.text = null
                         binding.etPassword.text = null
+                        viewModel.loadData(MoviesFragment.PAGE)
                         try {
                             findNavController().navigate(R.id.movies_nav)
                         } catch (e: Exception) {

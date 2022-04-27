@@ -52,13 +52,21 @@ class FavoritesFragment : Fragment() {
                 AndroidViewModelFactory.getInstance(requireActivity().application)
             )[ViewModelFavorites::class.java]
 
-        viewModel.getFavorites(PAGE)
+        viewModel.isLoading()
 
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
-                LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
-                LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
+                LoadingState.IS_LOADING -> {
+                    viewModel.getFavorites(PAGE)
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                LoadingState.FINISHED -> {
+                    binding.progressBar.visibility = View.GONE
+                    adapter.submitList(null)
+                    binding.rvFavorites.adapter = adapter
+                }
                 LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
+                    binding.progressBar.visibility = View.GONE
                     adapter.submitList(it)
                     binding.rvFavorites.adapter = adapter
                 }

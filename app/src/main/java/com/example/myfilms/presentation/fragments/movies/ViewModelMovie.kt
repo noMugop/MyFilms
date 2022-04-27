@@ -26,20 +26,14 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
     val movies: LiveData<List<Movie>>
         get() = _movies
 
-    fun loadData(page: Int) {
-        viewModelScope.launch {
-            _loadingState.value = LoadingState.IS_LOADING
-            withContext(Dispatchers.IO) {
-                _loadingState.postValue(repository.loadData(page))
-            }
-        }
-    }
     fun getMoviesList() {
         viewModelScope.launch {
+            _loadingState.value = LoadingState.IS_LOADING
             withContext(Dispatchers.IO) {
                 _movies.postValue(repository.getMovieList())
             }
             if (!movies.value.isNullOrEmpty()) {
+                _loadingState.value = LoadingState.FINISHED
                 _loadingState.value = LoadingState.SUCCESS
             }
         }

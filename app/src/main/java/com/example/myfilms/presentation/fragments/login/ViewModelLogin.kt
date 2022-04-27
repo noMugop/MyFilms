@@ -9,7 +9,9 @@ import com.example.myfilms.data.models.Session
 import com.example.myfilms.data.models.Token
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ViewModelLogin(application: Application) : AndroidViewModel(application) {
 
@@ -37,6 +39,14 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
             } else {
                 _loadingState.value = LoadingState.FINISHED
                 Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun loadData(page: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.loadData(page)
             }
         }
     }
