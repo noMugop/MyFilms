@@ -18,7 +18,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
             app:navigationIcon="@drawable/ic_baseline_menu_24"
-            app:title="MoviesApp" />
+            app:title="MoviesApp"
+            app:titleCentered="true"
+            app:titleTextColor="@color/black" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
