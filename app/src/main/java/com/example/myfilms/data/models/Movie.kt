@@ -13,35 +13,35 @@ data class Movie(
     @PrimaryKey(autoGenerate = false)
     @SerializedName("id")
     @Expose
-    var id: Int,
+    var id: Int? = null,
 
     @SerializedName("vote_count")
     @Expose
-    val voteCount: Int,
+    val voteCount: Int? = null,
 
     @SerializedName("title")
     @Expose
-    val title: String,
+    val title: String? = null,
 
     @SerializedName("original_title")
     @Expose
-    val originalTitle: String,
+    val originalTitle: String? = null,
 
     @SerializedName("overview")
     @Expose
-    val overview: String,
+    val overview: String? = null,
 
     @SerializedName("poster_path")
     @Expose
-    val posterPath: String,
+    val posterPath: String? = null,
 
     @SerializedName("backdrop_path")
     @Expose
-    val backdropPath: String,
+    val backdropPath: String? = null,
 
     @SerializedName("release_date")
     @Expose
-    val releaseDate: String,
+    val releaseDate: String? = null,
 
     @SerializedName("homepage")
     @Expose

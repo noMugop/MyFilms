@@ -69,14 +69,14 @@ class FavoritesFragment : Fragment() {
     private fun onMovieClickListener() {
         adapter.onFilmClickListener = object : MoviesAdapter.OnFilmClickListener {
             override fun onFilmClick(movie: Movie) {
-                launchDetailFragment(movie.id)
+                launchDetailFragment(movie)
             }
         }
     }
 
-    private fun launchDetailFragment(movieId: Int) {
+    private fun launchDetailFragment(movie: Movie) {
         val args = Bundle().apply {
-            putInt(DetailsFragment.KEY_MOVIE, movieId)
+            putParcelable(DetailsFragment.KEY_MOVIE, movie)
         }
 
         findNavController().navigate(R.id.action_favoritesFragment_to_detailsFragment, args)

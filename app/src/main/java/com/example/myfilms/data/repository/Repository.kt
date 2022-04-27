@@ -3,13 +3,12 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.*
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class Repository(application: Application) {
@@ -44,11 +43,16 @@ class Repository(application: Application) {
         if (response.isSuccessful) {
             val result = response.body()?.movies
             if (!result.isNullOrEmpty()) {
-                db.loadData(result)
+                db.insertMovieList(result)
                 loadingState = LoadingState.FINISHED
             }
         }
         return loadingState as LoadingState
+    }
+
+    suspend fun insertMovie(movie: Movie): LoadingState {
+        db.insertMovie(movie)
+        return LoadingState.FINISHED
     }
 
     suspend fun getTrailer(movieId: Int): MovieVideos {
@@ -106,6 +110,12 @@ class Repository(application: Application) {
             session_id = SESSION_ID,
             postMovie = postMovie
         )
+        withContext(Dispatchers.IO) {
+            val movie = getMovieById(postMovie.media_id)
+            movie.isFavorite = postMovie.isFavorite
+            val updateMovie = MovieUpdate(id = movie.id as Int, isFavorite = movie.isFavorite)
+            db.update(updateMovie)
+        }
         val loadingState = if (response.isSuccessful) {
             LoadingState.SUCCESS
         } else {

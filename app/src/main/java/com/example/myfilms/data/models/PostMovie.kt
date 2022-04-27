@@ -13,5 +13,5 @@ data class PostMovie(
     var media_id: Int,
     @SerializedName("favorite")
     @Expose
-    var favorite: Boolean
+    var isFavorite: Boolean
 )

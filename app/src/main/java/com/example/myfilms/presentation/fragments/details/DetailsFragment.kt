@@ -19,6 +19,7 @@ import com.example.myfilms.presentation.Utils.LoadingState
 import com.example.myfilms.presentation.fragments.login.LoginFragment
 import com.squareup.picasso.Picasso
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import com.example.myfilms.data.models.Movie
 
 class DetailsFragment : Fragment() {
 
@@ -45,7 +46,7 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViewModel()
-        getMovieById(movieId)
+        getMovieById(movie.id as Int)
         onFavoriteClickListener()
         onTrailerClick()
     }
@@ -58,25 +59,41 @@ class DetailsFragment : Fragment() {
     }
 
     private fun getMovieById(movieId: Int) {
+        binding.progressBar.visibility = View.VISIBLE
         viewModel.getMovieById(movieId)
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
-                LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
-                LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
                 LoadingState.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
                     viewModel.movie.observe(viewLifecycleOwner) {
-                        Picasso.get().load(DetailsFragment.IMG_URL + it.backdropPath)
-                            .into(binding.ivPoster)
-                        binding.tvTitle.text = it.title
-                        binding.tvOverview.text = it.overview
-                    }
-                    viewModel.trailer.observe(viewLifecycleOwner) {
-                        it.list?.map {
-                            binding.textViewNameOfVideo.text = it.name
+                        if (it != null) {
+                            Picasso.get().load(IMG_URL + it.backdropPath)
+                                .into(binding.ivPoster)
+                            binding.tvTitle.text = it.title
+                            binding.tvOverview.text = it.overview
+                            if (!it.isFavorite) {
+                                binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
+                                binding.ivAddFavorite.tag = TAG_WHITE
+                            } else {
+                                binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
+                                binding.ivAddFavorite.tag = TAG_YELLOW
+                            }
+                            viewModel.trailer.observe(
+                                viewLifecycleOwner
+                            ) {
+                                it.list?.map { binding.textViewNameOfVideo.text = it.name }
+                            }
+                        } else {
+                            binding.progressBar.visibility = View.VISIBLE
+                            movie.isFavorite = true
+                            viewModel.insertMovie(movie)
                         }
                     }
                 }
-                else -> throw RuntimeException("Error")
+                LoadingState.FINISHED -> {
+                    viewModel.getMovieById(movieId)
+                }
+                else -> {}
             }
         }
     }
@@ -91,16 +108,15 @@ class DetailsFragment : Fragment() {
         binding.ivAddFavorite.setOnClickListener {
 
             if (binding.ivAddFavorite.tag == TAG_WHITE) {
-                addFavorite(movieId)
+                addFavorite(movie.id as Int)
             } else {
-                deleteFavorite(movieId)
+                deleteFavorite(movie.id as Int)
             }
         }
     }
 
     private fun deleteFavorite(movieId: Int) {
         viewModel.deleteFavorites(movieId)
-
         viewModel.addFavoriteState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.SUCCESS -> {
@@ -144,19 +160,19 @@ class DetailsFragment : Fragment() {
     }
 
     private fun parseArgs() {
-        requireArguments().getInt(KEY_MOVIE).apply {
-            movieId = this
+        requireArguments().getParcelable<Movie>(KEY_MOVIE).apply {
+            movie = this as Movie
         }
     }
 
     companion object {
 
-        private var movieId: Int = 0
+        private var movie = Movie()
         private var key: String = ""
         private const val YOUTUBE_URL = "https://www.youtube.com/watch?v="
         private const val TAG_WHITE = "white"
         private const val TAG_YELLOW = "yellow"
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
-        const val KEY_MOVIE = "Movie_id"
+        const val KEY_MOVIE = "Movie details"
     }
 }

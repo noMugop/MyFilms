@@ -33,24 +33,23 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
     val addFavoriteState: LiveData<LoadingState>
         get() = _addFavoriteState
 
-    fun getMovieById(movieId: Int) {
-
+    fun insertMovie(movie: Movie) {
         viewModelScope.launch {
-            _loadingState.value = LoadingState.IS_LOADING
-            withContext(Dispatchers.IO) {
-                _movie.postValue(repository.getMovieById(movieId))
-            }
+            _loadingState.value = repository.insertMovie(movie)
+        }
+    }
+
+    fun getMovieById(movieId: Int) {
+        viewModelScope.launch {
+            _movie.value = repository.getMovieById(movieId)
             _trailer.value = repository.getTrailer(movieId)
-            if (_movie.value != null && _trailer.value != null) {
-                _loadingState.value = LoadingState.FINISHED
-                _loadingState.value = LoadingState.SUCCESS
-            }
+            _loadingState.value = LoadingState.SUCCESS
         }
     }
 
     fun deleteFavorites(movieId: Int) {
         viewModelScope.launch {
-            val postMovie = PostMovie(media_id = movieId, favorite = false)
+            val postMovie = PostMovie(media_id = movieId, isFavorite = false)
             _addFavoriteState.value = repository.addFavorite(postMovie)
             _addFavoriteState.value = LoadingState.IS_LOADING
         }
@@ -58,7 +57,7 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
 
     fun addFavorite(movieId: Int) {
         viewModelScope.launch {
-            val postMovie = PostMovie(media_id = movieId, favorite = true)
+            val postMovie = PostMovie(media_id = movieId, isFavorite = true)
             _addFavoriteState.value = repository.addFavorite(postMovie)
             _addFavoriteState.value = LoadingState.IS_LOADING
         }

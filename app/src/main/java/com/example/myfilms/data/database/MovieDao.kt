@@ -1,11 +1,9 @@
 package com.example.myfilms.data.database
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.MovieUpdate
+
 
 @Dao
 interface MovieDao {
@@ -17,5 +15,11 @@ interface MovieDao {
     suspend fun getMovieById(movieId: Int): Movie
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun loadData(movies: List<Movie>)
+    suspend fun insertMovieList(movies: List<Movie>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMovie(movies: Movie)
+
+    @Update(entity = Movie::class)
+    suspend fun update(movie: MovieUpdate)
 }
