@@ -110,12 +110,10 @@ class Repository(application: Application) {
             session_id = SESSION_ID,
             postMovie = postMovie
         )
-        withContext(Dispatchers.IO) {
-            val movie = getMovieById(postMovie.media_id)
-            movie.isFavorite = postMovie.isFavorite
-            val updateMovie = MovieUpdate(id = movie.id as Int, isFavorite = movie.isFavorite)
-            db.update(updateMovie)
-        }
+        val movie = getMovieById(postMovie.media_id)
+        movie.isFavorite = postMovie.isFavorite
+        val updateMovie = MovieUpdate(id = movie.id as Int, isFavorite = movie.isFavorite)
+        db.update(updateMovie)
         val loadingState = if (response.isSuccessful) {
             LoadingState.SUCCESS
         } else {

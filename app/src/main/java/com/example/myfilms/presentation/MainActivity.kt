@@ -147,7 +147,6 @@ class MainActivity : AppCompatActivity() {
                             .setMessage("Выйти?")
                             .setPositiveButton("Да") { dialogInterface, i ->
                                 viewModel.deleteSession()
-
                                 navController.popBackStack(R.id.loginFragment, false)
                                 navController.navigate(R.id.login_nav)
                             }
@@ -155,7 +154,6 @@ class MainActivity : AppCompatActivity() {
                             .create()
                             .show()
                     }
-
                 }
                 R.id.share -> {
                     Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show()
