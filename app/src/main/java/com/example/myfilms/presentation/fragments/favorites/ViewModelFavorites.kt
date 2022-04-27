@@ -1,11 +1,9 @@
-package com.example.myfilms.presentation.fragments.favorite
+package com.example.myfilms.presentation.fragments.favorites
 
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.Session
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
 import kotlinx.coroutines.launch

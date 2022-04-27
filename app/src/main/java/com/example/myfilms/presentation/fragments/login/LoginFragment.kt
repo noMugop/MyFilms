@@ -2,7 +2,6 @@ package com.example.myfilms.presentation.fragments.login
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,7 +17,6 @@ import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.presentation.Utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import com.example.myfilms.presentation.fragments.favorite.FavoritesFragment
 import com.example.myfilms.presentation.fragments.movies.MoviesFragment
 import java.lang.Exception
 import java.lang.RuntimeException
