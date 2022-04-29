@@ -121,12 +121,11 @@ class Repository(application: Application) {
         return loadingState
     }
 
-    suspend fun getAccountState(movie: Movie): Movie {
+    suspend fun getAccountState(movie: Movie) {
         val response = apiService.getAccountStates(id = movie.id as Int, session_id = SESSION_ID)
         if (response.isSuccessful) {
             movie.isFavorite = response.body()?.favorite as Boolean
         }
-        return movie
     }
 
     companion object {
