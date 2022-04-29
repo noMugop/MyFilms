@@ -1,8 +1,10 @@
 package com.example.myfilms.presentation.fragments.details
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -71,6 +73,7 @@ class DetailsFragment : Fragment() {
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = it.title
                             binding.tvOverview.text = it.overview
+                            binding.tvRate.text = String.format("Рейтинг: ${it.voteAverage}")
                             if (it.isFavorite != FAVORITE) {
                                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                                 binding.ivAddFavorite.tag = TAG_WHITE
@@ -84,6 +87,7 @@ class DetailsFragment : Fragment() {
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = movie.title
                             binding.tvOverview.text = movie.overview
+                            binding.tvRate.text = String.format("Рейтинг: ${movie.voteAverage}")
                             binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                             binding.ivAddFavorite.tag = TAG_YELLOW
                         }
