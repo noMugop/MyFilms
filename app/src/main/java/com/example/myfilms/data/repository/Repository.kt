@@ -7,8 +7,6 @@ import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.*
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class Repository(application: Application) {
@@ -34,6 +32,7 @@ class Repository(application: Application) {
     }
 
     suspend fun loadData(page: Int) {
+        SESSION_ID = getSessionId()
         val response = apiService.getMovies(page = page)
         if (response.isSuccessful) {
             val result = response.body()?.movies
@@ -43,12 +42,7 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun insertMovie(movie: Movie): LoadingState {
-        db.insertMovie(movie)
-        return LoadingState.FINISHED
-    }
-
-    suspend fun updateMovie(updateMovie: MovieUpdate) {
+    private suspend fun updateMovie(updateMovie: MovieUpdate) {
         db.update(updateMovie)
     }
 
@@ -99,12 +93,8 @@ class Repository(application: Application) {
     }
 
     suspend fun deleteSession() {
-        try {
-            SESSION_ID = getSessionId()
-            apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
-            editor.clear().commit()
-        } catch (e: Exception) {
-        }
+        SESSION_ID = getSessionId()
+        apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
     }
 
     suspend fun getFavorites(page: Int): List<Movie> {
@@ -129,6 +119,14 @@ class Repository(application: Application) {
             LoadingState.FINISHED
         }
         return loadingState
+    }
+
+    suspend fun getAccountState(movie: Movie): Movie {
+        val response = apiService.getAccountStates(id = movie.id as Int, session_id = SESSION_ID)
+        if (response.isSuccessful) {
+            movie.isFavorite = response.body()?.favorite as Boolean
+        }
+        return movie
     }
 
     companion object {

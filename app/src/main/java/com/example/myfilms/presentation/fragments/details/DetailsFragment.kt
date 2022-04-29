@@ -78,20 +78,19 @@ class DetailsFragment : Fragment() {
                                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                                 binding.ivAddFavorite.tag = TAG_YELLOW
                             }
-                            viewModel.trailer.observe(
-                                viewLifecycleOwner
-                            ) {
-                                it.list?.map { binding.textViewNameOfVideo.text = it.name }
-                            }
                         } else {
-                            binding.progressBar.visibility = View.VISIBLE
-                            movie.isFavorite = true
-                            viewModel.insertMovie(movie)
+                            binding.progressBar.visibility = View.GONE
+                            Picasso.get().load(IMG_URL + movie.backdropPath)
+                                .into(binding.ivPoster)
+                            binding.tvTitle.text = movie.title
+                            binding.tvOverview.text = movie.overview
+                            binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
+                            binding.ivAddFavorite.tag = TAG_YELLOW
+                        }
+                        viewModel.trailer.observe(viewLifecycleOwner) {
+                            it.list?.map { binding.textViewNameOfVideo.text = it.name }
                         }
                     }
-                }
-                LoadingState.FINISHED -> {
-                    viewModel.getMovieById(movieId)
                 }
                 else -> {}
             }

@@ -33,15 +33,12 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
     val addFavoriteState: LiveData<LoadingState>
         get() = _addFavoriteState
 
-    fun insertMovie(movie: Movie) {
-        viewModelScope.launch {
-            _loadingState.value = repository.insertMovie(movie)
-        }
-    }
-
     fun getMovieById(movieId: Int) {
         viewModelScope.launch {
             _movie.value = repository.getMovieById(movieId)
+            if (_movie.value != null) {
+                repository.getAccountState(_movie.value as Movie)
+            }
             _trailer.value = repository.getTrailer(movieId)
             _loadingState.value = LoadingState.SUCCESS
         }

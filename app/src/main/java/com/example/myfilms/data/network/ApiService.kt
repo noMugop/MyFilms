@@ -1,6 +1,7 @@
 package com.example.myfilms.data.network
 
 import com.example.myfilms.data.models.*
+import okhttp3.internal.http.hasBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -71,6 +72,13 @@ interface ApiService {
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
     ): Response<Result>
+
+    @GET("movie/{movie_id}/account_states")
+    suspend fun getAccountStates(
+        @Path("movie_id") id: Int,
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("session_id") session_id: String = SESSION_ID
+    ): Response<AccountStates>
 
     companion object {
 
