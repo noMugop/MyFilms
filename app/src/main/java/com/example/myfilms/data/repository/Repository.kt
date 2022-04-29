@@ -33,46 +33,55 @@ class Repository(application: Application) {
 
     suspend fun loadData(page: Int) {
         SESSION_ID = getSessionId()
-        val response = apiService.getMovies(page = page)
-        if (response.isSuccessful) {
-            val result = response.body()?.movies
-            if (!result.isNullOrEmpty()) {
-                db.insertMovieList(result)
+        try {
+            val response = apiService.getMovies(page = page)
+            if (response.isSuccessful) {
+                val result = response.body()?.movies
+                if (!result.isNullOrEmpty()) {
+                    db.insertMovieList(result)
+                }
             }
+        } catch (e: Exception) {
         }
     }
 
-    private suspend fun updateMovie(updateMovie: MovieUpdate) {
+    suspend fun updateMovie(updateMovie: MovieUpdate) {
         db.update(updateMovie)
     }
 
     suspend fun getTrailer(movieId: Int): MovieVideos {
         var result = MovieVideos()
-        val responseVideo = apiService.getTrailer(movieId)
-        if (responseVideo.isSuccessful) {
-            result = responseVideo.body() as MovieVideos
+        try {
+            val responseVideo = apiService.getTrailer(movieId)
+            if (responseVideo.isSuccessful) {
+                result = responseVideo.body() as MovieVideos
+            }
+        } catch (e: Exception) {
         }
         return result
     }
 
     suspend fun login(data: LoginApprove): String {
         var sessionId = String()
-        val responseGet = apiService.getToken()
-        if (responseGet.isSuccessful) {
-            val loginApprove = LoginApprove(
-                username = data.username,
-                password = data.password,
-                request_token = responseGet.body()?.request_token as String
-            )
-            val responseApprove = apiService.approveToken(loginApprove = loginApprove)
-            if (responseApprove.isSuccessful) {
-                val session = apiService.createSession(token = responseApprove.body() as Token)
-                if (session.isSuccessful) {
-                    sessionId = session.body()?.session_id as String
-                    editor.putString(SESSION_ID_KEY, sessionId)
-                    editor.commit()
+        try {
+            val responseGet = apiService.getToken()
+            if (responseGet.isSuccessful) {
+                val loginApprove = LoginApprove(
+                    username = data.username,
+                    password = data.password,
+                    request_token = responseGet.body()?.request_token as String
+                )
+                val responseApprove = apiService.approveToken(loginApprove = loginApprove)
+                if (responseApprove.isSuccessful) {
+                    val session = apiService.createSession(token = responseApprove.body() as Token)
+                    if (session.isSuccessful) {
+                        sessionId = session.body()?.session_id as String
+                        editor.putString(SESSION_ID_KEY, sessionId)
+                        editor.commit()
+                    }
                 }
             }
+        } catch (e: Exception) {
         }
         return sessionId
     }
@@ -94,38 +103,55 @@ class Repository(application: Application) {
 
     suspend fun deleteSession() {
         SESSION_ID = getSessionId()
-        apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
+        try {
+            apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
+            editor.clear().commit()
+        } catch (e: Exception) {
+            editor.clear().commit()
+        }
     }
 
     suspend fun getFavorites(page: Int): List<Movie> {
         var movie = listOf<Movie>()
-        val response = apiService.getFavorites(session_id = SESSION_ID, page = page)
-        if (response.isSuccessful) {
-            movie = response.body()?.movies as List<Movie>
+        try {
+            val response = apiService.getFavorites(session_id = SESSION_ID, page = page)
+            if (response.isSuccessful) {
+                movie = response.body()?.movies as List<Movie>
+            }
+        } catch (e: Exception) {
         }
         return movie
     }
 
     suspend fun addOrDeleteFavorite(postMovie: PostMovie): LoadingState {
-        val response = apiService.addFavorite(
-            session_id = SESSION_ID,
-            postMovie = postMovie
-        )
-        val movie = MovieUpdate(id = postMovie.media_id, isFavorite = postMovie.isFavorite)
-        updateMovie(movie)
-        val loadingState = if (response.isSuccessful) {
-            LoadingState.SUCCESS
-        } else {
-            LoadingState.FINISHED
+        var loadingState: LoadingState? = null
+        try {
+            val response = apiService.addFavorite(
+                session_id = SESSION_ID,
+                postMovie = postMovie
+            )
+            val movie = MovieUpdate(id = postMovie.media_id, isFavorite = postMovie.isFavorite)
+            updateMovie(movie)
+            loadingState = if (response.isSuccessful) {
+                LoadingState.SUCCESS
+            } else {
+                LoadingState.FINISHED
+            }
+        } catch (e: Exception) {
         }
-        return loadingState
+        return loadingState as LoadingState
     }
 
-    suspend fun getAccountState(movie: Movie) {
-        val response = apiService.getAccountStates(id = movie.id as Int, session_id = SESSION_ID)
-        if (response.isSuccessful) {
-            movie.isFavorite = response.body()?.favorite as Boolean
+    suspend fun getAccountState(movie: Movie): Movie {
+        try {
+            val response =
+                apiService.getAccountStates(id = movie.id as Int, session_id = SESSION_ID)
+            if (response.isSuccessful) {
+                movie.isFavorite = response.body()?.favorite as Boolean
+            }
+        } catch (e: Exception) {
         }
+        return movie
     }
 
     companion object {

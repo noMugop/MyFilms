@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.MovieUpdate
 import com.example.myfilms.data.models.MovieVideos
 import com.example.myfilms.data.models.PostMovie
 import com.example.myfilms.data.repository.Repository
@@ -37,7 +38,9 @@ class ViewModelDetails(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             _movie.value = repository.getMovieById(movieId)
             if (_movie.value != null) {
-                repository.getAccountState(_movie.value as Movie)
+                val result = repository.getAccountState(_movie.value as Movie)
+                val movie = MovieUpdate(id = result.id as Int, isFavorite = result.isFavorite)
+                repository.updateMovie(movie)
             }
             _trailer.value = repository.getTrailer(movieId)
             _loadingState.value = LoadingState.SUCCESS
