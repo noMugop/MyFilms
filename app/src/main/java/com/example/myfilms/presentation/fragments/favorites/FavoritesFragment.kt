@@ -61,14 +61,14 @@ class FavoritesFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 LoadingState.FINISHED -> {
+                    binding.progressBar.visibility = View.GONE
                     adapter.submitList(null)
                     binding.rvFavorites.adapter = adapter
-                    binding.progressBar.visibility = View.GONE
                 }
                 LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
+                    binding.progressBar.visibility = View.GONE
                     adapter.submitList(it)
                     binding.rvFavorites.adapter = adapter
-                    binding.progressBar.visibility = View.GONE
                 }
                 else -> throw RuntimeException("Error")
             }
