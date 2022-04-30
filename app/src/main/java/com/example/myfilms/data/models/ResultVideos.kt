@@ -5,11 +5,13 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-data class Session(
+data class ResultVideos(
 
-//    @SerializedName("success")
-//    @Expose
-//    val success: Boolean,
-    @SerializedName("session_id")
-    var session_id: String = ""
+    @SerializedName("name")
+    @Expose
+    val name: String,
+
+    @SerializedName("key")
+    @Expose
+    val key: String
 )

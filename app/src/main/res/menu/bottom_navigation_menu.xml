@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/films_fragment"
+        android:id="@+id/movies_nav"
         android:enabled="true"
         android:icon="@drawable/ic_home"
         android:title="@string/main"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/favorites_fragment"
+        android:id="@+id/favorites_nav"
         android:enabled="true"
         android:icon="@drawable/ic_menu"
         android:title="@string/favorites"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>
