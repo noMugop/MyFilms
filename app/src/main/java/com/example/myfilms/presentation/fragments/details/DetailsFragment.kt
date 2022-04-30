@@ -73,7 +73,7 @@ class DetailsFragment : Fragment() {
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = it.title
                             binding.tvOverview.text = it.overview
-                            binding.tvRate.text = String.format("Рейтинг: ${it.voteAverage}")
+                            binding.tvRate.text = getString(R.string.rate, it.voteAverage.toString())
                             if (it.isFavorite != FAVORITE) {
                                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                                 binding.ivAddFavorite.tag = TAG_WHITE
@@ -87,7 +87,7 @@ class DetailsFragment : Fragment() {
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = movie.title
                             binding.tvOverview.text = movie.overview
-                            binding.tvRate.text = String.format("Рейтинг: ${movie.voteAverage}")
+                            binding.tvRate.text = getString(R.string.rate, movie.voteAverage.toString())
                             binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                             binding.ivAddFavorite.tag = TAG_YELLOW
                         }

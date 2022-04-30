@@ -22,4 +22,5 @@
     <string name="communicate">Communicate</string>
     <string name="share">Share</string>
     <string name="rate_us">Rate us</string>
+    <string name="rate">Рейтинг: %s</string>
 </resources>
