@@ -25,7 +25,7 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
             val session = repository.login(data)
-            if (session.isBlank()) {
+            if (session.isNotBlank()) {
                 _sessionId.value = session
                 _loadingState.value = LoadingState.FINISHED
             } else {
