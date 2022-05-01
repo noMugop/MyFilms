@@ -41,7 +41,6 @@ class MoviesFragment : Fragment() {
 
         init()
         onMovieClickListener()
-//        onScrollListener()
         onBackPressed()
     }
 
