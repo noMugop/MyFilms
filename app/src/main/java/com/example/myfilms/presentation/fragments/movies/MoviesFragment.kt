@@ -39,12 +39,12 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        init()
+        initAndObserveViewModel()
         onMovieClickListener()
         onBackPressed()
     }
 
-    private fun init() {
+    private fun initAndObserveViewModel() {
 
         viewModel = ViewModelProvider(
             this,
