@@ -3,10 +3,13 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.wifi.aware.DiscoverySession
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.*
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class Repository(application: Application) {
@@ -24,29 +27,36 @@ class Repository(application: Application) {
     }
 
     suspend fun getMovieList(): List<Movie> {
-        return db.getMovieList()
+        return withContext(Dispatchers.Default) {
+            db.getMovieList()
+        }
     }
 
     suspend fun getMovieById(movieId: Int): Movie {
-        return db.getMovieById(movieId)
+        return withContext(Dispatchers.Default) {
+            db.getMovieById(movieId)
+        }
     }
 
     suspend fun loadData(page: Int) {
-        SESSION_ID = getSessionId()
-        try {
-            val response = apiService.getMovies(page = page)
-            if (response.isSuccessful) {
-                val result = response.body()?.movies
-                if (!result.isNullOrEmpty()) {
-                    db.insertMovieList(result)
+        withContext(Dispatchers.Default) {
+            try {
+                val response = apiService.getMovies(page = page)
+                if (response.isSuccessful) {
+                    val result = response.body()?.movies
+                    if (!result.isNullOrEmpty()) {
+                        db.insertMovieList(result)
+                    }
                 }
+            } catch (e: Exception) {
             }
-        } catch (e: Exception) {
         }
     }
 
     suspend fun updateMovie(updateMovie: MovieUpdate) {
-        db.update(updateMovie)
+        withContext(Dispatchers.Default) {
+            db.update(updateMovie)
+        }
     }
 
     suspend fun getTrailer(movieId: Int): MovieVideos {

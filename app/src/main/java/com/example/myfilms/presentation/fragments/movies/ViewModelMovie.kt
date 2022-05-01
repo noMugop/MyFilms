@@ -1,19 +1,11 @@
 package com.example.myfilms.presentation.fragments.movies
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.MovieUpdate
-import com.example.myfilms.data.models.Session
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.login.ViewModelLogin
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class ViewModelMovie(application: Application) : AndroidViewModel(application) {
 
@@ -31,9 +23,7 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
     fun getMoviesList() {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            withContext(Dispatchers.IO) {
-                _movies.postValue(repository.getMovieList())
-            }
+            _movies.value = repository.getMovieList()
             if (!movies.value.isNullOrEmpty()) {
                 _loadingState.value = LoadingState.FINISHED
                 _loadingState.value = LoadingState.SUCCESS
@@ -45,12 +35,5 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             repository.deleteSession()
         }
-    }
-
-    companion object {
-
-        private var PAGE = 1
-        private var LUST_PAGE = 0
-        private var SYNCHRONIZED = false
     }
 }
