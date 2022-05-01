@@ -23,7 +23,7 @@ class Repository(application: Application) {
     private var editor: SharedPreferences.Editor = prefSettings.edit()
 
     init {
-        SESSION_ID = getSessionId()
+        getSessionId()
     }
 
     suspend fun getMovieList(): List<Movie> {
@@ -72,7 +72,6 @@ class Repository(application: Application) {
     }
 
     suspend fun login(data: LoginApprove): String {
-        var sessionId = String()
         try {
             val responseGet = apiService.getToken()
             if (responseGet.isSuccessful) {
@@ -85,34 +84,31 @@ class Repository(application: Application) {
                 if (responseApprove.isSuccessful) {
                     val session = apiService.createSession(token = responseApprove.body() as Token)
                     if (session.isSuccessful) {
-                        sessionId = session.body()?.session_id as String
-                        editor.putString(SESSION_ID_KEY, sessionId)
+                        SESSION_ID = session.body()?.session_id as String
+                        editor.putString(SESSION_ID_KEY, SESSION_ID)
                         editor.commit()
                     }
                 }
             }
         } catch (e: Exception) {
         }
-        return sessionId
+        return SESSION_ID
     }
 
-    private fun getSessionId(): String {
-        var session = ""
+    private fun getSessionId() {
         try {
-            session =
-                prefSettings.getString(SESSION_ID_KEY, "") as String
+            SESSION_ID = prefSettings.getString(SESSION_ID_KEY, "") as String
         } catch (e: Exception) {
         }
-        return session
     }
 
     fun checkSessionId(): String {
-        SESSION_ID = getSessionId()
+        getSessionId()
         return SESSION_ID
     }
 
     suspend fun deleteSession() {
-        SESSION_ID = getSessionId()
+        getSessionId()
         try {
             apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
             editor.clear().commit()
