@@ -31,7 +31,7 @@ class ViewModelFavorites(application: Application) : AndroidViewModel(applicatio
             if (!result.isNullOrEmpty()) {
                 _movies.value = result
                 _loadingState.value = LoadingState.SUCCESS
-            } else if (repository.checkSessionId() == "") {
+            } else if (repository.checkSessionId().isBlank()) {
                 Toast.makeText(
                     context,
                     "Требуется авторизация",
