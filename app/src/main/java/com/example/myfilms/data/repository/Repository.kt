@@ -53,7 +53,8 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun updateMovie(updateMovie: MovieUpdate) {
+    suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
+        val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
         withContext(Dispatchers.Default) {
             db.update(updateMovie)
         }
@@ -129,15 +130,15 @@ class Repository(application: Application) {
         return movie
     }
 
-    suspend fun addOrDeleteFavorite(postMovie: PostMovie): LoadingState {
+    suspend fun addOrDeleteFavorite(movieId: Int, favoriteState: Boolean): LoadingState {
         var loadingState: LoadingState? = null
+        val postMovie = PostMovie(media_id = movieId, isFavorite = favoriteState)
         try {
             val response = apiService.addFavorite(
                 session_id = SESSION_ID,
                 postMovie = postMovie
             )
-            val movie = MovieUpdate(id = postMovie.media_id, isFavorite = postMovie.isFavorite)
-            updateMovie(movie)
+            updateMovie(postMovie.media_id, postMovie.isFavorite)
             loadingState = if (response.isSuccessful) {
                 LoadingState.SUCCESS
             } else {
