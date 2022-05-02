@@ -72,13 +72,13 @@ class Repository(application: Application) {
         return result
     }
 
-    suspend fun login(data: LoginApprove): String {
+    suspend fun login(username: String, password: String): String {
         try {
             val responseGet = apiService.getToken()
             if (responseGet.isSuccessful) {
                 val loginApprove = LoginApprove(
-                    username = data.username,
-                    password = data.password,
+                    username = username,
+                    password = password,
                     request_token = responseGet.body()?.request_token as String
                 )
                 val responseApprove = apiService.approveToken(loginApprove = loginApprove)

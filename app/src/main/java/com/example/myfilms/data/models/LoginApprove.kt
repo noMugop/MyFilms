@@ -13,5 +13,5 @@ data class LoginApprove(
     var password: String,
     @SerializedName("request_token")
     @Expose
-    var request_token: String
+    var request_token: String = ""
 )

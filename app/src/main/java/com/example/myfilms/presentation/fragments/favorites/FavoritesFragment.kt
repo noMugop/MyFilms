@@ -45,7 +45,6 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun initAndObserveViewModel() {
-
         viewModel =
             ViewModelProvider(
                 this,
@@ -87,7 +86,6 @@ class FavoritesFragment : Fragment() {
         val args = Bundle().apply {
             putParcelable(DetailsFragment.KEY_MOVIE, movie)
         }
-
         findNavController().navigate(R.id.action_favoritesFragment_to_detailsFragment, args)
     }
 

@@ -21,10 +21,10 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
     val sessionId: LiveData<String>
         get() = _sessionId
 
-    fun login(data: LoginApprove) {
+    fun login(username: String, password: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            val session = repository.login(data)
+            val session = repository.login(username, password)
             if (session.isNotBlank()) {
                 _sessionId.value = session
                 _loadingState.value = LoadingState.FINISHED
