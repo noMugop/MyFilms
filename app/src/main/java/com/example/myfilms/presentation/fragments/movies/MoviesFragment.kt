@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
@@ -57,8 +58,16 @@ class MoviesFragment : Fragment() {
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
-                LoadingState.FINISHED -> binding.progressBar.visibility = View.GONE
+                LoadingState.FINISHED -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Список пуст, требуется авторизация",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
+                    binding.progressBar.visibility = View.GONE
                     adapter.submitList(it)
                     binding.rvMovies.adapter = adapter
                 }

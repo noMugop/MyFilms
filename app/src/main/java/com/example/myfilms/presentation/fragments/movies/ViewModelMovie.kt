@@ -25,8 +25,9 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
             _loadingState.value = LoadingState.IS_LOADING
             _movies.value = repository.getMovieList()
             if (!movies.value.isNullOrEmpty()) {
-                _loadingState.value = LoadingState.FINISHED
                 _loadingState.value = LoadingState.SUCCESS
+            } else {
+                _loadingState.value = LoadingState.FINISHED
             }
         }
     }
