@@ -19,11 +19,11 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
-    fun setSuccess(): String {
+    fun checkSessionId(): String {
         return repository.checkFragmentSession()
     }
 
-    fun checkAccess() {
+    fun setSuccess() {
         if (repository.checkLoginSession() == "Access") {
             _loadingState.value = LoadingState.SUCCESS
         } else {

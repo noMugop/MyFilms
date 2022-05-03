@@ -32,7 +32,7 @@ class LoginFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         initViewModel()
-        if (viewModel.setSuccess().isNotBlank()) {
+        if (viewModel.checkSessionId().isNotBlank()) {
             launchMovieFragment()
         }
     }
@@ -48,7 +48,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.checkAccess()
+        viewModel.setSuccess()
         onLoginClick()
         onGuestClick()
         observeLoadingState()
