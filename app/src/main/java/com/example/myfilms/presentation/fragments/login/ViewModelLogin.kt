@@ -6,6 +6,8 @@ import androidx.lifecycle.*
 import com.example.myfilms.data.models.*
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ViewModelLogin(application: Application) : AndroidViewModel(application) {
@@ -17,19 +19,30 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
-    private val _sessionId = MutableLiveData<String>()
-    val sessionId: LiveData<String>
-        get() = _sessionId
+    fun setSuccess(): String {
+        return repository.checkFragmentSession()
+    }
+
+    fun checkAccess() {
+        if (repository.checkLoginSession() == "Access") {
+            _loadingState.value = LoadingState.SUCCESS
+        } else {
+            _loadingState.value = LoadingState.WAIT
+        }
+    }
+
+    fun setWait() {
+        _loadingState.value = LoadingState.WAIT
+    }
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
             val session = repository.login(username, password)
             if (session.isNotBlank()) {
-                _sessionId.value = session
                 _loadingState.value = LoadingState.FINISHED
             } else {
-                _loadingState.value = LoadingState.FINISHED
+                _loadingState.value = LoadingState.WAIT
                 Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
             }
         }
@@ -37,14 +50,17 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
 
     fun loadData(page: Int) {
         viewModelScope.launch {
-            repository.loadData(page)
-            _loadingState.value = LoadingState.SUCCESS
+            _loadingState.value = repository.loadData(page)
         }
     }
 
-    fun deleteSession() {
+    fun deleteFragmentSession() {
         viewModelScope.launch {
-            repository.deleteSession()
+            repository.deleteFragmentSession()
         }
+    }
+
+    fun deleteLoginSession() {
+        repository.deleteLoginSession()
     }
 }

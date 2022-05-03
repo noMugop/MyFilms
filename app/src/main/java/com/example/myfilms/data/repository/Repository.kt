@@ -9,6 +9,7 @@ import com.example.myfilms.data.models.*
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
@@ -22,10 +23,6 @@ class Repository(application: Application) {
     ) as SharedPreferences
     private var editor: SharedPreferences.Editor = prefSettings.edit()
 
-    init {
-        getSessionId()
-    }
-
     suspend fun getMovieList(): List<Movie> {
         return withContext(Dispatchers.Default) {
             db.getMovieList()
@@ -38,8 +35,8 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun loadData(page: Int) {
-        withContext(Dispatchers.Default) {
+    suspend fun loadData(page: Int): LoadingState {
+        return withContext(Dispatchers.Default) {
             try {
                 val response = apiService.getMovies(page = page)
                 if (response.isSuccessful) {
@@ -50,6 +47,7 @@ class Repository(application: Application) {
                 }
             } catch (e: Exception) {
             }
+            LoadingState.SUCCESS
         }
     }
 
@@ -73,6 +71,7 @@ class Repository(application: Application) {
     }
 
     suspend fun login(username: String, password: String): String {
+        var session = ""
         try {
             val responseGet = apiService.getToken()
             if (responseGet.isSuccessful) {
@@ -83,45 +82,69 @@ class Repository(application: Application) {
                 )
                 val responseApprove = apiService.approveToken(loginApprove = loginApprove)
                 if (responseApprove.isSuccessful) {
-                    val session = apiService.createSession(token = responseApprove.body() as Token)
-                    if (session.isSuccessful) {
-                        SESSION_ID = session.body()?.session_id as String
-                        editor.putString(SESSION_ID_KEY, SESSION_ID)
+                    val response = apiService.createSession(token = responseApprove.body() as Token)
+                    if (response.isSuccessful) {
+                        session = response.body()?.session_id as String
+                        editor.putString(FRAGMENTS_KEY, session)
+                        editor.commit()
+                        editor.putString(LOGIN_KEY, "Access")
                         editor.commit()
                     }
                 }
             }
         } catch (e: Exception) {
         }
-        return SESSION_ID
+        return session
     }
 
-    private fun getSessionId() {
+    private fun getFragmentSession(): String {
+        var session = ""
         try {
-            SESSION_ID = prefSettings.getString(SESSION_ID_KEY, "") as String
+            session = prefSettings.getString(FRAGMENTS_KEY, "") as String
         } catch (e: Exception) {
+        }
+        return session
+    }
+
+    private fun getLoginSession(): String {
+        var session = ""
+        try {
+            session = prefSettings.getString(LOGIN_KEY, "") as String
+        } catch (e: Exception) {
+        }
+        return session
+    }
+
+    fun checkFragmentSession(): String {
+        return getFragmentSession()
+    }
+
+    fun checkLoginSession(): String {
+        return getLoginSession()
+    }
+
+    suspend fun deleteFragmentSession() {
+        val session = getFragmentSession()
+        try {
+            apiService.deleteSession(sessionId = Session(session_id = session))
+            editor.remove(FRAGMENTS_KEY).commit()
+        } catch (e: Exception) {
+            editor.remove(FRAGMENTS_KEY).commit()
         }
     }
 
-    fun checkSessionId(): String {
-        getSessionId()
-        return SESSION_ID
-    }
-
-    suspend fun deleteSession() {
-        getSessionId()
+    fun deleteLoginSession() {
         try {
-            apiService.deleteSession(sessionId = Session(session_id = SESSION_ID))
-            editor.clear().commit()
+            editor.remove(LOGIN_KEY).commit()
         } catch (e: Exception) {
-            editor.clear().commit()
         }
     }
 
     suspend fun getFavorites(page: Int): List<Movie> {
         var movie = listOf<Movie>()
+        val session = getFragmentSession()
         try {
-            val response = apiService.getFavorites(session_id = SESSION_ID, page = page)
+            val response = apiService.getFavorites(session_id = session, page = page)
             if (response.isSuccessful) {
                 movie = response.body()?.movies as List<Movie>
             }
@@ -132,10 +155,11 @@ class Repository(application: Application) {
 
     suspend fun addOrDeleteFavorite(movieId: Int, favoriteState: Boolean): LoadingState {
         var loadingState: LoadingState? = null
+        val session = getFragmentSession()
         val postMovie = PostMovie(media_id = movieId, isFavorite = favoriteState)
         try {
             val response = apiService.addFavorite(
-                session_id = SESSION_ID,
+                session_id = session,
                 postMovie = postMovie
             )
             updateMovie(postMovie.media_id, postMovie.isFavorite)
@@ -150,9 +174,10 @@ class Repository(application: Application) {
     }
 
     suspend fun getAccountState(movie: Movie): Movie {
+        val session = getFragmentSession()
         try {
             val response =
-                apiService.getAccountStates(id = movie.id as Int, session_id = SESSION_ID)
+                apiService.getAccountStates(id = movie.id as Int, session_id = session)
             if (response.isSuccessful) {
                 movie.isFavorite = response.body()?.favorite as Boolean
             }
@@ -163,8 +188,8 @@ class Repository(application: Application) {
 
     companion object {
 
-        private var SESSION_ID = ""
         const val APP_SETTINGS = "Settings"
-        const val SESSION_ID_KEY = "SESSION_ID"
+        const val FRAGMENTS_KEY = "SESSION_FRAGMENT"
+        const val LOGIN_KEY = "SESSION_LOGIN"
     }
 }

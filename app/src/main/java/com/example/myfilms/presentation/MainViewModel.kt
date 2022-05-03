@@ -16,7 +16,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteSession() {
         viewModelScope.launch {
-            repository.deleteSession()
+            repository.deleteFragmentSession()
         }
     }
 }

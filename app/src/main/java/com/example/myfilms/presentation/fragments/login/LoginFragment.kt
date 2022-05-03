@@ -29,6 +29,14 @@ class LoginFragment : Fragment() {
 
     private lateinit var viewModel: ViewModelLogin
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        initViewModel()
+        if (viewModel.setSuccess().isNotBlank()) {
+            launchMovieFragment()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,9 +48,10 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViewModel()
+        viewModel.checkAccess()
         onLoginClick()
         onGuestClick()
+        observeLoadingState()
         onBackPressed()
     }
 
@@ -61,7 +70,6 @@ class LoginFragment : Fragment() {
                 val username = binding.etUsername.text.toString().trim()
                 val password = binding.etPassword.text.toString().trim()
                 viewModel.login(username, password)
-                observeLoadingState()
             } else {
                 Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT).show()
             }
@@ -72,10 +80,10 @@ class LoginFragment : Fragment() {
         binding.btnGuest.setOnClickListener {
             hideKeyboard(requireActivity())
             try {
-                viewModel.deleteSession()
-                findNavController().navigate(R.id.movies_nav)
+                viewModel.deleteFragmentSession()
+                launchMovieFragment()
             } catch (e: Exception) {
-                findNavController().navigate(R.id.movies_nav)
+                launchMovieFragment()
             }
         }
     }
@@ -87,19 +95,22 @@ class LoginFragment : Fragment() {
                 LoadingState.FINISHED -> viewModel.loadData(MoviesFragment.PAGE)
                 LoadingState.SUCCESS -> {
                     binding.pbLoading.visibility = View.GONE
-                    viewModel.sessionId.observe(viewLifecycleOwner) {
-                        binding.etUsername.text = null
-                        binding.etPassword.text = null
-                        binding.pbLoading.visibility = View.GONE
-                        try {
-                            findNavController().navigate(R.id.movies_nav)
-                        } catch (e: Exception) {
-                        }
-                    }
+                    binding.etUsername.text = null
+                    binding.etPassword.text = null
+                    launchMovieFragment()
+                    viewModel.setWait()
+                }
+                LoadingState.WAIT -> {
+                    viewModel.deleteLoginSession()
+                    binding.pbLoading.visibility = View.GONE
                 }
                 else -> Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun launchMovieFragment() {
+        findNavController().navigate(R.id.movies_nav)
     }
 
     private fun hideKeyboard(activity: Activity) {
