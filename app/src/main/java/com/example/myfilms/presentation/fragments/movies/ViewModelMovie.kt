@@ -31,6 +31,12 @@ class ViewModelMovie(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun syncFavorites(page: Int) {
+        viewModelScope.launch {
+            repository.syncFavorites(page)
+        }
+    }
+
     fun deleteSession() {
         viewModelScope.launch {
             repository.deleteFragmentSession()

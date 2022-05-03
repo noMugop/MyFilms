@@ -51,6 +51,22 @@ class Repository(application: Application) {
         }
     }
 
+    suspend fun syncFavorites(page: Int) {
+        val session = getFragmentSession()
+        withContext(Dispatchers.Default) {
+            try {
+                val response = apiService.getFavorites(session_id = session, page = page)
+                if (response.isSuccessful) {
+                    val result = response.body()?.movies as List<Movie>
+                    result.map {
+                        updateMovie(it.id as Int, true)
+                    }
+                }
+            } catch (e: Exception) {
+            }
+        }
+    }
+
     suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
         val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
         withContext(Dispatchers.Default) {
@@ -154,7 +170,7 @@ class Repository(application: Application) {
     }
 
     suspend fun addOrDeleteFavorite(movieId: Int, favoriteState: Boolean): LoadingState {
-        var loadingState: LoadingState? = null
+        var loadingState = LoadingState.FINISHED
         val session = getFragmentSession()
         val postMovie = PostMovie(media_id = movieId, isFavorite = favoriteState)
         try {
@@ -163,14 +179,12 @@ class Repository(application: Application) {
                 postMovie = postMovie
             )
             updateMovie(postMovie.media_id, postMovie.isFavorite)
-            loadingState = if (response.isSuccessful) {
-                LoadingState.SUCCESS
-            } else {
-                LoadingState.FINISHED
+            if (response.isSuccessful) {
+                loadingState = LoadingState.SUCCESS
             }
         } catch (e: Exception) {
         }
-        return loadingState as LoadingState
+        return loadingState
     }
 
     suspend fun getAccountState(movie: Movie): Movie {

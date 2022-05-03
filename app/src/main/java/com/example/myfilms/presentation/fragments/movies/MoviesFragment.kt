@@ -40,6 +40,7 @@ class MoviesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initAndObserveViewModel()
+        syncFavorites()
         onMovieClickListener()
         onBackPressed()
     }
@@ -64,6 +65,10 @@ class MoviesFragment : Fragment() {
                 else -> throw RuntimeException("Error")
             }
         }
+    }
+
+    private fun syncFavorites() {
+        viewModel.syncFavorites(page = PAGE)
     }
 
     private fun onMovieClickListener() {
