@@ -3,6 +3,7 @@ package com.example.myfilms.data.database
 import androidx.room.*
 import com.example.myfilms.data.models.Movie
 import com.example.myfilms.data.models.MovieUpdate
+import com.example.myfilms.data.models.account.AccountUpdate
 import com.example.myfilms.data.models.account.DbAccountDetails
 
 
@@ -20,7 +21,7 @@ interface MovieDao {
     suspend fun insertMovieList(movies: List<Movie>)
 
     @Update(entity = Movie::class)
-    suspend fun update(movie: MovieUpdate)
+    suspend fun movieUpdate(movie: MovieUpdate)
 
     //users_table
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -28,4 +29,7 @@ interface MovieDao {
 
     @Query("SELECT * FROM users_table WHERE id == :userId")
     suspend fun getUserById(userId: Int): DbAccountDetails
+
+    @Update(entity = DbAccountDetails::class)
+    suspend fun userUpdate(user: AccountUpdate)
 }

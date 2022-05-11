@@ -28,7 +28,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getUser() {
         viewModelScope.launch {
-            var user = repository.getUser()
+            val user = repository.getUser()
             try {
                 if (user.id != null) {
                     _user.value = user

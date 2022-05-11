@@ -7,18 +7,20 @@
     android:background="#CC2196F3">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/ivAvatar"
+        android:id="@+id/iv_avatar"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        app:src="@drawable/empty_avatar" />
+        android:src="@drawable/empty_avatar"/>
 
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivAvatar"
+        android:layout_below="@+id/iv_avatar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:paddingBottom="15dp"

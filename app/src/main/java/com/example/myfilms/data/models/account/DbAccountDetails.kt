@@ -1,6 +1,7 @@
 package com.example.myfilms.data.models.account
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
@@ -14,5 +15,6 @@ data class DbAccountDetails(
     val iso3166: String? = null,
     val name: String? = null,
     val includeAdult: Boolean? = null,
-    val username: String = "User Name",
+    val username: String = "Гость",
+    var avatar_uri: String? = null
 )

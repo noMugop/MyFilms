@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.*
 import com.example.myfilms.data.models.account.AccountDetails
+import com.example.myfilms.data.models.account.AccountUpdate
 import com.example.myfilms.data.models.account.DbAccountDetails
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
@@ -70,8 +71,21 @@ class Repository(application: Application) {
     suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
         val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
         withContext(Dispatchers.Default) {
-            db.update(updateMovie)
+            db.movieUpdate(updateMovie)
         }
+    }
+
+    suspend fun updateAccount(accountId: Int, uri: String): LoadingState {
+        var loadingState = LoadingState.FINISHED
+        val updateAccount = AccountUpdate(id = accountId, avatar_uri = uri)
+        withContext(Dispatchers.Default) {
+            try {
+                db.userUpdate(updateAccount)
+                loadingState = LoadingState.SUCCESS
+            } catch (e: Exception) {
+            }
+        }
+        return loadingState
     }
 
     suspend fun getTrailer(movieId: Int): MovieVideos {

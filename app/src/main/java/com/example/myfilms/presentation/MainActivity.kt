@@ -3,6 +3,7 @@ package com.example.myfilms.presentation
 import android.R.id
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -30,6 +31,7 @@ import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.presentation.fragments.login.LoginFragment
 import com.example.myfilms.presentation.fragments.movies.MoviesFragment
 import com.example.myfilms.presentation.fragments.movies.ViewModelMovie
+import com.example.myfilms.presentation.fragments.settings.SettingsFragment
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
@@ -86,7 +88,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.loginFragment -> {
                     drawerLayout.closeDrawers()
                     viewModel.cleanUser()
-                    userAvatar.setImageResource(0)
+//                    userAvatar.setImageResource(0)
+                    Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
                     bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
                 }
@@ -112,12 +115,12 @@ class MainActivity : AppCompatActivity() {
         toolbar = binding.contentMain.topToolbar
         drawerLayout = binding.drawerMainActivity
         sideBar = binding.sideNavigation
+        val header = sideBar.getHeaderView(0)
+        userName = header.findViewById(R.id.tvName)
+        userAvatar = header.findViewById(R.id.iv_avatar)
     }
 
     private fun observeAccountDetails() {
-        val header = sideBar.getHeaderView(0)
-        userName = header.findViewById(R.id.tvName)
-        userAvatar = header.findViewById(R.id.ivAvatar)
 
         viewModel.user.observe(this) {
             if (!it?.name.isNullOrBlank()) {
@@ -125,8 +128,13 @@ class MainActivity : AppCompatActivity() {
             } else {
                 userName.text = it?.username
             }
-            if (!it?.avatar.isNullOrBlank()) {
+            if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
                 Picasso.get().load(IMG_URL + it?.avatar).into(userAvatar)
+            } else if (!it?.avatar_uri.isNullOrBlank()) {
+                val uri = Uri.parse(it?.avatar_uri)
+                userAvatar.setImageURI(uri)
+            } else {
+                Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
             }
         }
     }
