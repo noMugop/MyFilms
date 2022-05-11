@@ -46,7 +46,8 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        observeAndSaveChanges()
+        observer()
+        buttonListeners()
     }
 
     private fun init() {
@@ -60,7 +61,21 @@ class SettingsFragment : Fragment() {
         binding.btnSave.isEnabled = false
     }
 
-    private fun observeAndSaveChanges() {
+    private fun observer() {
+
+        viewModel.user.observe(viewLifecycleOwner) {
+            if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
+                Picasso.get().load(IMG_URL + it?.avatar).into(binding.ivAvatar)
+            } else if (!it?.avatar_uri.isNullOrBlank()) {
+                val uri = Uri.parse(it?.avatar_uri)
+                binding.ivAvatar.setImageURI(uri)
+            } else {
+                Picasso.get().load(R.drawable.empty_avatar).into(binding.ivAvatar)
+            }
+        }
+    }
+
+    private fun buttonListeners() {
 
         binding.ivEdit.setOnClickListener {
             ImagePicker.with(this)
@@ -99,17 +114,6 @@ class SettingsFragment : Fragment() {
                     }
                     else -> {}
                 }
-            }
-        }
-
-        viewModel.user.observe(viewLifecycleOwner) {
-            if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
-                Picasso.get().load(IMG_URL + it?.avatar).into(binding.ivAvatar)
-            } else if (!it?.avatar_uri.isNullOrBlank()) {
-                val uri = Uri.parse(it?.avatar_uri)
-                binding.ivAvatar.setImageURI(uri)
-            } else {
-                Picasso.get().load(R.drawable.empty_avatar).into(binding.ivAvatar)
             }
         }
     }
