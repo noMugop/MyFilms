@@ -7,4 +7,5 @@
     <include app:graph="@navigation/movies_nav" />
     <include app:graph="@navigation/favorites_nav" />
     <include app:graph="@navigation/login_nav" />
+    <include app:graph="@navigation/settings_nav" />
 </navigation>

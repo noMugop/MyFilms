@@ -40,6 +40,7 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
             _loadingState.value = LoadingState.IS_LOADING
             val session = repository.login(username, password)
             if (session.isNotBlank()) {
+                repository.addUser()
                 _loadingState.value = LoadingState.FINISHED
             } else {
                 _loadingState.value = LoadingState.WAIT

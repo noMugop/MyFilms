@@ -8,10 +8,8 @@ import kotlinx.parcelize.Parcelize
 data class ResultVideos(
 
     @SerializedName("name")
-    @Expose
     val name: String,
 
     @SerializedName("key")
-    @Expose
     val key: String
 )

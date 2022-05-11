@@ -1,7 +1,7 @@
 package com.example.myfilms.data.network
 
 import com.example.myfilms.data.models.*
-import okhttp3.internal.http.hasBody
+import com.example.myfilms.data.models.account.AccountDetails
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -79,6 +79,12 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID
     ): Response<AccountStates>
+
+    @GET("account")
+    suspend fun getAccountDetails(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("session_id") session_id: String = SESSION_ID
+    ): Response<AccountDetails>
 
     companion object {
 

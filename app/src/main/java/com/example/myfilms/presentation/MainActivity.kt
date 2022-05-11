@@ -5,12 +5,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
@@ -23,14 +26,17 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.myfilms.R
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.databinding.ActivityMainBinding
+import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.presentation.fragments.login.LoginFragment
 import com.example.myfilms.presentation.fragments.movies.MoviesFragment
 import com.example.myfilms.presentation.fragments.movies.ViewModelMovie
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
+import com.squareup.picasso.Picasso
 import java.lang.Exception
 
 
@@ -46,6 +52,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var sideBar: NavigationView
+    private lateinit var userName: TextView
+    private lateinit var userAvatar: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,17 +62,20 @@ class MainActivity : AppCompatActivity() {
         init()
         bottomNavInit()
         sideBarInit()
-        setVisibility()
+        setActivity()
+        observeAccountDetails()
     }
 
-    private fun setVisibility() {
+    private fun setActivity() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
                 R.id.moviesFragment -> {
+                    viewModel.getUser()
                     bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.favoritesFragment -> {
+                    viewModel.getUser()
                     bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.VISIBLE
                 }
@@ -73,6 +84,14 @@ class MainActivity : AppCompatActivity() {
                     toolbarLayout.visibility = View.GONE
                 }
                 R.id.loginFragment -> {
+                    drawerLayout.closeDrawers()
+                    viewModel.cleanUser()
+                    userAvatar.setImageResource(0)
+                    bottomNavigation.visibility = View.GONE
+                    toolbarLayout.visibility = View.GONE
+                }
+                R.id.settingsFragment -> {
+                    viewModel.getUser()
                     bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
                 }
@@ -95,6 +114,23 @@ class MainActivity : AppCompatActivity() {
         sideBar = binding.sideNavigation
     }
 
+    private fun observeAccountDetails() {
+        val header = sideBar.getHeaderView(0)
+        userName = header.findViewById(R.id.tvName)
+        userAvatar = header.findViewById(R.id.ivAvatar)
+
+        viewModel.user.observe(this) {
+            if (!it?.name.isNullOrBlank()) {
+                userName.text = it?.name
+            } else {
+                userName.text = it?.username
+            }
+            if (!it?.avatar.isNullOrBlank()) {
+                Picasso.get().load(IMG_URL + it?.avatar).into(userAvatar)
+            }
+        }
+    }
+
     private fun sideBarInit() {
 
         setSupportActionBar(toolbar)
@@ -102,10 +138,9 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.movies_nav,
                 R.id.favorites_nav,
-                R.id.login_nav,
                 R.id.settings,
+                R.id.login_nav,
                 R.id.about,
-                R.id.share,
                 R.id.rate_us
             ), drawerLayout
         )
@@ -134,10 +169,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.settings -> {
-                    Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
-                }
-                R.id.about -> {
-                    Toast.makeText(this, "About", Toast.LENGTH_SHORT).show()
+                    val current = findCurrentFragmentId()
+                    if (current != R.id.settingsFragment) {
+                        navController.popBackStack(current, false)
+                        navController.navigate(R.id.settings_nav)
+                    }
                 }
                 R.id.login_nav -> {
                     this.let {
@@ -154,8 +190,9 @@ class MainActivity : AppCompatActivity() {
                             .show()
                     }
                 }
-                R.id.share -> {
-                    Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show()
+
+                R.id.about -> {
+                    Toast.makeText(this, "About", Toast.LENGTH_SHORT).show()
                 }
                 R.id.rate_us -> {
                     Toast.makeText(this, "Rate us", Toast.LENGTH_SHORT).show()
@@ -206,4 +243,8 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    companion object {
+
+        private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
+    }
 }

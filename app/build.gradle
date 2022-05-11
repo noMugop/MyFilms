@@ -71,9 +71,13 @@ dependencies {
 
     //material (for toolbar)
     implementation 'com.google.android.material:material:1.5.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //room
     implementation "androidx.room:room-runtime:2.4.2"
     implementation "androidx.room:room-ktx:2.4.2"
     kapt "androidx.room:room-compiler:2.4.2"
+
+    //image picker (camera and gallery)
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 }

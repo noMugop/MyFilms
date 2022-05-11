@@ -8,7 +8,6 @@ import kotlinx.parcelize.Parcelize
 data class Session(
 
 //    @SerializedName("success")
-//    @Expose
 //    val success: Boolean,
     @SerializedName("session_id")
     var session_id: String = ""

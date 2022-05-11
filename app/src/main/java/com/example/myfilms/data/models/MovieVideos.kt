@@ -6,10 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class MovieVideos(
 
     @SerializedName("id")
-    @Expose
     val id: Int? = null,
 
     @SerializedName("results")
-    @Expose
     val list: List<ResultVideos>? = null
 )

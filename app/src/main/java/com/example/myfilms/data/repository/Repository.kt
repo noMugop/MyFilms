@@ -3,13 +3,13 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.wifi.aware.DiscoverySession
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.*
+import com.example.myfilms.data.models.account.AccountDetails
+import com.example.myfilms.data.models.account.DbAccountDetails
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
@@ -129,6 +129,15 @@ class Repository(application: Application) {
         return session
     }
 
+    private fun getCurrentUserId(): Int {
+        var userId = 0
+        try {
+            userId = prefSettings.getInt(CURRENT_USER_ID, 0)
+        } catch (e: Exception) {
+        }
+        return userId
+    }
+
     fun checkFragmentSession(): String {
         return getFragmentSession()
     }
@@ -142,14 +151,23 @@ class Repository(application: Application) {
         try {
             apiService.deleteSession(sessionId = Session(session_id = session))
             editor.remove(FRAGMENTS_KEY).commit()
+            deleteCurrentUserId()
         } catch (e: Exception) {
             editor.remove(FRAGMENTS_KEY).commit()
+            deleteCurrentUserId()
         }
     }
 
     fun deleteLoginSession() {
         try {
             editor.remove(LOGIN_KEY).commit()
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun deleteCurrentUserId() {
+        try {
+            editor.remove(CURRENT_USER_ID).commit()
         } catch (e: Exception) {
         }
     }
@@ -198,10 +216,39 @@ class Repository(application: Application) {
         return movie
     }
 
+    suspend fun addUser() {
+        val session = getFragmentSession()
+        withContext(Dispatchers.Default) {
+            try {
+                val response = apiService.getAccountDetails(session_id = session)
+                if (response.isSuccessful) {
+                    val result = response.body() as AccountDetails
+                    val user = DbAccountDetails(
+                        id = result.id,
+                        avatar = result.avatar?.tmdb?.avatarPath,
+                        name = result.name,
+                        username = result.username
+                    )
+                    if (user.username != "User Name") {
+                        db.insertUser(user)
+                        editor.putInt(CURRENT_USER_ID, result.id as Int).commit()
+                    }
+                }
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+    suspend fun getUser(): DbAccountDetails {
+        val userId = getCurrentUserId()
+        return db.getUserById(userId)
+    }
+
     companion object {
 
         const val APP_SETTINGS = "Settings"
         const val FRAGMENTS_KEY = "SESSION_FRAGMENT"
         const val LOGIN_KEY = "SESSION_LOGIN"
+        const val CURRENT_USER_ID = "CURRENT_USER"
     }
 }

@@ -1,13 +1,13 @@
 package com.example.myfilms.data.database
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.account.DbAccountDetails
 
-@Database(entities = [Movie::class], version = 4, exportSchema = false)
+@Database(entities = [Movie::class, DbAccountDetails::class], version = 6, exportSchema = false)
 abstract class MovieDatabase : RoomDatabase() {
 
     companion object {
