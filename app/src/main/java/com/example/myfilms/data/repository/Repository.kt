@@ -101,10 +101,8 @@ class Repository(application: Application) {
                     val response = apiService.createSession(token = responseApprove.body() as Token)
                     if (response.isSuccessful) {
                         session = response.body()?.session_id as String
-                        editor.putString(FRAGMENTS_KEY, session)
-                        editor.commit()
-                        editor.putString(LOGIN_KEY, "Access")
-                        editor.commit()
+                        editor.putString(FRAGMENTS_KEY, session).commit()
+                        editor.putString(LOGIN_KEY, "Access").commit()
                     }
                 }
             }
