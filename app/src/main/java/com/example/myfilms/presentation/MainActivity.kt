@@ -97,10 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun sideBarInit() {
 
-
-
         setSupportActionBar(toolbar)
-
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.movies_nav,
