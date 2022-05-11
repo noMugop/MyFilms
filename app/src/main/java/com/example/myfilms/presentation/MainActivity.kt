@@ -97,6 +97,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun sideBarInit() {
 
+
+
         setSupportActionBar(toolbar)
 
         appBarConfiguration = AppBarConfiguration(

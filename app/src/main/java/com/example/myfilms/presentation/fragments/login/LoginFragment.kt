@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
@@ -48,11 +49,16 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.setSuccess()
+        init()
         onLoginClick()
         onGuestClick()
         observeLoadingState()
         onBackPressed()
+    }
+
+    private fun init() {
+        viewModel.setSuccess()
+        binding.ivLogo.setImageResource(R.drawable.movies_logo)
     }
 
     private fun initViewModel() {

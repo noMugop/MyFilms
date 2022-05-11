@@ -176,8 +176,8 @@ class Repository(application: Application) {
                 session_id = session,
                 postMovie = postMovie
             )
-            updateMovie(postMovie.media_id, postMovie.isFavorite)
             if (response.isSuccessful) {
+                updateMovie(postMovie.media_id, postMovie.isFavorite)
                 loadingState = LoadingState.SUCCESS
             }
         } catch (e: Exception) {
