@@ -129,7 +129,7 @@ class SettingsFragment : Fragment() {
                     .show()
             }
             else -> {
-                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Отмена", Toast.LENGTH_SHORT).show()
             }
         }
     }
