@@ -45,11 +45,11 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViewModel()
+        init()
         observeAndSaveChanges()
     }
 
-    private fun initViewModel() {
+    private fun init() {
 
         viewModel = ViewModelProvider(
             this,
