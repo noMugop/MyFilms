@@ -23,7 +23,5 @@ data class AccountDetails(
     val includeAdult: Boolean? = null,
 
     @SerializedName("username")
-    val username: String = "Гость",
-
-    var avatar_uri: String? = null
+    val username: String = "Гость"
 )

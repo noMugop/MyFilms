@@ -87,6 +87,8 @@ class SettingsFragment : Fragment() {
 
         binding.btnSave.setOnClickListener {
             viewModel.isLoading()
+            binding.btnSave.isEnabled = false
+            binding.btnSave.setBackgroundColor(Color.parseColor("#1A424242"))
             viewModel.loadingState.observe(viewLifecycleOwner) {
                 when (it) {
                     LoadingState.IS_LOADING -> {

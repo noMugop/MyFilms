@@ -88,13 +88,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.loginFragment -> {
                     drawerLayout.closeDrawers()
                     viewModel.cleanUser()
-//                    userAvatar.setImageResource(0)
-                    Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
+                    userAvatar.setImageResource(R.drawable.empty_avatar)
+//                    Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
                     bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
                 }
                 R.id.settingsFragment -> {
-                    viewModel.getUser()
                     bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
                 }
