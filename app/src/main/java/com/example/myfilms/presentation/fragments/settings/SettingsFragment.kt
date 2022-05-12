@@ -1,6 +1,7 @@
 package com.example.myfilms.presentation.fragments.settings
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -10,6 +11,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -160,12 +162,35 @@ class SettingsFragment : Fragment() {
                 when (it) {
                     LoadingState.IS_LOADING -> {
                         binding.progressBar.visibility = View.VISIBLE
+                        hideKeyboard(requireActivity())
                         if (currentUri != null) {
                             val stringUri = currentUri.toString()
-                            viewModel.updateUser(stringUri)
-                            currentUri = null
+                            if (!binding.etName.text.isNullOrBlank()
+                                || !binding.etSurname.text.isNullOrBlank()
+                            ) {
+                                name =
+                                    binding.etName.text.toString() + " " + binding.etSurname.text.toString()
+                                viewModel.updateUser(name, stringUri)
+                                clearData()
+                            } else {
+                                if (!viewModel.user.value?.name.isNullOrBlank()) {
+                                    name = viewModel.user.value?.name as String
+                                    viewModel.updateUser(name, stringUri)
+                                } else {
+                                    viewModel.updateUser(name, stringUri)
+                                }
+                            }
                         } else {
-                            binding.progressBar.visibility = View.GONE
+                            if (!binding.etName.text.isNullOrBlank()
+                                || !binding.etSurname.text.isNullOrBlank()
+                            ) {
+                                name =
+                                    binding.etName.text.toString() + " " + binding.etSurname.text.toString()
+                                viewModel.updateUser(name, "")
+                                clearData()
+                            } else {
+                                binding.progressBar.visibility = View.GONE
+                            }
                         }
                     }
                     LoadingState.FINISHED -> {
@@ -174,8 +199,7 @@ class SettingsFragment : Fragment() {
                             requireContext(),
                             "Требуется авторизация",
                             Toast.LENGTH_SHORT
-                        )
-                            .show()
+                        ).show()
                     }
                     LoadingState.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
@@ -189,6 +213,21 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun clearData() {
+        binding.etName.text = null
+        binding.etSurname.text = null
+        currentUri = null
+    }
+
+    private fun hideKeyboard(activity: Activity) {
+        val inputMethodManager =
+            activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(
+            activity.currentFocus?.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -220,5 +259,6 @@ class SettingsFragment : Fragment() {
 
         private var currentUri: Uri? = null
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
+        private var name = ""
     }
 }

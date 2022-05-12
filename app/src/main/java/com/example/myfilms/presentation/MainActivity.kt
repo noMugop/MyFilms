@@ -178,7 +178,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.settings -> {
                     val current = findCurrentFragmentId()
                     if (current != R.id.settingsFragment) {
-                        navController.popBackStack(current, false)
                         navController.navigate(R.id.settings_nav)
                     }
                 }
@@ -189,8 +188,7 @@ class MainActivity : AppCompatActivity() {
                             .setMessage("Выйти?")
                             .setPositiveButton("Да") { dialogInterface, i ->
                                 viewModel.deleteSession()
-                                navController.popBackStack(R.id.loginFragment, false)
-                                navController.navigate(R.id.login_nav)
+                                navController.popBackStack()
                             }
                             .setNegativeButton("Нет") { dialogInterface, i -> }
                             .create()

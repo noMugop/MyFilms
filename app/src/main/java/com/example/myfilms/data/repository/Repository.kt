@@ -75,9 +75,9 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun updateAccount(accountId: Int, uri: String): LoadingState {
+    suspend fun updateAccount(accountId: Int, name: String, uri: String): LoadingState {
         var loadingState = LoadingState.FINISHED
-        val updateAccount = AccountUpdate(id = accountId, avatar_uri = uri)
+        val updateAccount = AccountUpdate(id = accountId, name = name, avatar_uri = uri)
         withContext(Dispatchers.Default) {
             try {
                 db.userUpdate(updateAccount)

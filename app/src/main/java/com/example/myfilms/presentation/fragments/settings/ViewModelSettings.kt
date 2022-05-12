@@ -40,10 +40,11 @@ class ViewModelSettings(application: Application) : AndroidViewModel(application
         _loadingState.value = LoadingState.IS_LOADING
     }
 
-    fun updateUser(stringUri: String) {
+    fun updateUser(name: String, stringUri: String) {
         viewModelScope.launch {
             if (_user.value?.id != null) {
-                _loadingState.value = repository.updateAccount(_user.value?.id as Int, stringUri)
+                _loadingState.value = LoadingState.WAIT
+                _loadingState.value = repository.updateAccount(_user.value?.id as Int, name, stringUri)
             } else {
                 _loadingState.value = LoadingState.FINISHED
             }
