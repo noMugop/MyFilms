@@ -5,11 +5,15 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfilms.databinding.FragmentMoviesBinding
@@ -47,7 +51,7 @@ class SettingsFragment : Fragment() {
 
         init()
         observer()
-        buttonListeners()
+        listeners()
     }
 
     private fun init() {
@@ -75,7 +79,63 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun buttonListeners() {
+    private fun listeners() {
+
+        binding.etName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                if (!p0.isNullOrBlank()) {
+                    binding.btnSave.isEnabled = true
+                    binding.btnSave.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.dark_blue
+                        )
+                    )
+                } else {
+                    binding.btnSave.isEnabled = false
+                    binding.btnSave.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.grey
+                        )
+                    )
+                }
+            }
+        })
+
+        binding.etSurname.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                if (!p0.isNullOrBlank()) {
+                    binding.btnSave.isEnabled = true
+                    binding.btnSave.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.dark_blue
+                        )
+                    )
+                } else {
+                    binding.btnSave.isEnabled = false
+                    binding.btnSave.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.grey
+                        )
+                    )
+                }
+            }
+        })
 
         binding.ivEdit.setOnClickListener {
             ImagePicker.with(this)
@@ -88,7 +148,13 @@ class SettingsFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             viewModel.isLoading()
             binding.btnSave.isEnabled = false
-            binding.btnSave.setBackgroundColor(Color.parseColor("#1A424242"))
+//            binding.btnSave.setBackgroundColor(Color.parseColor("#1A424242"))
+            binding.btnSave.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.grey
+                )
+            )
             viewModel.loadingState.observe(viewLifecycleOwner) {
                 when (it) {
                     LoadingState.IS_LOADING -> {
@@ -102,17 +168,21 @@ class SettingsFragment : Fragment() {
                         }
                     }
                     LoadingState.FINISHED -> {
+                        binding.progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
                             "Требуется авторизация",
                             Toast.LENGTH_SHORT
                         )
                             .show()
-                        binding.progressBar.visibility = View.GONE
                     }
                     LoadingState.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        findNavController().popBackStack()
+                        Toast.makeText(
+                            requireContext(),
+                            "Изменения сохранены",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     else -> {}
                 }
@@ -128,7 +198,12 @@ class SettingsFragment : Fragment() {
                 currentUri = data?.data
                 binding.ivAvatar.setImageURI(currentUri)
                 binding.btnSave.isEnabled = true
-                binding.btnSave.setBackgroundColor(Color.parseColor("#215CF3"))
+                binding.btnSave.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.dark_blue
+                    )
+                )
             }
             ImagePicker.RESULT_ERROR -> {
                 Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
