@@ -99,7 +99,7 @@ class SettingsFragment : Fragment() {
                             R.color.dark_blue
                         )
                     )
-                } else {
+                } else if (p0.isNullOrBlank() && binding.etSurname.text.isNullOrBlank()) {
                     binding.btnSave.isEnabled = false
                     binding.btnSave.setBackgroundColor(
                         ContextCompat.getColor(
@@ -128,7 +128,7 @@ class SettingsFragment : Fragment() {
                             R.color.dark_blue
                         )
                     )
-                } else {
+                } else if (p0.isNullOrBlank() && binding.etName.text.isNullOrBlank()) {
                     binding.btnSave.isEnabled = false
                     binding.btnSave.setBackgroundColor(
                         ContextCompat.getColor(
