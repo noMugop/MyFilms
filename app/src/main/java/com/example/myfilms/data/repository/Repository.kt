@@ -4,10 +4,16 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.myfilms.data.database.MovieDatabase
-import com.example.myfilms.data.models.*
 import com.example.myfilms.data.models.account.AccountDetails
 import com.example.myfilms.data.models.account.AccountUpdate
 import com.example.myfilms.data.models.account.DbAccountDetails
+import com.example.myfilms.data.models.authorization.LoginApprove
+import com.example.myfilms.data.models.authorization.Session
+import com.example.myfilms.data.models.authorization.Token
+import com.example.myfilms.data.models.movie.Movie
+import com.example.myfilms.data.models.movie.MovieUpdate
+import com.example.myfilms.data.models.movie.MovieVideos
+import com.example.myfilms.data.models.movie.PostMovie
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.presentation.Utils.LoadingState
 import kotlinx.coroutines.Dispatchers
@@ -237,15 +243,20 @@ class Repository(application: Application) {
                 val response = apiService.getAccountDetails(session_id = session)
                 if (response.isSuccessful) {
                     val result = response.body() as AccountDetails
+                    println("RESULT ID ${result.id}")
                     val user = DbAccountDetails(
                         id = result.id,
                         avatar = result.avatar?.tmdb?.avatarPath,
                         name = result.name,
                         username = result.username
                     )
-                    if (user.username != "User Name") {
+                    val checkUser = db.getUserById(user.id as Int)
+                    println("CHECK USER $checkUser")
+                    if (checkUser == null) {
                         db.insertUser(user)
-                        editor.putInt(CURRENT_USER_ID, result.id as Int).commit()
+                        editor.putInt(CURRENT_USER_ID, user.id).commit()
+                    } else {
+                        editor.putInt(CURRENT_USER_ID, user.id).commit()
                     }
                 }
             } catch (e: Exception) {

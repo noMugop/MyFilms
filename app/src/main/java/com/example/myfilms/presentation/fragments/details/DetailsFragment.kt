@@ -1,10 +1,6 @@
 package com.example.myfilms.presentation.fragments.details
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,13 +11,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfilms.R
-import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.databinding.FragmentDetailsBinding
 import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.login.LoginFragment
 import com.squareup.picasso.Picasso
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.movie.Movie
 
 class DetailsFragment : Fragment() {
 

@@ -1,8 +1,8 @@
 package com.example.myfilms.data.database
 
 import androidx.room.*
-import com.example.myfilms.data.models.Movie
-import com.example.myfilms.data.models.MovieUpdate
+import com.example.myfilms.data.models.movie.Movie
+import com.example.myfilms.data.models.movie.MovieUpdate
 import com.example.myfilms.data.models.account.AccountUpdate
 import com.example.myfilms.data.models.account.DbAccountDetails
 

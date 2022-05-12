@@ -1,6 +1,5 @@
-package com.example.myfilms.data.models
+package com.example.myfilms.data.models.movie
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class Result(

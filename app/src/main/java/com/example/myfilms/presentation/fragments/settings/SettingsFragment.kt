@@ -30,6 +30,7 @@ import com.example.myfilms.R
 import com.example.myfilms.presentation.MainActivity
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.squareup.picasso.Picasso
+import java.lang.Exception
 
 class SettingsFragment : Fragment() {
 
@@ -65,6 +66,11 @@ class SettingsFragment : Fragment() {
 
         viewModel.getUser()
         binding.btnSave.isEnabled = false
+        try {
+            name = viewModel.user.value?.name as String
+            currentUri = Uri.parse(viewModel.user.value?.avatar_uri)
+        } catch (e: Exception) {
+        }
     }
 
     private fun observer() {
@@ -174,7 +180,6 @@ class SettingsFragment : Fragment() {
                                 clearData()
                             } else {
                                 if (!viewModel.user.value?.name.isNullOrBlank()) {
-                                    name = viewModel.user.value?.name as String
                                     viewModel.updateUser(name, stringUri)
                                 } else {
                                     viewModel.updateUser(name, stringUri)
@@ -186,7 +191,7 @@ class SettingsFragment : Fragment() {
                             ) {
                                 name =
                                     binding.etName.text.toString() + " " + binding.etSurname.text.toString()
-                                viewModel.updateUser(name, "")
+                                viewModel.updateUser(name, currentUri.toString())
                                 clearData()
                             } else {
                                 binding.progressBar.visibility = View.GONE
@@ -218,7 +223,6 @@ class SettingsFragment : Fragment() {
     private fun clearData() {
         binding.etName.text = null
         binding.etSurname.text = null
-        currentUri = null
     }
 
     private fun hideKeyboard(activity: Activity) {
@@ -257,8 +261,8 @@ class SettingsFragment : Fragment() {
 
     companion object {
 
-        private var currentUri: Uri? = null
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
+        private var currentUri: Uri? = null
         private var name = ""
     }
 }

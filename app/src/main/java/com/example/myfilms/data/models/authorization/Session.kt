@@ -1,4 +1,4 @@
-package com.example.myfilms.data.models
+package com.example.myfilms.data.models.authorization
 
 import android.os.Parcelable
 import com.google.gson.annotations.Expose

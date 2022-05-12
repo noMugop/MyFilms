@@ -4,8 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.myfilms.databinding.ItemMovieBinding
-import com.example.myfilms.data.models.Movie
-import com.example.myfilms.presentation.fragments.details.DetailsFragment
+import com.example.myfilms.data.models.movie.Movie
 import com.squareup.picasso.Picasso
 
 class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {

@@ -1,7 +1,10 @@
 package com.example.myfilms.data.network
 
-import com.example.myfilms.data.models.*
 import com.example.myfilms.data.models.account.AccountDetails
+import com.example.myfilms.data.models.authorization.LoginApprove
+import com.example.myfilms.data.models.authorization.Session
+import com.example.myfilms.data.models.authorization.Token
+import com.example.myfilms.data.models.movie.*
 import retrofit2.Response
 import retrofit2.http.*
 

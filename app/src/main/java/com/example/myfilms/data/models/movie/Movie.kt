@@ -1,4 +1,4 @@
-package com.example.myfilms.data.models
+package com.example.myfilms.data.models.movie
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore

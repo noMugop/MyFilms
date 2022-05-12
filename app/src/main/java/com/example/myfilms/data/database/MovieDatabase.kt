@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.models.account.DbAccountDetails
 
 @Database(entities = [Movie::class, DbAccountDetails::class], version = 7, exportSchema = false)

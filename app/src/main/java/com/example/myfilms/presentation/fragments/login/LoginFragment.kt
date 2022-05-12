@@ -8,13 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
-import com.example.myfilms.data.models.LoginApprove
 import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.presentation.Utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory

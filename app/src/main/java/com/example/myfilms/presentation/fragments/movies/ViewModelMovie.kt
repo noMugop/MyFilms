@@ -2,7 +2,7 @@ package com.example.myfilms.presentation.fragments.movies
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.myfilms.data.models.Movie
+import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
 import kotlinx.coroutines.launch

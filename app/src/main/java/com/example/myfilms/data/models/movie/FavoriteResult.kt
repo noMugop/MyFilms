@@ -1,4 +1,4 @@
-package com.example.myfilms.data.models
+package com.example.myfilms.data.models.movie
 
 data class FavoriteResult(
     val success: Boolean,
