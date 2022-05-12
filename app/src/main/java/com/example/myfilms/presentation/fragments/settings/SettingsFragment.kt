@@ -66,10 +66,8 @@ class SettingsFragment : Fragment() {
 
         viewModel.getUser()
         binding.btnSave.isEnabled = false
-        try {
+        if (!viewModel.user.value?.name.isNullOrBlank()) {
             name = viewModel.user.value?.name as String
-            currentUri = Uri.parse(viewModel.user.value?.avatar_uri)
-        } catch (e: Exception) {
         }
     }
 
@@ -170,19 +168,18 @@ class SettingsFragment : Fragment() {
                         binding.progressBar.visibility = View.VISIBLE
                         hideKeyboard(requireActivity())
                         if (currentUri != null) {
-                            val stringUri = currentUri.toString()
                             if (!binding.etName.text.isNullOrBlank()
                                 || !binding.etSurname.text.isNullOrBlank()
                             ) {
                                 name =
                                     binding.etName.text.toString() + " " + binding.etSurname.text.toString()
-                                viewModel.updateUser(name, stringUri)
+                                viewModel.updateUser(name, currentUri.toString())
                                 clearData()
                             } else {
                                 if (!viewModel.user.value?.name.isNullOrBlank()) {
-                                    viewModel.updateUser(name, stringUri)
+                                    viewModel.updateUser(name, currentUri.toString())
                                 } else {
-                                    viewModel.updateUser(name, stringUri)
+                                    viewModel.updateUser(name, currentUri.toString())
                                 }
                             }
                         } else {
@@ -191,6 +188,9 @@ class SettingsFragment : Fragment() {
                             ) {
                                 name =
                                     binding.etName.text.toString() + " " + binding.etSurname.text.toString()
+                                if (!viewModel.user.value?.avatar_uri.isNullOrBlank()) {
+                                    currentUri = Uri.parse(viewModel.user.value?.avatar_uri)
+                                }
                                 viewModel.updateUser(name, currentUri.toString())
                                 clearData()
                             } else {
