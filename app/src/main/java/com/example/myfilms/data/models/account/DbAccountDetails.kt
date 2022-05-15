@@ -13,7 +13,7 @@ data class DbAccountDetails(
     val avatar: String? = null,
     val iso639: String? = null,
     val iso3166: String? = null,
-    val name: String? = null,
+    var name: String? = null,
     val includeAdult: Boolean? = null,
     val username: String = "Гость",
     var avatar_uri: String? = null

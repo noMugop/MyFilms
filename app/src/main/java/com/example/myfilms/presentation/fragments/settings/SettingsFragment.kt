@@ -66,9 +66,6 @@ class SettingsFragment : Fragment() {
 
         viewModel.getUser()
         binding.btnSave.isEnabled = false
-        if (!viewModel.user.value?.name.isNullOrBlank()) {
-            name = viewModel.user.value?.name as String
-        }
     }
 
     private fun observer() {
@@ -162,40 +159,24 @@ class SettingsFragment : Fragment() {
                     R.color.grey
                 )
             )
+
             viewModel.loadingState.observe(viewLifecycleOwner) {
                 when (it) {
                     LoadingState.IS_LOADING -> {
                         binding.progressBar.visibility = View.VISIBLE
                         hideKeyboard(requireActivity())
-                        if (currentUri != null) {
-                            if (!binding.etName.text.isNullOrBlank()
-                                || !binding.etSurname.text.isNullOrBlank()
-                            ) {
-                                name =
-                                    binding.etName.text.toString() + " " + binding.etSurname.text.toString()
-                                viewModel.updateUser(name, currentUri.toString())
-                                clearData()
-                            } else {
-                                if (!viewModel.user.value?.name.isNullOrBlank()) {
-                                    viewModel.updateUser(name, currentUri.toString())
-                                } else {
-                                    viewModel.updateUser(name, currentUri.toString())
-                                }
-                            }
+                        if (!binding.etName.text.isNullOrBlank()
+                            || !binding.etSurname.text.isNullOrBlank()
+                        ) {
+                            binding.progressBar.visibility = View.GONE
+                            viewModel.updateName(
+                                binding.etName.text.toString() + " " + binding.etSurname.text.toString()
+                            )
+                            viewModel.updateUser()
+                            clearData()
                         } else {
-                            if (!binding.etName.text.isNullOrBlank()
-                                || !binding.etSurname.text.isNullOrBlank()
-                            ) {
-                                name =
-                                    binding.etName.text.toString() + " " + binding.etSurname.text.toString()
-                                if (!viewModel.user.value?.avatar_uri.isNullOrBlank()) {
-                                    currentUri = Uri.parse(viewModel.user.value?.avatar_uri)
-                                }
-                                viewModel.updateUser(name, currentUri.toString())
-                                clearData()
-                            } else {
-                                binding.progressBar.visibility = View.GONE
-                            }
+                            binding.progressBar.visibility = View.GONE
+                            viewModel.updateUser()
                         }
                     }
                     LoadingState.FINISHED -> {
@@ -239,8 +220,9 @@ class SettingsFragment : Fragment() {
 
         when (resultCode) {
             Activity.RESULT_OK -> {
-                currentUri = data?.data
+                val currentUri = data?.data
                 binding.ivAvatar.setImageURI(currentUri)
+                viewModel.updateUri(currentUri.toString())
                 binding.btnSave.isEnabled = true
                 binding.btnSave.setBackgroundColor(
                     ContextCompat.getColor(
@@ -252,9 +234,7 @@ class SettingsFragment : Fragment() {
             ImagePicker.RESULT_ERROR -> {
                 Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
                     .show()
-            }
-            else -> {
-                Toast.makeText(requireContext(), "Отмена", Toast.LENGTH_SHORT).show()
+            } else -> {
             }
         }
     }
@@ -262,7 +242,5 @@ class SettingsFragment : Fragment() {
     companion object {
 
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
-        private var currentUri: Uri? = null
-        private var name = ""
     }
 }
