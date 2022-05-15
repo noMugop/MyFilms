@@ -161,18 +161,15 @@ class SettingsFragment : Fragment() {
         })
 
         binding.ivEdit.setOnClickListener {
-            //создать массив разрешений, который нам нужны
+
             val permissions = arrayOf(
                 Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
 
-            //проверить есть ли у нас эти разрешения, checkPermissions вернет false, если нет какого-то из разрешений
             if (!checkPermissions(requireContext(), permissions)) {
-                //если нет какого то разрешения, то в requestMultiplePermissions можно вызвать Toast о том, что требуется разрешение
                 requestMultiplePermissions.launch(permissions)
             } else {
-                //если же все разрешения есть, то просто запустить выбор картинки
                 launchIntent()
             }
         }
@@ -197,14 +194,33 @@ class SettingsFragment : Fragment() {
     private val requestMultiplePermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
 
-            permissions.map {
-                println("RESULTS ${it.key} = ${it.value}")
+            val cameraPerm = "android.permission.CAMERA"
+            val galleryPerm = "android.permission.READ_EXTERNAL_STORAGE"
+            var camText = ""
+            var galText = ""
+            var comma = ","
+
+            permissions.forEach {
+                if (it.key == cameraPerm && !it.value) {
+                    camText = " камера "
+                } else if (it.key == galleryPerm && !it.value) {
+                    galText = " галерея "
+                } else {
+                    comma = ""
+                }
             }
-//            val granted = permissions.all {
-//                it.value == true
-//            }
-            Toast.makeText(requireContext(), "Нужно разрешение", Toast.LENGTH_SHORT).show()
+
+            if (camText.isNotBlank() || galText.isNotBlank()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Требуется разрешние$camText$comma$galText",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                launchIntent()
+            }
         }
+
 
     private fun launchIntent() {
         ImagePicker.with(this)
@@ -216,7 +232,6 @@ class SettingsFragment : Fragment() {
             }
     }
 
-    //вместо onActivityResult()
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             val resultCode = result.resultCode
