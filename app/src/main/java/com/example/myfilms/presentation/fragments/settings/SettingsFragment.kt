@@ -1,9 +1,9 @@
 package com.example.myfilms.presentation.fragments.settings
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -15,23 +15,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.myfilms.databinding.FragmentMoviesBinding
-import com.example.myfilms.databinding.FragmentSettingsBinding
-import com.example.myfilms.presentation.Utils.LoadingState
-import com.example.myfilms.presentation.fragments.movies.ViewModelMovie
-import java.lang.RuntimeException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
-import com.example.myfilms.presentation.MainActivity
+import com.example.myfilms.databinding.FragmentSettingsBinding
+import com.example.myfilms.presentation.Utils.LoadingState
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.squareup.picasso.Picasso
-import java.lang.Exception
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 
 class SettingsFragment : Fragment() {
 
@@ -133,18 +130,12 @@ class SettingsFragment : Fragment() {
                 if (!p0.isNullOrBlank()) {
                     binding.btnSave.isEnabled = true
                     binding.btnSave.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.dark_blue
-                        )
+                        ContextCompat.getColor(requireContext(), R.color.dark_blue)
                     )
                 } else if (p0.isNullOrBlank() && binding.etSurname.text.isNullOrBlank()) {
                     binding.btnSave.isEnabled = false
                     binding.btnSave.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.grey
-                        )
+                        ContextCompat.getColor(requireContext(), R.color.grey)
                     )
                 }
             }
@@ -158,31 +149,32 @@ class SettingsFragment : Fragment() {
                 if (!p0.isNullOrBlank()) {
                     binding.btnSave.isEnabled = true
                     binding.btnSave.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.dark_blue
-                        )
+                        ContextCompat.getColor(requireContext(), R.color.dark_blue)
                     )
                 } else if (p0.isNullOrBlank() && binding.etName.text.isNullOrBlank()) {
                     binding.btnSave.isEnabled = false
                     binding.btnSave.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.grey
-                        )
+                        ContextCompat.getColor(requireContext(), R.color.grey)
                     )
                 }
             }
         })
 
         binding.ivEdit.setOnClickListener {
-            ImagePicker.with(this)
-                .crop()
-                .compress(1024)
-                .maxResultSize(1080, 1080)
-                .createIntent { intent ->
-                    startForProfileImageResult.launch(intent)
-                }
+            //создать массив разрешений, который нам нужны
+            val permissions = arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+
+            //проверить есть ли у нас эти разрешения, checkPermissions вернет false, если нет какого-то из разрешений
+            if (!checkPermissions(requireContext(), permissions)) {
+                //если нет какого то разрешения, то в requestMultiplePermissions можно вызвать Toast о том, что требуется разрешение
+                requestMultiplePermissions.launch(permissions)
+            } else {
+                //если же все разрешения есть, то просто запустить выбор картинки
+                launchIntent()
+            }
         }
 
         binding.btnSave.setOnClickListener {
@@ -190,29 +182,41 @@ class SettingsFragment : Fragment() {
             binding.btnSave.isEnabled = false
 //            binding.btnSave.setBackgroundColor(Color.parseColor("#1A424242"))
             binding.btnSave.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.grey
-                )
+                ContextCompat.getColor(requireContext(), R.color.grey)
             )
         }
     }
 
-    private fun clearData() {
-        binding.etName.text = null
-        binding.etSurname.text = null
+    private fun checkPermissions(context: Context, permissions: Array<String>): Boolean {
+
+        return permissions.all {
+            ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
-    private fun hideKeyboard(activity: Activity) {
-        val inputMethodManager =
-            activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(
-            activity.currentFocus?.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
-        )
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+
+            permissions.map {
+                println("RESULTS ${it.key} = ${it.value}")
+            }
+//            val granted = permissions.all {
+//                it.value == true
+//            }
+            Toast.makeText(requireContext(), "Нужно разрешение", Toast.LENGTH_SHORT).show()
+        }
+
+    private fun launchIntent() {
+        ImagePicker.with(this)
+            .crop()
+            .compress(1024)
+            .maxResultSize(1080, 1080)
+            .createIntent { intent ->
+                startForProfileImageResult.launch(intent)
+            }
     }
 
-    //вместо onActivityResult(), т к он deprecated
+    //вместо onActivityResult()
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             val resultCode = result.resultCode
@@ -240,30 +244,19 @@ class SettingsFragment : Fragment() {
             }
         }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        when (resultCode) {
-//            Activity.RESULT_OK -> {
-//                val currentUri = data?.data
-//                binding.ivAvatar.setImageURI(currentUri)
-//                viewModel.updateUri(currentUri.toString())
-//                binding.btnSave.isEnabled = true
-//                binding.btnSave.setBackgroundColor(
-//                    ContextCompat.getColor(
-//                        requireContext(),
-//                        R.color.dark_blue
-//                    )
-//                )
-//            }
-//            ImagePicker.RESULT_ERROR -> {
-//                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//            else -> {
-//            }
-//        }
-//    }
+    private fun clearData() {
+        binding.etName.text = null
+        binding.etSurname.text = null
+    }
+
+    private fun hideKeyboard(activity: Activity) {
+        val inputMethodManager =
+            activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(
+            activity.currentFocus?.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
+    }
 
     companion object {
 

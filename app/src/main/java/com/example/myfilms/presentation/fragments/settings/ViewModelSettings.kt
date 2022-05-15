@@ -1,6 +1,9 @@
 package com.example.myfilms.presentation.fragments.settings
 
 import android.app.Application
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +11,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.myfilms.data.models.account.DbAccountDetails
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.Utils.LoadingState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class ViewModelSettings(application: Application) : AndroidViewModel(application) {
@@ -58,7 +64,8 @@ class ViewModelSettings(application: Application) : AndroidViewModel(application
                 _loadingState.value = repository.updateAccount(
                     _user.value?.id as Int,
                     _user.value?.name as String,
-                    _user.value?.avatar_uri as String)
+                    _user.value?.avatar_uri as String
+                )
             } else {
                 _loadingState.value = LoadingState.FINISHED
             }
