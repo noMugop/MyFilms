@@ -44,8 +44,12 @@ class ViewModelSettings(application: Application) : AndroidViewModel(application
         _user.value?.name = name
     }
 
-    fun isLoading() {
+    fun isLoadingState() {
         _loadingState.value = LoadingState.IS_LOADING
+    }
+
+    fun waitState() {
+        _loadingState.value = LoadingState.WAIT
     }
 
     fun updateUser() {

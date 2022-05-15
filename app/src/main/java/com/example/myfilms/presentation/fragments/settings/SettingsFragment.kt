@@ -80,6 +80,46 @@ class SettingsFragment : Fragment() {
                 Picasso.get().load(R.drawable.empty_avatar).into(binding.ivAvatar)
             }
         }
+
+        viewModel.loadingState.observe(viewLifecycleOwner) {
+            when (it) {
+                LoadingState.IS_LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    hideKeyboard(requireActivity())
+                    if (!binding.etName.text.isNullOrBlank()
+                        || !binding.etSurname.text.isNullOrBlank()
+                    ) {
+                        binding.progressBar.visibility = View.GONE
+                        viewModel.updateName(
+                            binding.etName.text.toString() + " "
+                                    + binding.etSurname.text.toString()
+                        )
+                        viewModel.updateUser()
+                        clearData()
+                    } else {
+                        binding.progressBar.visibility = View.GONE
+                        viewModel.updateUser()
+                    }
+                }
+                LoadingState.FINISHED -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Требуется авторизация", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                LoadingState.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Изменения сохранены", Toast.LENGTH_SHORT
+                    ).show()
+                    findNavController().popBackStack()
+                    viewModel.waitState()
+                }
+                else -> {}
+            }
+        }
     }
 
     private fun listeners() {
@@ -143,7 +183,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.btnSave.setOnClickListener {
-            viewModel.isLoading()
+            viewModel.isLoadingState()
             binding.btnSave.isEnabled = false
 //            binding.btnSave.setBackgroundColor(Color.parseColor("#1A424242"))
             binding.btnSave.setBackgroundColor(
@@ -152,41 +192,6 @@ class SettingsFragment : Fragment() {
                     R.color.grey
                 )
             )
-
-            viewModel.loadingState.observe(viewLifecycleOwner) {
-                when (it) {
-                    LoadingState.IS_LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        hideKeyboard(requireActivity())
-                        if (!binding.etName.text.isNullOrBlank()
-                            || !binding.etSurname.text.isNullOrBlank()
-                        ) {
-                            binding.progressBar.visibility = View.GONE
-                            viewModel.updateName(
-                                binding.etName.text.toString() + " "
-                                        + binding.etSurname.text.toString()
-                            )
-                            viewModel.updateUser()
-                            clearData()
-                        } else {
-                            binding.progressBar.visibility = View.GONE
-                            viewModel.updateUser()
-                        }
-                    }
-                    LoadingState.FINISHED -> {
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(),
-                            "Требуется авторизация", Toast.LENGTH_SHORT).show()
-                    }
-                    LoadingState.SUCCESS -> {
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(),
-                            "Изменения сохранены", Toast.LENGTH_SHORT).show()
-                        findNavController().popBackStack()
-                    }
-                    else -> {}
-                }
-            }
         }
     }
 
@@ -223,7 +228,8 @@ class SettingsFragment : Fragment() {
             ImagePicker.RESULT_ERROR -> {
                 Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
                     .show()
-            } else -> {
+            }
+            else -> {
             }
         }
     }
