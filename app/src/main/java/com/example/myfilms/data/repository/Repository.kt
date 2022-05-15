@@ -65,7 +65,7 @@ class Repository(application: Application) {
                 val response = apiService.getFavorites(session_id = session, page = page)
                 if (response.isSuccessful) {
                     val result = response.body()?.movies as List<Movie>
-                    result.map {
+                    result.forEach {
                         updateMovie(it.id as Int, true)
                     }
                 }
