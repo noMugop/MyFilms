@@ -189,37 +189,6 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private val requestMultiplePermissions =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-
-            val cameraPerm = "android.permission.CAMERA"
-            val galleryPerm = "android.permission.READ_EXTERNAL_STORAGE"
-            var camText = ""
-            var galText = ""
-            var comma = ","
-
-            permissions.forEach {
-                if (it.key == cameraPerm && !it.value) {
-                    camText = " камера "
-                } else if (it.key == galleryPerm && !it.value) {
-                    galText = " галерея "
-                } else {
-                    comma = ""
-                }
-            }
-
-            if (camText.isNotBlank() || galText.isNotBlank()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Требуется разрешние$camText$comma$galText",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                launchIntent()
-            }
-        }
-
-
     private fun launchIntent() {
         ImagePicker.with(this)
             .crop()
@@ -254,6 +223,36 @@ class SettingsFragment : Fragment() {
                 }
                 else -> {
                 }
+            }
+        }
+
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+
+            val cameraPerm = "android.permission.CAMERA"
+            val galleryPerm = "android.permission.READ_EXTERNAL_STORAGE"
+            var camText = ""
+            var galText = ""
+            var comma = ","
+
+            permissions.forEach {
+                if (it.key == cameraPerm && !it.value) {
+                    camText = " камера "
+                } else if (it.key == galleryPerm && !it.value) {
+                    galText = " галерея "
+                } else {
+                    comma = ""
+                }
+            }
+
+            if (camText.isNotBlank() || galText.isNotBlank()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Требуется разрешние$camText$comma$galText",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                launchIntent()
             }
         }
 
