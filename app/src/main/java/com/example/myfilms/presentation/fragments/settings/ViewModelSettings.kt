@@ -30,7 +30,6 @@ class ViewModelSettings(application: Application) : AndroidViewModel(application
             try {
                 if (user.id != null) {
                     _user.value = user
-                    println("CURRENT USER $user")
                 }
             } catch (e: Exception) {
             }
@@ -52,7 +51,6 @@ class ViewModelSettings(application: Application) : AndroidViewModel(application
     fun updateUser() {
         viewModelScope.launch {
             if (_user.value?.id != null) {
-                _loadingState.value = LoadingState.WAIT
                 _loadingState.value = repository.updateAccount(
                     _user.value?.id as Int,
                     _user.value?.name as String,

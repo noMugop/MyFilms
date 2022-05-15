@@ -194,6 +194,7 @@ class SettingsFragment : Fragment() {
                             "Изменения сохранены",
                             Toast.LENGTH_SHORT
                         ).show()
+                        findNavController().popBackStack()
                     }
                     else -> {}
                 }
