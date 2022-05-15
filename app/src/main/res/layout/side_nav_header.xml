@@ -25,7 +25,7 @@
         android:layout_marginTop="10dp"
         android:paddingBottom="15dp"
         android:textColor="@color/white"
-        android:text="@string/user_name"
+        android:text="@string/guest"
         android:textSize="16sp"
         android:textStyle="bold" />
 

@@ -70,9 +70,13 @@ class MainActivity : AppCompatActivity() {
                     toolbarLayout.visibility = View.GONE
                 }
                 R.id.loginFragment -> {
+                    val current = findCurrentFragmentId()
                     drawerLayout.closeDrawers()
-                    viewModel.cleanUser()
-                    userAvatar.setImageResource(R.drawable.empty_avatar)
+                    if (viewModel.getSession().isBlank()) {
+                        resetUser()
+                    } else if (current == R.id.loginFragment) {
+                        resetUser()
+                    }
 //                    Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
                     bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
@@ -112,6 +116,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 userName.text = it?.username
             }
+
             if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
                 Picasso.get().load(IMG_URL + it?.avatar).into(userAvatar)
             } else if (!it?.avatar_uri.isNullOrBlank()) {
@@ -227,6 +232,11 @@ class MainActivity : AppCompatActivity() {
             }
             return@setOnItemSelectedListener true
         }
+    }
+
+    fun resetUser() {
+        viewModel.cleanUser()
+        userAvatar.setImageResource(R.drawable.empty_avatar)
     }
 
     override fun onSupportNavigateUp(): Boolean {

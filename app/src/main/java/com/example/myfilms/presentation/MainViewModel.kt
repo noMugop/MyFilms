@@ -16,6 +16,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val user: LiveData<DbAccountDetails?>
         get() = _user
 
+    fun getSession(): String {
+        return repository.getFragmentSession()
+    }
+
     fun deleteSession() {
         viewModelScope.launch {
             repository.deleteFragmentSession()

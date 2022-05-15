@@ -14,7 +14,6 @@
     <string name="tag_white">white</string>
     <string name="tag_yellow">yellow</string>
     <string name="launch_trailer">Запустить трейлер</string>
-    <string name="guest">гость</string>
     <string name="settings">Настройки</string>
     <string name="about">О программе</string>
     <string name="exit">Выход</string>
@@ -22,7 +21,7 @@
     <string name="communicate">Communicate</string>
     <string name="rate_us">Оценить</string>
     <string name="rate">Рейтинг: %s</string>
-    <string name="user_name">User Name</string>
+    <string name="guest">Гость</string>
     <string name="name">Имя</string>
     <string name="save">Сохранить</string>
     <string name="surname">Фамилия</string>
