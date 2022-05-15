@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentDetailsBinding
-import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import com.squareup.picasso.Picasso
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.myfilms.data.models.movie.Movie

@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment

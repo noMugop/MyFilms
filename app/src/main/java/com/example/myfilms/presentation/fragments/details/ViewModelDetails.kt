@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.models.movie.MovieVideos
 import com.example.myfilms.data.repository.Repository
-import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 
 class ViewModelDetails(application: Application) : AndroidViewModel(application) {

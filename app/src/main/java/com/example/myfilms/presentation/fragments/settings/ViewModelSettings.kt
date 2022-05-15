@@ -1,20 +1,14 @@
 package com.example.myfilms.presentation.fragments.settings
 
 import android.app.Application
-import android.content.Context
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myfilms.data.models.account.DbAccountDetails
 import com.example.myfilms.data.repository.Repository
-import com.example.myfilms.presentation.Utils.LoadingState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class ViewModelSettings(application: Application) : AndroidViewModel(application) {

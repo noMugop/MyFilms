@@ -15,7 +15,7 @@ import com.example.myfilms.data.models.movie.MovieUpdate
 import com.example.myfilms.data.models.movie.MovieVideos
 import com.example.myfilms.data.models.movie.PostMovie
 import com.example.myfilms.data.network.ApiFactory
-import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
@@ -131,7 +131,7 @@ class Repository(application: Application) {
         return session
     }
 
-    private fun getFragmentSession(): String {
+    fun getFragmentSession(): String {
         var session = ""
         try {
             session = prefSettings.getString(FRAGMENTS_KEY, "") as String
@@ -140,7 +140,7 @@ class Repository(application: Application) {
         return session
     }
 
-    private fun getLoginSession(): String {
+    fun getLoginSession(): String {
         var session = ""
         try {
             session = prefSettings.getString(LOGIN_KEY, "") as String
@@ -156,14 +156,6 @@ class Repository(application: Application) {
         } catch (e: Exception) {
         }
         return userId
-    }
-
-    fun checkFragmentSession(): String {
-        return getFragmentSession()
-    }
-
-    fun checkLoginSession(): String {
-        return getLoginSession()
     }
 
     suspend fun deleteFragmentSession() {

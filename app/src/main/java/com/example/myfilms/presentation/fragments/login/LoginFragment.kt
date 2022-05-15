@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentLoginBinding
-import com.example.myfilms.presentation.Utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.myfilms.presentation.fragments.movies.MoviesFragment
 import java.lang.Exception

@@ -3,11 +3,8 @@ package com.example.myfilms.presentation.fragments.login
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.myfilms.data.models.*
 import com.example.myfilms.data.repository.Repository
-import com.example.myfilms.presentation.Utils.LoadingState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 
 class ViewModelLogin(application: Application) : AndroidViewModel(application) {
@@ -20,11 +17,11 @@ class ViewModelLogin(application: Application) : AndroidViewModel(application) {
         get() = _loadingState
 
     fun checkSessionId(): String {
-        return repository.checkFragmentSession()
+        return repository.getFragmentSession()
     }
 
     fun setSuccess() {
-        if (repository.checkLoginSession() == "Access") {
+        if (repository.getLoginSession() == "Access") {
             _loadingState.value = LoadingState.SUCCESS
         } else {
             _loadingState.value = LoadingState.WAIT
