@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -179,7 +180,9 @@ class SettingsFragment : Fragment() {
                 .crop()
                 .compress(1024)
                 .maxResultSize(1080, 1080)
-                .start()
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
         }
 
         binding.btnSave.setOnClickListener {
@@ -209,30 +212,58 @@ class SettingsFragment : Fragment() {
         )
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    //вместо onActivityResult(), т к он deprecated
+    private val startForProfileImageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            val resultCode = result.resultCode
+            val data = result.data
 
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-                val currentUri = data?.data
-                binding.ivAvatar.setImageURI(currentUri)
-                viewModel.updateUri(currentUri.toString())
-                binding.btnSave.isEnabled = true
-                binding.btnSave.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.dark_blue
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    val currentUri = data?.data
+                    binding.ivAvatar.setImageURI(currentUri)
+                    viewModel.updateUri(currentUri.toString())
+                    binding.btnSave.isEnabled = true
+                    binding.btnSave.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.dark_blue
+                        )
                     )
-                )
-            }
-            ImagePicker.RESULT_ERROR -> {
-                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
-                    .show()
-            }
-            else -> {
+                }
+                ImagePicker.RESULT_ERROR -> {
+                    Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                        .show()
+                }
+                else -> {
+                }
             }
         }
-    }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        when (resultCode) {
+//            Activity.RESULT_OK -> {
+//                val currentUri = data?.data
+//                binding.ivAvatar.setImageURI(currentUri)
+//                viewModel.updateUri(currentUri.toString())
+//                binding.btnSave.isEnabled = true
+//                binding.btnSave.setBackgroundColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.dark_blue
+//                    )
+//                )
+//            }
+//            ImagePicker.RESULT_ERROR -> {
+//                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//            else -> {
+//            }
+//        }
+//    }
 
     companion object {
 
