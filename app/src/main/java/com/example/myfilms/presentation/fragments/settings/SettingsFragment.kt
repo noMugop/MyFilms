@@ -161,7 +161,6 @@ class SettingsFragment : Fragment() {
         })
 
         binding.ivEdit.setOnClickListener {
-
             val permissions = arrayOf(
                 Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -185,7 +184,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun checkPermissions(context: Context, permissions: Array<String>): Boolean {
-
         return permissions.all {
             ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
