@@ -114,6 +114,7 @@ class MainActivity : AppCompatActivity() {
         toolbar = binding.contentMain.topToolbar
         drawerLayout = binding.drawerMainActivity
         sideBar = binding.sideNavigation
+        //получить доступ к side_nav_header.xml
         val header = sideBar.getHeaderView(0)
         userName = header.findViewById(R.id.tvName)
         userAvatar = header.findViewById(R.id.iv_avatar)
