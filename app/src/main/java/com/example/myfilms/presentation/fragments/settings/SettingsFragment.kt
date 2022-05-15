@@ -48,7 +48,7 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        observer()
+        observers()
         listeners()
     }
 
@@ -63,7 +63,7 @@ class SettingsFragment : Fragment() {
         binding.btnSave.isEnabled = false
     }
 
-    private fun observer() {
+    private fun observers() {
 
         viewModel.user.observe(viewLifecycleOwner) {
             if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
