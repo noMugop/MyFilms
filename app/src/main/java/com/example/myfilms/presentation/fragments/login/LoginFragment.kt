@@ -26,7 +26,7 @@ class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding
         get() = _binding ?: throw RuntimeException("FragmentLoginBinding is null")
 
-    private lateinit var viewModel: ViewModelLogin
+    private lateinit var viewModel: LoginViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -64,7 +64,7 @@ class LoginFragment : Fragment() {
             ViewModelProvider(
                 this,
                 AndroidViewModelFactory.getInstance(requireActivity().application)
-            )[ViewModelLogin::class.java]
+            )[LoginViewModel::class.java]
     }
 
     private fun onLoginClick() {

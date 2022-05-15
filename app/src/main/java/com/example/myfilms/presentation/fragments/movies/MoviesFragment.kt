@@ -26,8 +26,8 @@ class MoviesFragment : Fragment() {
     private val binding: FragmentMoviesBinding
         get() = _binding ?: throw RuntimeException("FragmentFilmsBinding is null")
 
+    private lateinit var viewModel: MovieViewModel
     private val adapter = MoviesAdapter()
-    private lateinit var viewModel: ViewModelMovie
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +51,7 @@ class MoviesFragment : Fragment() {
         viewModel = ViewModelProvider(
             this,
             AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[ViewModelMovie::class.java]
+        )[MovieViewModel::class.java]
 
         viewModel.getMoviesList()
 

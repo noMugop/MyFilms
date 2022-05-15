@@ -1,8 +1,5 @@
 package com.example.myfilms.presentation
 
-import android.R.id
-import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -12,34 +9,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.R.id.nav_host_fragment_container
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.myfilms.R
-import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.databinding.ActivityMainBinding
-import com.example.myfilms.presentation.adapter.MoviesAdapter
-import com.example.myfilms.presentation.fragments.login.LoginFragment
-import com.example.myfilms.presentation.fragments.movies.MoviesFragment
-import com.example.myfilms.presentation.fragments.movies.ViewModelMovie
-import com.example.myfilms.presentation.fragments.settings.SettingsFragment
-import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
-import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {

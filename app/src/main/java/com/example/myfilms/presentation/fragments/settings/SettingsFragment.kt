@@ -33,7 +33,7 @@ class SettingsFragment : Fragment() {
     private val binding: FragmentSettingsBinding
         get() = _binding ?: throw RuntimeException("FragmentSettingsBinding is null")
 
-    private lateinit var viewModel: ViewModelSettings
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +57,7 @@ class SettingsFragment : Fragment() {
         viewModel = ViewModelProvider(
             this,
             AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[ViewModelSettings::class.java]
+        )[SettingsViewModel::class.java]
 
         viewModel.getUser()
         binding.btnSave.isEnabled = false

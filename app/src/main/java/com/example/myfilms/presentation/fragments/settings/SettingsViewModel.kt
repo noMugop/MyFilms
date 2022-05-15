@@ -11,7 +11,7 @@ import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class ViewModelSettings(application: Application) : AndroidViewModel(application) {
+class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
     private val repository = Repository(context)

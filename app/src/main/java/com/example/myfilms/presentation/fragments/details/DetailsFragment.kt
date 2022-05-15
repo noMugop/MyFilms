@@ -23,7 +23,7 @@ class DetailsFragment : Fragment() {
     private val binding: FragmentDetailsBinding
         get() = _binding ?: throw RuntimeException("DetailsFragment is null")
 
-    private lateinit var viewModel: ViewModelDetails
+    private lateinit var viewModel: DetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +51,7 @@ class DetailsFragment : Fragment() {
         viewModel = ViewModelProvider(
             this,
             AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[ViewModelDetails::class.java]
+        )[DetailsViewModel::class.java]
     }
 
     private fun getMovieById(movieId: Int) {
@@ -67,7 +67,8 @@ class DetailsFragment : Fragment() {
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = it.title
                             binding.tvOverview.text = it.overview
-                            binding.tvRate.text = getString(R.string.rate, it.voteAverage.toString())
+                            binding.tvRate.text =
+                                getString(R.string.rate, it.voteAverage.toString())
                             if (it.isFavorite != FAVORITE) {
                                 binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                                 binding.ivAddFavorite.tag = TAG_WHITE
@@ -81,7 +82,8 @@ class DetailsFragment : Fragment() {
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = movie.title
                             binding.tvOverview.text = movie.overview
-                            binding.tvRate.text = getString(R.string.rate, movie.voteAverage.toString())
+                            binding.tvRate.text =
+                                getString(R.string.rate, movie.voteAverage.toString())
                             binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                             binding.ivAddFavorite.tag = TAG_YELLOW
                         }

@@ -25,8 +25,8 @@ class FavoritesFragment : Fragment() {
     private val binding: FragmentFavoritesBinding
         get() = _binding ?: throw RuntimeException("FavoritesFragment is null")
 
+    private lateinit var viewModel: FavoritesViewModel
     private val adapter = MoviesAdapter()
-    private lateinit var viewModel: ViewModelFavorites
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +49,7 @@ class FavoritesFragment : Fragment() {
             ViewModelProvider(
                 this,
                 AndroidViewModelFactory.getInstance(requireActivity().application)
-            )[ViewModelFavorites::class.java]
+            )[FavoritesViewModel::class.java]
 
         viewModel.isLoading()
 

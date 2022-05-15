@@ -8,7 +8,7 @@ import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 
-class ViewModelDetails(application: Application) : AndroidViewModel(application) {
+class DetailsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
     private val repository = Repository(context)
