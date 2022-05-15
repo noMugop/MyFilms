@@ -243,7 +243,6 @@ class Repository(application: Application) {
                 val response = apiService.getAccountDetails(session_id = session)
                 if (response.isSuccessful) {
                     val result = response.body() as AccountDetails
-                    println("RESULT ID ${result.id}")
                     val user = DbAccountDetails(
                         id = result.id,
                         avatar = result.avatar?.tmdb?.avatarPath,
@@ -251,7 +250,6 @@ class Repository(application: Application) {
                         username = result.username
                     )
                     val checkUser = db.getUserById(user.id as Int)
-                    println("CHECK USER $checkUser")
                     if (checkUser == null) {
                         db.insertUser(user)
                         editor.putInt(CURRENT_USER_ID, user.id).commit()
