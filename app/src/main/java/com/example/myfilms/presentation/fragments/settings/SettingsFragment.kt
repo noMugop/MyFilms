@@ -85,11 +85,8 @@ class SettingsFragment : Fragment() {
     private fun listeners() {
 
         binding.etName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
                 if (!p0.isNullOrBlank()) {
@@ -113,12 +110,8 @@ class SettingsFragment : Fragment() {
         })
 
         binding.etSurname.addTextChangedListener(object : TextWatcher {
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
                 if (!p0.isNullOrBlank()) {
@@ -170,7 +163,8 @@ class SettingsFragment : Fragment() {
                         ) {
                             binding.progressBar.visibility = View.GONE
                             viewModel.updateName(
-                                binding.etName.text.toString() + " " + binding.etSurname.text.toString()
+                                binding.etName.text.toString() + " "
+                                        + binding.etSurname.text.toString()
                             )
                             viewModel.updateUser()
                             clearData()
@@ -181,19 +175,13 @@ class SettingsFragment : Fragment() {
                     }
                     LoadingState.FINISHED -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Требуется авторизация",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(),
+                            "Требуется авторизация", Toast.LENGTH_SHORT).show()
                     }
                     LoadingState.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Изменения сохранены",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(),
+                            "Изменения сохранены", Toast.LENGTH_SHORT).show()
                         findNavController().popBackStack()
                     }
                     else -> {}
