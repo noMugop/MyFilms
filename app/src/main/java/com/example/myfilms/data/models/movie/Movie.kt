@@ -1,5 +1,6 @@
 package com.example.myfilms.data.models.movie
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -12,7 +13,7 @@ import kotlinx.parcelize.Parcelize
 data class Movie(
 
     @PrimaryKey(autoGenerate = false)
-    @SerializedName("id")
+    @ColumnInfo(name = "id")
     var id: Int? = null,
 
     @SerializedName("vote_count")

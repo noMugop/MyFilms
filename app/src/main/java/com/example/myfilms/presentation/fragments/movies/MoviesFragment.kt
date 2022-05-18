@@ -19,6 +19,13 @@ import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.flatMap
+import androidx.paging.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MoviesFragment : Fragment() {
 
@@ -40,44 +47,30 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initAndObserveViewModel()
-        syncFavorites()
+        binding.progressBar.visibility = View.VISIBLE
+        init()
+        observe()
         onMovieClickListener()
         onBackPressed()
     }
 
-    private fun initAndObserveViewModel() {
+    private fun init() {
 
         viewModel = ViewModelProvider(
             this,
             AndroidViewModelFactory.getInstance(requireActivity().application)
         )[MovieViewModel::class.java]
 
-        viewModel.getMoviesList()
-
-        viewModel.loadingState.observe(viewLifecycleOwner) {
-            when (it) {
-                LoadingState.IS_LOADING -> binding.progressBar.visibility = View.VISIBLE
-                LoadingState.FINISHED -> {
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(
-                        requireContext(),
-                        "Список пуст, требуется авторизация",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
-                    binding.progressBar.visibility = View.GONE
-                    adapter.submitList(it)
-                    binding.rvMovies.adapter = adapter
-                }
-                else -> throw RuntimeException("Error")
-            }
-        }
+        binding.rvMovies.adapter = adapter
     }
 
-    private fun syncFavorites() {
-        viewModel.syncFavorites(page = PAGE)
+    private fun observe() {
+        lifecycleScope.launch {
+            viewModel.moviesFlow.collectLatest {
+                binding.progressBar.visibility = View.GONE
+                adapter.submitData(it)
+            }
+        }
     }
 
     private fun onMovieClickListener() {
@@ -118,10 +111,5 @@ class MoviesFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-    }
-
-    companion object {
-
-        var PAGE = 1
     }
 }

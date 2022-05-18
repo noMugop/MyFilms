@@ -3,6 +3,8 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
+import androidx.paging.*
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.account.AccountDetails
 import com.example.myfilms.data.models.account.AccountUpdate
@@ -15,8 +17,10 @@ import com.example.myfilms.data.models.movie.MovieUpdate
 import com.example.myfilms.data.models.movie.MovieVideos
 import com.example.myfilms.data.models.movie.PostMovie
 import com.example.myfilms.data.network.ApiFactory
+import com.example.myfilms.data.paging_source.MoviePagingSource
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
@@ -42,20 +46,14 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun loadData(page: Int): LoadingState {
-        return withContext(Dispatchers.Default) {
-            try {
-                val response = apiService.getMovies(page = page)
-                if (response.isSuccessful) {
-                    val result = response.body()?.movies
-                    if (!result.isNullOrEmpty()) {
-                        db.insertMovieList(result)
-                    }
-                }
-            } catch (e: Exception) {
-            }
-            LoadingState.SUCCESS
-        }
+    fun getMoviesFromNetwork(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { MoviePagingSource(apiService) }
+        ).flow
     }
 
     suspend fun syncFavorites(page: Int) {
@@ -261,9 +259,10 @@ class Repository(application: Application) {
 
     companion object {
 
-        const val APP_SETTINGS = "Settings"
-        const val FRAGMENTS_KEY = "SESSION_FRAGMENT"
-        const val LOGIN_KEY = "SESSION_LOGIN"
-        const val CURRENT_USER_ID = "CURRENT_USER"
+        private const val APP_SETTINGS = "Settings"
+        private const val FRAGMENTS_KEY = "SESSION_FRAGMENT"
+        private const val LOGIN_KEY = "SESSION_LOGIN"
+        private const val CURRENT_USER_ID = "CURRENT_USER"
+        private const val PAGE_SIZE = 20
     }
 }

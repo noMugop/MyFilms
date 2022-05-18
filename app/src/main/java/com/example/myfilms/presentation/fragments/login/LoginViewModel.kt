@@ -39,16 +39,11 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             if (session.isNotBlank()) {
                 repository.addUser()
                 _loadingState.value = LoadingState.FINISHED
+                _loadingState.value = LoadingState.SUCCESS
             } else {
                 _loadingState.value = LoadingState.WAIT
                 Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-    fun loadData(page: Int) {
-        viewModelScope.launch {
-            _loadingState.value = repository.loadData(page)
         }
     }
 

@@ -96,7 +96,7 @@ class LoginFragment : Fragment() {
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.IS_LOADING -> binding.pbLoading.visibility = View.VISIBLE
-                LoadingState.FINISHED -> viewModel.loadData(MoviesFragment.PAGE)
+                LoadingState.FINISHED -> binding.pbLoading.visibility = View.GONE
                 LoadingState.SUCCESS -> {
                     binding.pbLoading.visibility = View.GONE
                     binding.etUsername.text = null

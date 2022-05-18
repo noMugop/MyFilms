@@ -14,6 +14,13 @@ interface MovieDao {
     @Query("SELECT * FROM movies_table ORDER BY voteAverage DESC")
     suspend fun getMovieList(): List<Movie>
 
+    //searchBy позволяет на ходу фильтровать данные, т е поиск, в нашем случае по полю title.
+    @Query("SELECT * FROM movies_table " +
+            "WHERE :searchBy = '' OR title LIKE '%' || :searchBy || '%' " +
+            "ORDER BY voteAverage DESC " +
+            "LIMIT :limit OFFSET :offset")
+    suspend fun getAmountOfMovies(limit: Int, offset: Int, searchBy: String = ""): List<Movie>
+
     @Query("SELECT * FROM movies_table WHERE id == :movieId")
     suspend fun getMovieById(movieId: Int): Movie
 

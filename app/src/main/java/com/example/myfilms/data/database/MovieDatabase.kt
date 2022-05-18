@@ -7,8 +7,10 @@ import androidx.room.RoomDatabase
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.models.account.DbAccountDetails
 
-@Database(entities = [Movie::class, DbAccountDetails::class], version = 7, exportSchema = false)
+@Database(entities = [Movie::class, DbAccountDetails::class], version = 9, exportSchema = false)
 abstract class MovieDatabase : RoomDatabase() {
+
+    abstract fun movieDao(): MovieDao
 
     companion object {
 
@@ -34,6 +36,4 @@ abstract class MovieDatabase : RoomDatabase() {
             }
         }
     }
-
-    abstract fun movieDao(): MovieDao
 }

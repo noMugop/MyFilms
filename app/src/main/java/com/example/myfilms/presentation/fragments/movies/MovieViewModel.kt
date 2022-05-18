@@ -2,41 +2,27 @@ package com.example.myfilms.presentation.fragments.movies
 
 import android.app.Application
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.utils.LoadingState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
     private val repository = Repository(context)
 
-    private val _loadingState = MutableLiveData<LoadingState>()
-    val loadingState: LiveData<LoadingState>
-        get() = _loadingState
-
-    private val _movies = MutableLiveData<List<Movie>>()
-    val movies: LiveData<List<Movie>>
-        get() = _movies
-
-    fun getMoviesList() {
-        viewModelScope.launch {
-            _loadingState.value = LoadingState.IS_LOADING
-            _movies.value = repository.getMovieList()
-            if (!movies.value.isNullOrEmpty()) {
-                _loadingState.value = LoadingState.SUCCESS
-            } else {
-                _loadingState.value = LoadingState.FINISHED
-            }
-        }
-    }
-
-    fun syncFavorites(page: Int) {
-        viewModelScope.launch {
-            repository.syncFavorites(page)
-        }
-    }
+    val moviesFlow: Flow<PagingData<Movie>> =
+        repository.getMoviesFromNetwork().cachedIn(viewModelScope)
 
     fun deleteSession() {
         viewModelScope.launch {

@@ -2,12 +2,13 @@ package com.example.myfilms.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ListAdapter
 import com.example.myfilms.databinding.ItemMovieBinding
 import com.example.myfilms.data.models.movie.Movie
 import com.squareup.picasso.Picasso
 
-class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
+class MoviesAdapter : PagingDataAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
 
     var onFilmClickListener: OnFilmClickListener? = null
 
@@ -23,11 +24,10 @@ class MoviesAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = getItem(position)
-
         with(holder.binding) {
-            Picasso.get().load(IMG_URL + movie.posterPath).into(ivMovie)
+            Picasso.get().load(IMG_URL + movie?.posterPath).into(ivMovie)
             movieItemID.setOnClickListener {
-                onFilmClickListener?.onFilmClick(movie)
+                onFilmClickListener?.onFilmClick(movie as Movie)
             }
         }
     }
