@@ -16,6 +16,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
+    private val _loadFavorites = MutableLiveData<LoadingState>()
+    val loadFavorites: LiveData<LoadingState>
+        get() = _loadFavorites
+
     fun checkSessionId(): String {
         return repository.getFragmentSession()
     }
@@ -39,6 +43,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             if (session.isNotBlank()) {
                 repository.addUser()
                 _loadingState.value = LoadingState.FINISHED
+                _loadingState.value = LoadingState.SUCCESS
             } else {
                 _loadingState.value = LoadingState.WAIT
                 Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
@@ -48,8 +53,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getFavorites() {
         viewModelScope.launch {
-            while (_loadingState.value != LoadingState.SUCCESS) {
-                _loadingState.postValue(repository.getFavorites(PAGE))
+            _loadFavorites.postValue(LoadingState.IS_LOADING)
+            while (_loadFavorites.value != LoadingState.SUCCESS) {
+                _loadFavorites.postValue(repository.getFavorites(PAGE))
                 PAGE++
             }
         }
