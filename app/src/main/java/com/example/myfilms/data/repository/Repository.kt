@@ -60,25 +60,25 @@ class Repository(application: Application) {
         ).flow
     }
 
-    suspend fun getAccountState(movie: Movie): Movie {
-        val session = getFragmentSession()
-        try {
-            val response =
-                apiService.getAccountStates(id = movie.id as Int, session_id = session)
-            if (response.isSuccessful) {
-                movie.isFavorite = response.body()?.favorite as Boolean
-            }
-        } catch (e: Exception) {
-        }
-        return movie
-    }
+//    suspend fun getAccountState(movie: Movie): Movie {
+//        val session = getFragmentSession()
+//        try {
+//            val response =
+//                apiService.getAccountStates(id = movie.id as Int, session_id = session)
+//            if (response.isSuccessful) {
+//                movie.isFavorite = response.body()?.favorite as Boolean
+//            }
+//        } catch (e: Exception) {
+//        }
+//        return movie
+//    }
 
-    suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
-        val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
-        withContext(Dispatchers.Default) {
-            db.movieUpdate(updateMovie)
-        }
-    }
+//    suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
+//        val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
+//        withContext(Dispatchers.Default) {
+//            db.movieUpdate(updateMovie)
+//        }
+//    }
 
     suspend fun updateAccount(accountId: Int, name: String, uri: String): LoadingState {
         var loadingState = LoadingState.FINISHED

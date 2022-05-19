@@ -32,10 +32,6 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
     fun getMovieById(movieId: Int) {
         viewModelScope.launch {
             _movie.value = repository.getMovieById(movieId)
-//            if (_movie.value != null) {
-//                val result = repository.getAccountState(_movie.value as Movie)
-//                repository.updateMovie(result.id as Int, result.isFavorite)
-//            }
             _trailer.value = repository.getTrailer(movieId)
             _loadingState.value = LoadingState.SUCCESS
         }
