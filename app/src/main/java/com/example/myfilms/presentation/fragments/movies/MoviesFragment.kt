@@ -5,27 +5,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.presentation.utils.LoadingState
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.flatMap
-import androidx.paging.map
-import kotlinx.coroutines.Dispatchers
+import androidx.paging.LoadState
+import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MoviesFragment : Fragment() {
 
@@ -47,7 +45,6 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.progressBar.visibility = View.VISIBLE
         init()
         observe()
         onMovieClickListener()
@@ -61,13 +58,23 @@ class MoviesFragment : Fragment() {
             AndroidViewModelFactory.getInstance(requireActivity().application)
         )[MovieViewModel::class.java]
 
-        binding.rvMovies.adapter = adapter
+//        binding.rvMovies.adapter = adapter
+
+        binding.rvMovies.adapter = adapter.withLoadStateFooter(
+            footer = NewLoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
+//        adapter.addLoadStateListener { state ->
+//            binding.rvMovies.isVisible = state.refresh != LoadState.Loading
+//            binding.progressBar.isVisible = state.refresh == LoadState.Loading
+//        }
     }
 
     private fun observe() {
         lifecycleScope.launch {
             viewModel.moviesFlow.collectLatest {
-                binding.progressBar.visibility = View.GONE
                 adapter.submitData(it)
             }
         }

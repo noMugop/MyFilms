@@ -20,7 +20,7 @@ class MoviePagingSource(
                 val result = response.body()?.movies as List<Movie>
                 LoadResult.Page(
                     data = result,
-                    prevKey = if (currentPage == 1) null else currentPage - 1,
+                    prevKey = if (currentPage > 1) currentPage - 1 else null,
                     nextKey = if (result.isEmpty()) null else currentPage + 1
                 )
             } else {

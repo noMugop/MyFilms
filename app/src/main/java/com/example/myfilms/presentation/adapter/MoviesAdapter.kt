@@ -23,11 +23,11 @@ class MoviesAdapter : PagingDataAdapter<Movie, MovieViewHolder>(MovieDiffCallbac
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = getItem(position)
+        val movie = getItem(position) ?: return
         with(holder.binding) {
-            Picasso.get().load(IMG_URL + movie?.posterPath).into(ivMovie)
+            Picasso.get().load(IMG_URL + movie.posterPath).into(ivMovie)
             movieItemID.setOnClickListener {
-                onFilmClickListener?.onFilmClick(movie as Movie)
+                onFilmClickListener?.onFilmClick(movie)
             }
         }
     }
