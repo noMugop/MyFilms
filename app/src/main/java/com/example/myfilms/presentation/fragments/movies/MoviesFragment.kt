@@ -58,18 +58,11 @@ class MoviesFragment : Fragment() {
             AndroidViewModelFactory.getInstance(requireActivity().application)
         )[MovieViewModel::class.java]
 
-//        binding.rvMovies.adapter = adapter
-
         binding.rvMovies.adapter = adapter.withLoadStateFooter(
             footer = NewLoadingStateAdapter {
                 adapter.retry()
             }
         )
-
-//        adapter.addLoadStateListener { state ->
-//            binding.rvMovies.isVisible = state.refresh != LoadState.Loading
-//            binding.progressBar.isVisible = state.refresh == LoadState.Loading
-//        }
     }
 
     private fun observe() {

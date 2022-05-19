@@ -4,6 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.network.ApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.lang.Exception
 
@@ -13,21 +15,23 @@ class MoviePagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
 
-        try {
-            val currentPage = params.key ?: PAGE_NUMBER
-            val response = apiService.getMovies(page = currentPage)
-            return if (response.isSuccessful) {
-                val result = response.body()?.movies as List<Movie>
-                LoadResult.Page(
-                    data = result,
-                    prevKey = if (currentPage > 1) currentPage - 1 else null,
-                    nextKey = if (result.isEmpty()) null else currentPage + 1
-                )
-            } else {
-                LoadResult.Error(HttpException(response))
+        return withContext(Dispatchers.Default) {
+            try {
+                val currentPage = params.key ?: PAGE_NUMBER
+                val response = apiService.getMovies(page = currentPage)
+                if (response.isSuccessful) {
+                    val result = response.body()?.movies as List<Movie>
+                    LoadResult.Page(
+                        data = result,
+                        prevKey = if (currentPage > 1) currentPage - 1 else null,
+                        nextKey = if (result.isEmpty()) null else currentPage + 1
+                    )
+                } else {
+                    LoadResult.Error(HttpException(response))
+                }
+            } catch (e: Exception) {
+                LoadResult.Error(e)
             }
-        } catch (e: Exception) {
-            return LoadResult.Error(e)
         }
     }
 
