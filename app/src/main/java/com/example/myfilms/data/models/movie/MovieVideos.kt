@@ -8,5 +8,5 @@ data class MovieVideos(
     val id: Int? = null,
 
     @SerializedName("results")
-    val list: List<ResultVideos>? = null
+    val list: List<ResultTrailers>? = null
 )

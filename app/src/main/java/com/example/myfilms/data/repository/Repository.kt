@@ -3,7 +3,6 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
 import androidx.paging.*
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.account.AccountDetails
@@ -17,7 +16,8 @@ import com.example.myfilms.data.models.movie.MovieUpdate
 import com.example.myfilms.data.models.movie.MovieVideos
 import com.example.myfilms.data.models.movie.PostMovie
 import com.example.myfilms.data.network.ApiFactory
-import com.example.myfilms.data.paging_source.MoviePagingSource
+import com.example.myfilms.data.paging_source.NetworkPagingSource
+import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -34,10 +34,14 @@ class Repository(application: Application) {
     ) as SharedPreferences
     private var editor: SharedPreferences.Editor = prefSettings.edit()
 
-    suspend fun getMovieList(): List<Movie> {
-        return withContext(Dispatchers.Default) {
-            db.getMovieList()
-        }
+    fun getFavoriteMovies(searchBy: String = ""): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { RoomPagingSource(db, PAGE_SIZE, searchBy) }
+        ).flow
     }
 
     suspend fun getMovieById(movieId: Int): Movie {
@@ -52,24 +56,21 @@ class Repository(application: Application) {
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { MoviePagingSource(apiService) }
+            pagingSourceFactory = { NetworkPagingSource(apiService) }
         ).flow
     }
 
-    suspend fun syncFavorites(page: Int) {
+    suspend fun getAccountState(movie: Movie): Movie {
         val session = getFragmentSession()
-        withContext(Dispatchers.Default) {
-            try {
-                val response = apiService.getFavorites(session_id = session, page = page)
-                if (response.isSuccessful) {
-                    val result = response.body()?.movies as List<Movie>
-                    result.forEach {
-                        updateMovie(it.id as Int, true)
-                    }
-                }
-            } catch (e: Exception) {
+        try {
+            val response =
+                apiService.getAccountStates(id = movie.id as Int, session_id = session)
+            if (response.isSuccessful) {
+                movie.isFavorite = response.body()?.favorite as Boolean
             }
+        } catch (e: Exception) {
         }
+        return movie
     }
 
     suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
@@ -148,12 +149,11 @@ class Repository(application: Application) {
     }
 
     private fun getCurrentUserId(): Int {
-        var userId = 0
-        try {
-            userId = prefSettings.getInt(CURRENT_USER_ID, 0)
+        return try {
+            prefSettings.getInt(CURRENT_USER_ID, 0)
         } catch (e: Exception) {
+            return 0
         }
-        return userId
     }
 
     suspend fun deleteFragmentSession() {
@@ -182,48 +182,48 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun getFavorites(page: Int): List<Movie> {
-        var movie = listOf<Movie>()
-        val session = getFragmentSession()
-        try {
-            val response = apiService.getFavorites(session_id = session, page = page)
-            if (response.isSuccessful) {
-                movie = response.body()?.movies as List<Movie>
+    suspend fun getFavorites(page: Int): LoadingState {
+        return withContext(Dispatchers.Default) {
+            val session = getFragmentSession()
+            try {
+                val response = apiService.getFavorites(session_id = session, page = page)
+                if (response.isSuccessful) {
+                    val movies = response.body()?.movies as List<Movie>
+                    if (!movies.isNullOrEmpty()) {
+                        db.insertMovieList(movies)
+                        LoadingState.FINISHED
+                    } else {
+                        LoadingState.SUCCESS
+                    }
+                } else {
+                    LoadingState.SUCCESS
+                }
+            } catch (e: Exception) {
+                LoadingState.SUCCESS
             }
-        } catch (e: Exception) {
         }
-        return movie
     }
 
-    suspend fun addOrDeleteFavorite(movieId: Int, favoriteState: Boolean): LoadingState {
+    suspend fun addOrDeleteFavorite(movie: Movie): LoadingState {
         var loadingState = LoadingState.FINISHED
         val session = getFragmentSession()
-        val postMovie = PostMovie(media_id = movieId, isFavorite = favoriteState)
+        val postMovie = PostMovie(media_id = movie.id as Int, isFavorite = movie.isFavorite)
         try {
             val response = apiService.addFavorite(
                 session_id = session,
                 postMovie = postMovie
             )
             if (response.isSuccessful) {
-                updateMovie(postMovie.media_id, postMovie.isFavorite)
+                if (!movie.isFavorite) {
+                    db.deleteMovieById(movie.id as Int)
+                } else {
+                    db.insertMovie(movie)
+                }
                 loadingState = LoadingState.SUCCESS
             }
         } catch (e: Exception) {
         }
         return loadingState
-    }
-
-    suspend fun getAccountState(movie: Movie): Movie {
-        val session = getFragmentSession()
-        try {
-            val response =
-                apiService.getAccountStates(id = movie.id as Int, session_id = session)
-            if (response.isSuccessful) {
-                movie.isFavorite = response.body()?.favorite as Boolean
-            }
-        } catch (e: Exception) {
-        }
-        return movie
     }
 
     suspend fun addUser() {

@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-data class ResultVideos(
+data class ResultTrailers(
 
     @SerializedName("name")
     val name: String,

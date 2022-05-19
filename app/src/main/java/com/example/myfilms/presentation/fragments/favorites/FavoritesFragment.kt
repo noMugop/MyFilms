@@ -14,8 +14,16 @@ import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.presentation.utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.example.myfilms.presentation.adapter.MoviesAdapter
+import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -39,37 +47,30 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initAndObserveViewModel()
+        init()
+        observe()
         onMovieClickListener()
         onBackPressed()
     }
 
-    private fun initAndObserveViewModel() {
+    private fun init() {
         viewModel =
             ViewModelProvider(
                 this,
                 AndroidViewModelFactory.getInstance(requireActivity().application)
             )[FavoritesViewModel::class.java]
 
-        viewModel.isLoading()
+        binding.rvFavorites.adapter = adapter.withLoadStateFooter(
+            footer = NewLoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+    }
 
-        viewModel.loadingState.observe(viewLifecycleOwner) {
-            when (it) {
-                LoadingState.IS_LOADING -> {
-                    viewModel.getFavorites(PAGE)
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                LoadingState.FINISHED -> {
-                    binding.progressBar.visibility = View.GONE
-//                    adapter.submitList(null)
-                    binding.rvFavorites.adapter = adapter
-                }
-                LoadingState.SUCCESS -> viewModel.movies.observe(viewLifecycleOwner) {
-                    binding.progressBar.visibility = View.GONE
-//                    adapter.submitList(it)
-                    binding.rvFavorites.adapter = adapter
-                }
-                else -> throw RuntimeException("Error")
+    private fun observe() {
+        lifecycleScope.launch {
+            viewModel.favoritesFlow.collectLatest {
+                adapter.submitData(it)
             }
         }
     }

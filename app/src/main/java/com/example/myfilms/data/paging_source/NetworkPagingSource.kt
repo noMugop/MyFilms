@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.lang.Exception
 
-class MoviePagingSource(
+class NetworkPagingSource(
     private val apiService: ApiService
 ) : PagingSource<Int, Movie>() {
 

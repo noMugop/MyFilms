@@ -10,11 +10,10 @@ import com.example.myfilms.data.models.account.DbAccountDetails
 @Dao
 interface MovieDao {
 
-    //movies_table
-    @Query("SELECT * FROM movies_table ORDER BY voteAverage DESC")
-    suspend fun getMovieList(): List<Movie>
+//    @Query("SELECT * FROM movies_table ORDER BY voteAverage DESC")
+//    suspend fun getMovieList(): List<Movie>
 
-    //searchBy позволяет на ходу фильтровать данные, т е поиск, в нашем случае по полю title.
+    //movies_table
     @Query("SELECT * FROM movies_table " +
             "WHERE :searchBy = '' OR title LIKE '%' || :searchBy || '%' " +
             "ORDER BY voteAverage DESC " +
@@ -27,8 +26,17 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovieList(movies: List<Movie>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMovie(movie: Movie)
+
     @Update(entity = Movie::class)
     suspend fun movieUpdate(movie: MovieUpdate)
+
+    @Query("DELETE FROM movies_table")
+    suspend fun deleteAllMovies()
+
+    @Query("DELETE FROM movies_table WHERE id = :userId")
+    suspend fun deleteMovieById(userId: Int)
 
     //users_table
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -63,6 +63,13 @@ class MoviesFragment : Fragment() {
                 adapter.retry()
             }
         )
+
+//        adapter.addLoadStateListener { state ->
+//            with(binding) {
+//                rvMovies.isVisible = state.refresh != LoadState.Loading
+//                progressBar.isVisible = state.refresh == LoadState.Loading
+//            }
+//        }
     }
 
     private fun observe() {

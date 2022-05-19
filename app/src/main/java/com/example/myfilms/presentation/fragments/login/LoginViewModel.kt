@@ -39,10 +39,18 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             if (session.isNotBlank()) {
                 repository.addUser()
                 _loadingState.value = LoadingState.FINISHED
-                _loadingState.value = LoadingState.SUCCESS
             } else {
                 _loadingState.value = LoadingState.WAIT
                 Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun getFavorites() {
+        viewModelScope.launch {
+            while (_loadingState.value != LoadingState.SUCCESS) {
+                _loadingState.postValue(repository.getFavorites(PAGE))
+                PAGE++
             }
         }
     }
@@ -55,5 +63,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteLoginSession() {
         repository.deleteLoginSession()
+    }
+
+    companion object {
+
+        private var PAGE = 1
     }
 }

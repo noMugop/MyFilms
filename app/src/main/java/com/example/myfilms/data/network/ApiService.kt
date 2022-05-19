@@ -17,7 +17,7 @@ interface ApiService {
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("vote_count.gte") vote_count: Int = MIN_VOTE_COUNT_VALUE,
         @Query("page") page: Int = PARAMS_PAGE
-    ):Response<Result>
+    ):Response<ResultMovies>
 
 //    @GET("movie/{movie_id}")
 //    suspend fun getMovieById(
@@ -65,7 +65,7 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID,
         @Body postMovie: PostMovie
-    ): Response<FavoriteResult>
+    ): Response<ResultFavorite>
 
     @GET("account/{account_id}/favorite/movies")
     suspend fun getFavorites(
@@ -74,7 +74,7 @@ interface ApiService {
         @Query("language") language: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
-    ): Response<Result>
+    ): Response<ResultMovies>
 
     @GET("movie/{movie_id}/account_states")
     suspend fun getAccountStates(

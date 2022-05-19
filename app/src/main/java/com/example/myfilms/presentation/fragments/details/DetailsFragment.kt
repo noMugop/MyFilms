@@ -69,23 +69,17 @@ class DetailsFragment : Fragment() {
                             binding.tvOverview.text = it.overview
                             binding.tvRate.text =
                                 getString(R.string.rate, it.voteAverage.toString())
-                            if (it.isFavorite != FAVORITE) {
-                                binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
-                                binding.ivAddFavorite.tag = TAG_WHITE
-                            } else {
-                                binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
-                                binding.ivAddFavorite.tag = TAG_YELLOW
-                            }
+                            binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
+                            binding.ivAddFavorite.tag = TAG_YELLOW
                         } else {
-                            binding.progressBar.visibility = View.GONE
                             Picasso.get().load(IMG_URL + movie.backdropPath)
                                 .into(binding.ivPoster)
                             binding.tvTitle.text = movie.title
                             binding.tvOverview.text = movie.overview
                             binding.tvRate.text =
                                 getString(R.string.rate, movie.voteAverage.toString())
-                            binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
-                            binding.ivAddFavorite.tag = TAG_YELLOW
+                            binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
+                            binding.ivAddFavorite.tag = TAG_WHITE
                         }
                         viewModel.trailer.observe(viewLifecycleOwner) {
                             it.list?.map { binding.textViewNameOfVideo.text = it.name }
@@ -106,15 +100,15 @@ class DetailsFragment : Fragment() {
     private fun onFavoriteClickListener() {
         binding.ivAddFavorite.setOnClickListener {
             if (binding.ivAddFavorite.tag == TAG_WHITE) {
-                addFavorite(movie.id as Int)
+                addFavorite()
             } else {
-                deleteFavorite(movie.id as Int)
+                deleteFavorite()
             }
         }
     }
 
-    private fun deleteFavorite(movieId: Int) {
-        viewModel.deleteFavorites(movieId)
+    private fun deleteFavorite() {
+        viewModel.deleteFavorites(movie)
         viewModel.addFavoriteState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.SUCCESS -> {
@@ -129,8 +123,8 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun addFavorite(movieId: Int) {
-        viewModel.addFavorite(movieId)
+    private fun addFavorite() {
+        viewModel.addFavorite(movie)
         viewModel.addFavoriteState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.SUCCESS -> {
