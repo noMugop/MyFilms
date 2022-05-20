@@ -57,7 +57,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun updateUser() {
         viewModelScope.launch {
             if (_user.value?.id != null) {
-                _loadingState.value = repository.updateAccount(
+                _loadingState.value = repository.updateUser(
                     _user.value?.id as Int,
                     _user.value?.name as String,
                     _user.value?.avatar_uri as String

@@ -15,7 +15,9 @@ import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.presentation.utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment

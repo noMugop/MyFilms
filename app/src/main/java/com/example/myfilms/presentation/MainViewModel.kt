@@ -22,7 +22,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteAll() {
         viewModelScope.launch {
-            repository.deleteFragmentSession()
+            repository.deleteMainSession()
             repository.deleteFavoriteMovies()
         }
     }

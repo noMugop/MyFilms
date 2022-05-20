@@ -10,18 +10,18 @@ import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.lang.RuntimeException
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
     private val repository = Repository(context)
 
-    val favoritesFlow: Flow<PagingData<Movie>> =
-        repository.getFavoriteMovies().cachedIn(viewModelScope)
+    private val _favoritesFlow: Flow<PagingData<Movie>> = repository.getFavoriteMovies()
+    val favoritesFlow = _favoritesFlow
 
     init {
         checkSession()
@@ -39,7 +39,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun deleteAll() {
         viewModelScope.launch {
-            repository.deleteFragmentSession()
+            repository.deleteMainSession()
             repository.deleteFavoriteMovies()
         }
     }

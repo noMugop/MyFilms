@@ -3,6 +3,8 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.paging.*
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.account.AccountDetails
@@ -21,6 +23,7 @@ import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
@@ -149,7 +152,7 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun deleteFragmentSession() {
+    suspend fun deleteMainSession() {
         val session = getFragmentSession()
         try {
             apiService.deleteSession(sessionId = Session(session_id = session))
@@ -250,7 +253,7 @@ class Repository(application: Application) {
         return db.getUserById(userId)
     }
 
-    suspend fun updateAccount(accountId: Int, name: String, uri: String): LoadingState {
+    suspend fun updateUser(accountId: Int, name: String, uri: String): LoadingState {
         var loadingState = LoadingState.FINISHED
         val updateAccount = AccountUpdate(id = accountId, name = name, avatar_uri = uri)
         withContext(Dispatchers.Default) {

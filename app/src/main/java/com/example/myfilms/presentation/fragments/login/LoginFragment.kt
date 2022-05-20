@@ -83,12 +83,7 @@ class LoginFragment : Fragment() {
     private fun onGuestClick() {
         binding.btnGuest.setOnClickListener {
             hideKeyboard(requireActivity())
-            try {
-                viewModel.deleteFragmentSession()
-                launchMovieFragment()
-            } catch (e: Exception) {
-                launchMovieFragment()
-            }
+            launchMovieFragment()
         }
     }
 
