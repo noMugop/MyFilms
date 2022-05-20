@@ -20,8 +20,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     private val context = application
     private val repository = Repository(context)
 
-    private val _favoritesFlow: Flow<PagingData<Movie>> = repository.getFavoriteMovies()
-    val favoritesFlow = _favoritesFlow
+    val favoritesFlow: Flow<PagingData<Movie>> = repository.getFavoriteMovies()
 
     init {
         checkSession()
