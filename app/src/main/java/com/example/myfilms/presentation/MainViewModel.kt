@@ -20,9 +20,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return repository.getFragmentSession()
     }
 
-    fun deleteSession() {
+    fun deleteAll() {
         viewModelScope.launch {
             repository.deleteFragmentSession()
+            repository.deleteFavoriteMovies()
         }
     }
 

@@ -19,9 +19,10 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     val moviesFlow: Flow<PagingData<Movie>> =
         repository.getMoviesFromNetwork().cachedIn(viewModelScope)
 
-    fun deleteSession() {
+    fun deleteAll() {
         viewModelScope.launch {
             repository.deleteFragmentSession()
+            repository.deleteFavoriteMovies()
         }
     }
 }

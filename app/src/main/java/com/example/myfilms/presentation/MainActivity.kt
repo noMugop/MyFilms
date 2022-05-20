@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                             .Builder(it)
                             .setMessage("Выйти?")
                             .setPositiveButton("Да") { dialogInterface, i ->
-                                viewModel.deleteSession()
+                                viewModel.deleteAll()
                                 navController.popBackStack()
                             }
                             .setNegativeButton("Нет") { dialogInterface, i -> }

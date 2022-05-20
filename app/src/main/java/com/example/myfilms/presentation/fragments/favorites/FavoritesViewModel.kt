@@ -37,9 +37,10 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun deleteSession() {
+    fun deleteAll() {
         viewModelScope.launch {
             repository.deleteFragmentSession()
+            repository.deleteFavoriteMovies()
         }
     }
 }

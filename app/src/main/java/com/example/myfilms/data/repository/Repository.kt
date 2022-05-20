@@ -60,6 +60,12 @@ class Repository(application: Application) {
         ).flow
     }
 
+    suspend fun deleteFavoriteMovies() {
+        withContext(Dispatchers.Default) {
+            db.deleteAllMovies()
+        }
+    }
+
 //    suspend fun getAccountState(movie: Movie): Movie {
 //        val session = getFragmentSession()
 //        try {
@@ -79,19 +85,6 @@ class Repository(application: Application) {
 //            db.movieUpdate(updateMovie)
 //        }
 //    }
-
-    suspend fun updateAccount(accountId: Int, name: String, uri: String): LoadingState {
-        var loadingState = LoadingState.FINISHED
-        val updateAccount = AccountUpdate(id = accountId, name = name, avatar_uri = uri)
-        withContext(Dispatchers.Default) {
-            try {
-                db.userUpdate(updateAccount)
-                loadingState = LoadingState.SUCCESS
-            } catch (e: Exception) {
-            }
-        }
-        return loadingState
-    }
 
     suspend fun getTrailer(movieId: Int): MovieVideos {
         var result = MovieVideos()
@@ -255,6 +248,19 @@ class Repository(application: Application) {
     suspend fun getUser(): DbAccountDetails {
         val userId = getCurrentUserId()
         return db.getUserById(userId)
+    }
+
+    suspend fun updateAccount(accountId: Int, name: String, uri: String): LoadingState {
+        var loadingState = LoadingState.FINISHED
+        val updateAccount = AccountUpdate(id = accountId, name = name, avatar_uri = uri)
+        withContext(Dispatchers.Default) {
+            try {
+                db.userUpdate(updateAccount)
+                loadingState = LoadingState.SUCCESS
+            } catch (e: Exception) {
+            }
+        }
+        return loadingState
     }
 
     companion object {
