@@ -102,7 +102,7 @@ class FavoritesFragment : Fragment() {
                         .setMessage("Выйти?")
                         .setPositiveButton("Да") { dialogInterface, i ->
                             try {
-                                viewModel.deleteAll()
+                                viewModel.deleteMainSession()
                                 findNavController().popBackStack()
                             } catch (e: Exception) {
                                 findNavController().popBackStack()
@@ -115,10 +115,5 @@ class FavoritesFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-    }
-
-    companion object {
-
-        private var PAGE = 1
     }
 }

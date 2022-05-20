@@ -56,12 +56,15 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
                 R.id.moviesFragment -> {
-                    viewModel.getUser()
+                    if (viewModel.getSession().isNotBlank()) {
+                        viewModel.getUser()
+                    } else {
+                        deleteAll()
+                    }
                     bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.favoritesFragment -> {
-                    viewModel.getUser()
                     bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.VISIBLE
                 }
@@ -70,14 +73,10 @@ class MainActivity : AppCompatActivity() {
                     toolbarLayout.visibility = View.GONE
                 }
                 R.id.loginFragment -> {
-                    val current = findCurrentFragmentId()
                     drawerLayout.closeDrawers()
                     if (viewModel.getSession().isBlank()) {
-                        resetUser()
-                    } else if (current == R.id.loginFragment) {
-                        resetUser()
+                        deleteAll()
                     }
-//                    Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
                     bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
                 }
@@ -177,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                             .Builder(it)
                             .setMessage("Выйти?")
                             .setPositiveButton("Да") { dialogInterface, i ->
-                                viewModel.deleteAll()
+                                viewModel.deleteMainSession()
                                 navController.popBackStack()
                             }
                             .setNegativeButton("Нет") { dialogInterface, i -> }
@@ -234,9 +233,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun resetUser() {
+    private fun deleteAll() {
         viewModel.cleanUser()
         userAvatar.setImageResource(R.drawable.empty_avatar)
+//        Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
+        viewModel.deleteFavoriteMovies()
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -83,6 +83,7 @@ class LoginFragment : Fragment() {
     private fun onGuestClick() {
         binding.btnGuest.setOnClickListener {
             hideKeyboard(requireActivity())
+//            viewModel.deleteFavoriteMovies()
             launchMovieFragment()
         }
     }
@@ -93,7 +94,7 @@ class LoginFragment : Fragment() {
                 LoadingState.IS_LOADING -> binding.pbLoading.visibility = View.VISIBLE
                 LoadingState.FINISHED -> viewModel.getFavorites()
                 LoadingState.SUCCESS -> {
-                    binding.pbLoading.visibility = View.GONE
+                binding.pbLoading.visibility = View.GONE
                     binding.etUsername.text = null
                     binding.etPassword.text = null
                     launchMovieFragment()

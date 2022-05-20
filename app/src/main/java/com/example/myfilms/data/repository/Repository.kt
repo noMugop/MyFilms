@@ -3,8 +3,6 @@ package com.example.myfilms.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.paging.*
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.account.AccountDetails
@@ -14,7 +12,6 @@ import com.example.myfilms.data.models.authorization.LoginApprove
 import com.example.myfilms.data.models.authorization.Session
 import com.example.myfilms.data.models.authorization.Token
 import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.data.models.movie.MovieUpdate
 import com.example.myfilms.data.models.movie.MovieVideos
 import com.example.myfilms.data.models.movie.PostMovie
 import com.example.myfilms.data.network.ApiFactory
@@ -23,7 +20,6 @@ import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
@@ -126,7 +122,7 @@ class Repository(application: Application) {
         return session
     }
 
-    fun getFragmentSession(): String {
+    fun getMainSession(): String {
         var session = ""
         try {
             session = prefSettings.getString(FRAGMENTS_KEY, "") as String
@@ -153,7 +149,7 @@ class Repository(application: Application) {
     }
 
     suspend fun deleteMainSession() {
-        val session = getFragmentSession()
+        val session = getMainSession()
         try {
             apiService.deleteSession(sessionId = Session(session_id = session))
             editor.remove(FRAGMENTS_KEY).commit()
@@ -178,31 +174,33 @@ class Repository(application: Application) {
         }
     }
 
-    suspend fun getFavorites(page: Int): LoadingState {
-        return withContext(Dispatchers.Default) {
-            val session = getFragmentSession()
+    suspend fun getFavorites() {
+        val session = getMainSession()
+        var page = 1
+        val movies = mutableListOf<Movie>()
+        while (page != 0) {
             try {
                 val response = apiService.getFavorites(session_id = session, page = page)
-                if (response.isSuccessful) {
-                    val movies = response.body()?.movies as List<Movie>
-                    if (!movies.isNullOrEmpty()) {
-                        db.insertMovieList(movies)
-                        LoadingState.FINISHED
-                    } else {
-                        LoadingState.SUCCESS
+                if (!response.body()?.movies.isNullOrEmpty()) {
+                    response.body()?.movies?.onEach {
+                        movies.add(it)
                     }
+                    page++
                 } else {
-                    LoadingState.SUCCESS
+                    page = 0
                 }
             } catch (e: Exception) {
-                LoadingState.SUCCESS
             }
+        }
+        if (!movies.isNullOrEmpty()) {
+            db.insertMovieList(movies)
+            movies.clear()
         }
     }
 
     suspend fun addOrDeleteFavorite(movie: Movie): LoadingState {
         var loadingState = LoadingState.FINISHED
-        val session = getFragmentSession()
+        val session = getMainSession()
         val postMovie = PostMovie(media_id = movie.id as Int, isFavorite = movie.isFavorite)
         try {
             val response = apiService.addFavorite(
@@ -223,7 +221,7 @@ class Repository(application: Application) {
     }
 
     suspend fun addUser() {
-        val session = getFragmentSession()
+        val session = getMainSession()
         withContext(Dispatchers.Default) {
             try {
                 val response = apiService.getAccountDetails(session_id = session)

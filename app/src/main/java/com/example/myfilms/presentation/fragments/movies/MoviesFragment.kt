@@ -105,7 +105,7 @@ class MoviesFragment : Fragment() {
                         .setMessage("Выйти?")
                         .setPositiveButton("Да") { dialogInterface, i ->
                             try {
-                                viewModel.deleteAll()
+                                viewModel.deleteMainSession()
                                 findNavController().popBackStack()
                             } catch (e: Exception) {
                                 findNavController().popBackStack()

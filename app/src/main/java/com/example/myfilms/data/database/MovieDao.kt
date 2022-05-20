@@ -14,10 +14,12 @@ interface MovieDao {
 //    suspend fun getMovieList(): List<Movie>
 
     //movies_table
-    @Query("SELECT * FROM movies_table " +
-            "WHERE :searchBy = '' OR title LIKE '%' || :searchBy || '%' " +
-            "ORDER BY voteAverage DESC " +
-            "LIMIT :limit OFFSET :offset")
+    @Query(
+        "SELECT * FROM movies_table " +
+                "WHERE :searchBy = '' OR title LIKE '%' || :searchBy || '%' " +
+                "ORDER BY voteAverage DESC " +
+                "LIMIT :limit OFFSET :offset"
+    )
     suspend fun getAmountOfMovies(limit: Int, offset: Int, searchBy: String = ""): List<Movie>
 
     @Query("SELECT * FROM movies_table WHERE id == :movieId")

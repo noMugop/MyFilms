@@ -5,7 +5,9 @@ import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.myfilms.data.repository.Repository
 import com.example.myfilms.presentation.utils.LoadingState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -16,12 +18,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
-    private val _loadFavorites = MutableLiveData<LoadingState>()
-    val loadFavorites: LiveData<LoadingState>
-        get() = _loadFavorites
-
     fun checkSessionId(): String {
-        return repository.getFragmentSession()
+        return repository.getMainSession()
     }
 
     fun setSuccess() {
@@ -52,27 +50,18 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getFavorites() {
-        viewModelScope.launch {
-            _loadFavorites.postValue(LoadingState.IS_LOADING)
-            while (_loadFavorites.value != LoadingState.SUCCESS) {
-                _loadFavorites.postValue(repository.getFavorites(PAGE))
-                PAGE++
-            }
+        viewModelScope.launch(Dispatchers.Default) {
+            repository.getFavorites()
         }
     }
 
-    fun deleteMainSession() {
+    fun deleteFavoriteMovies() {
         viewModelScope.launch {
-            repository.deleteMainSession()
+            repository.deleteFavoriteMovies()
         }
     }
 
     fun deleteLoginSession() {
         repository.deleteLoginSession()
-    }
-
-    companion object {
-
-        private var PAGE = 1
     }
 }

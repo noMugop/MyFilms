@@ -17,18 +17,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         get() = _user
 
     fun getSession(): String {
-        return repository.getFragmentSession()
+        return repository.getMainSession()
     }
 
-    fun deleteAll() {
+    fun deleteMainSession() {
         viewModelScope.launch {
             repository.deleteMainSession()
-            repository.deleteFavoriteMovies()
         }
     }
 
     fun cleanUser() {
-        _user.value = DbAccountDetails()
+        _user.value = null
+    }
+
+    fun deleteFavoriteMovies() {
+        viewModelScope.launch {
+            repository.deleteFavoriteMovies()
+        }
     }
 
     fun getUser() {
