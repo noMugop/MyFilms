@@ -23,9 +23,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentSettingsBinding
+import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
 import com.example.myfilms.presentation.utils.LoadingState
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.squareup.picasso.Picasso
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
@@ -33,7 +35,7 @@ class SettingsFragment : Fragment() {
     private val binding: FragmentSettingsBinding
         get() = _binding ?: throw RuntimeException("FragmentSettingsBinding is null")
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,11 +55,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun init() {
-
-        viewModel = ViewModelProvider(
-            this,
-            AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[SettingsViewModel::class.java]
 
         viewModel.getUser()
         binding.btnSave.isEnabled = false

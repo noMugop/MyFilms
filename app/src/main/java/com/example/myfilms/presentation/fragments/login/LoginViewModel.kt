@@ -3,16 +3,15 @@ package com.example.myfilms.presentation.fragments.login
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.myfilms.data.repository.Repository
+import com.example.myfilms.data.repository.RepositoryImpl
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val context = application
-    private val repository = Repository(context)
+class LoginViewModel(
+    val repository: RepositoryImpl,
+    val application: Application
+) : ViewModel() {
 
     private val _loadingState = MutableLiveData<LoadingState>()
     val loadingState: LiveData<LoadingState>
@@ -44,7 +43,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 _loadingState.value = LoadingState.SUCCESS
             } else {
                 _loadingState.value = LoadingState.WAIT
-                Toast.makeText(context, "Неверные данные", Toast.LENGTH_SHORT).show()
+                Toast.makeText(application, "Неверные данные", Toast.LENGTH_SHORT).show()
             }
         }
     }

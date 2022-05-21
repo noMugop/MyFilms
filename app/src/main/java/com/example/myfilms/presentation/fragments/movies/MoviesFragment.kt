@@ -21,9 +21,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
+import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment() {
 
@@ -31,7 +33,7 @@ class MoviesFragment : Fragment() {
     private val binding: FragmentMoviesBinding
         get() = _binding ?: throw RuntimeException("FragmentFilmsBinding is null")
 
-    private lateinit var viewModel: MovieViewModel
+    private val viewModel by viewModel<MovieViewModel>()
     private val adapter = MoviesAdapter()
 
     override fun onCreateView(
@@ -52,11 +54,6 @@ class MoviesFragment : Fragment() {
     }
 
     private fun init() {
-
-        viewModel = ViewModelProvider(
-            this,
-            AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[MovieViewModel::class.java]
 
         binding.rvMovies.adapter = adapter.withLoadStateFooter(
             footer = NewLoadingStateAdapter {

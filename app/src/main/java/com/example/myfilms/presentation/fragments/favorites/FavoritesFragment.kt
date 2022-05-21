@@ -27,6 +27,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -36,7 +37,7 @@ class FavoritesFragment : Fragment() {
     private val binding: FragmentFavoritesBinding
         get() = _binding ?: throw RuntimeException("FavoritesFragment is null")
 
-    private lateinit var viewModel: FavoritesViewModel
+    private val viewModel by viewModel<FavoritesViewModel>()
     private val adapter = MoviesAdapter()
 
     override fun onCreateView(
@@ -57,11 +58,6 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun init() {
-        viewModel =
-            ViewModelProvider(
-                this,
-                AndroidViewModelFactory.getInstance(requireActivity().application)
-            )[FavoritesViewModel::class.java]
 
         binding.rvFavorites.adapter = adapter.withLoadStateFooter(
             footer = NewLoadingStateAdapter {

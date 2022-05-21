@@ -5,16 +5,13 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.data.repository.Repository
-import kotlinx.coroutines.Dispatchers
+import com.example.myfilms.data.repository.RepositoryImpl
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class MovieViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val context = application
-    private val repository = Repository(context)
+class MovieViewModel(
+    val repository: RepositoryImpl
+) : ViewModel() {
 
     val moviesFlow: Flow<PagingData<Movie>> =
         repository.getMoviesFromNetwork().cachedIn(viewModelScope)

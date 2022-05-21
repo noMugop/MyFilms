@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.myfilms"
-        minSdk 25
+        minSdk 26
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -97,4 +97,8 @@ dependencies {
 
     //доп библиотека для работы с ЖЦ
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
+
+    //koin
+    implementation "io.insert-koin:koin-core:3.2.0"
+    implementation "io.insert-koin:koin-android:3.2.0"
 }

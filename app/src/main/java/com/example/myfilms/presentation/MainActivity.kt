@@ -18,18 +18,20 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.ActivityMainBinding
+import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
+    private val viewModel by viewModel<MainViewModel>()
 
     private lateinit var navController: NavController
     private lateinit var bottomNavigation: BottomNavigationView
@@ -89,11 +91,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[MainViewModel::class.java]
 
         navController = findNavController(R.id.main_container)
         bottomNavigation = binding.contentMain.bottomNavigation
