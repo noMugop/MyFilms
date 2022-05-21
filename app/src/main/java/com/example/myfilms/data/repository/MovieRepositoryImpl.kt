@@ -34,9 +34,6 @@ class MovieRepositoryImpl(
     private val editor: SharedPreferences.Editor
 ) : MovieRepository {
 
-//    если нужно сделать inject не в Activity или Fragment
-//    private val api: ApiService by inject(ApiService::class.java)
-
     override fun getFavoritesFromDB(searchBy: String): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(

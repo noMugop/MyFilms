@@ -33,7 +33,6 @@ val sharedPrefsModule = module {
 }
 
 val repositoryModule = module {
-//    factory {  }
     single<MovieRepository> { MovieRepositoryImpl(
         apiService = get(),
         db = get(),

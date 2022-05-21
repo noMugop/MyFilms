@@ -39,9 +39,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel by viewModel<MainViewModel>()
 
-//    inject для Activity или Fragment
-//    private val api by inject<ApiService>()
-
     private lateinit var navController: NavController
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var toolbarLayout: AppBarLayout
