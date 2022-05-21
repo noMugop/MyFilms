@@ -24,7 +24,7 @@ val daoModule = module {
     single { getMovieDao(context = get()) }
 }
 
-val sharedPrefersModule = module {
+val sharedPrefsModule = module {
     single { getPrefSettings(context = get()) }
     single { getEditor(context = get()) }
 }
@@ -42,7 +42,7 @@ val viewModelModule = module {
     viewModel { SettingsViewModel(repository = get()) }
 }
 
-val appModule = networkModule + daoModule + repositoryModule + viewModelModule + sharedPrefersModule
+val appModule = networkModule + daoModule + repositoryModule + viewModelModule + sharedPrefsModule
 
 private fun getApiService(): ApiService = ApiFactory.getInstance()
 private fun getMovieDao(context: Context): MovieDao = MovieDatabase.getInstance(context).movieDao()
