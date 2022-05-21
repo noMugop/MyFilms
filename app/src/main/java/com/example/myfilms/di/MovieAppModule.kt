@@ -6,7 +6,8 @@ import com.example.myfilms.data.database.MovieDao
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.network.ApiService
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.data.repository.MovieRepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import com.example.myfilms.presentation.MainViewModel
 import com.example.myfilms.presentation.fragments.details.DetailsViewModel
 import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
@@ -30,16 +31,22 @@ val sharedPrefsModule = module {
 }
 
 val repositoryModule = module {
-    single { RepositoryImpl(apiService = get(), db = get(), prefSettings = get(), editor = get()) }
+//    factory {  }
+    single<MovieRepository> { MovieRepositoryImpl(
+        apiService = get(),
+        db = get(),
+        prefSettings = get(),
+        editor = get()
+    ) }
 }
 
 val viewModelModule = module {
-    viewModel { MainViewModel(repository = get()) }
-    viewModel { DetailsViewModel(repository = get()) }
-    viewModel { LoginViewModel(repository = get(), application = get()) }
-    viewModel { MovieViewModel(repository = get()) }
-    viewModel { FavoritesViewModel(repository = get(), application = get()) }
-    viewModel { SettingsViewModel(repository = get()) }
+    viewModel { MainViewModel(movieRepository = get()) }
+    viewModel { DetailsViewModel(movieRepository = get()) }
+    viewModel { LoginViewModel(movieRepository = get(), application = get()) }
+    viewModel { MovieViewModel(movieRepository = get()) }
+    viewModel { FavoritesViewModel(movieRepository = get(), application = get()) }
+    viewModel { SettingsViewModel(movieRepository = get()) }
 }
 
 val appModule = networkModule + daoModule + repositoryModule + viewModelModule + sharedPrefsModule

@@ -19,20 +19,21 @@ import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.network.ApiService
 import com.example.myfilms.data.paging_source.NetworkPagingSource
 import com.example.myfilms.data.paging_source.RoomPagingSource
+import com.example.myfilms.domain.MovieRepository
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class RepositoryImpl(
+class MovieRepositoryImpl(
     private val apiService: ApiService,
     private val db: MovieDao,
     private val prefSettings: SharedPreferences,
     private val editor: SharedPreferences.Editor
-) {
+) : MovieRepository {
 
-    fun getFavoriteMovies(searchBy: String = ""): Flow<PagingData<Movie>> {
+    override fun getFavoritesFromDB(searchBy: String): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -42,13 +43,13 @@ class RepositoryImpl(
         ).flow
     }
 
-    suspend fun getMovieById(movieId: Int): Movie {
+    override suspend fun getFavoriteMovieById(movieId: Int): Movie {
         return withContext(Dispatchers.Default) {
             db.getMovieById(movieId)
         }
     }
 
-    fun getMoviesFromNetwork(): Flow<PagingData<Movie>> {
+    override fun getMoviesFromNetwork(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -58,7 +59,7 @@ class RepositoryImpl(
         ).flow
     }
 
-    suspend fun deleteFavoriteMovies() {
+    override suspend fun deleteFavoriteMovies() {
         withContext(Dispatchers.Default) {
             db.deleteAllMovies()
         }
@@ -84,7 +85,7 @@ class RepositoryImpl(
 //        }
 //    }
 
-    suspend fun getTrailer(movieId: Int): MovieVideos {
+    override suspend fun getTrailer(movieId: Int): MovieVideos {
         var result = MovieVideos()
         try {
             val responseVideo = apiService.getTrailer(movieId)
@@ -96,7 +97,7 @@ class RepositoryImpl(
         return result
     }
 
-    suspend fun login(username: String, password: String): String {
+    override suspend fun login(username: String, password: String): String {
         var session = ""
         try {
             val responseGet = apiService.getToken()
@@ -121,7 +122,7 @@ class RepositoryImpl(
         return session
     }
 
-    fun getMainSession(): String {
+    override fun getMainSession(): String {
         var session = ""
         try {
             session = prefSettings.getString(FRAGMENTS_KEY, "") as String
@@ -130,7 +131,7 @@ class RepositoryImpl(
         return session
     }
 
-    fun getLoginSession(): String {
+    override fun getLoginSession(): String {
         var session = ""
         try {
             session = prefSettings.getString(LOGIN_KEY, "") as String
@@ -147,7 +148,7 @@ class RepositoryImpl(
         }
     }
 
-    suspend fun deleteMainSession() {
+    override suspend fun deleteMainSession() {
         val session = getMainSession()
         try {
             apiService.deleteSession(sessionId = Session(session_id = session))
@@ -159,7 +160,7 @@ class RepositoryImpl(
         }
     }
 
-    fun deleteLoginSession() {
+    override fun deleteLoginSession() {
         try {
             editor.remove(LOGIN_KEY).commit()
         } catch (e: Exception) {
@@ -173,7 +174,7 @@ class RepositoryImpl(
         }
     }
 
-    suspend fun getFavorites() {
+    override suspend fun getFavoritesFromNetwork() {
         val session = getMainSession()
         var page = 1
         val movies = mutableListOf<Movie>()
@@ -197,7 +198,7 @@ class RepositoryImpl(
         }
     }
 
-    suspend fun addOrDeleteFavorite(movie: Movie): LoadingState {
+    override suspend fun addOrDeleteFavorite(movie: Movie): LoadingState {
         var loadingState = LoadingState.FINISHED
         val session = getMainSession()
         val postMovie = PostMovie(media_id = movie.id as Int, isFavorite = movie.isFavorite)
@@ -219,7 +220,7 @@ class RepositoryImpl(
         return loadingState
     }
 
-    suspend fun addUser() {
+    override suspend fun addUser() {
         val session = getMainSession()
         withContext(Dispatchers.Default) {
             try {
@@ -245,12 +246,12 @@ class RepositoryImpl(
         }
     }
 
-    suspend fun getUser(): DbAccountDetails {
+    override suspend fun getUser(): DbAccountDetails {
         val userId = getCurrentUserId()
         return db.getUserById(userId)
     }
 
-    suspend fun updateUser(accountId: Int, name: String, uri: String): LoadingState {
+    override suspend fun updateUser(accountId: Int, name: String, uri: String): LoadingState {
         var loadingState = LoadingState.FINISHED
         val updateAccount = AccountUpdate(id = accountId, name = name, avatar_uri = uri)
         withContext(Dispatchers.Default) {

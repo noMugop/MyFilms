@@ -5,23 +5,24 @@ import android.widget.Toast
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.data.repository.MovieRepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
-    val repository: RepositoryImpl,
-    val application: Application
+    private val movieRepository: MovieRepository,
+    private val application: Application
 ) : ViewModel() {
 
-    val favoritesFlow: Flow<PagingData<Movie>> = repository.getFavoriteMovies()
+    val favoritesFlow: Flow<PagingData<Movie>> = movieRepository.getFavoritesFromDB("")
 
     init {
         checkSession()
     }
 
     private fun checkSession() {
-        if (repository.getMainSession().isBlank()) {
+        if (movieRepository.getMainSession().isBlank()) {
             Toast.makeText(
                 application,
                 "Требуется авторизация",
@@ -32,7 +33,7 @@ class FavoritesViewModel(
 
     fun deleteMainSession() {
         viewModelScope.launch {
-            repository.deleteMainSession()
+            movieRepository.deleteMainSession()
         }
     }
 }

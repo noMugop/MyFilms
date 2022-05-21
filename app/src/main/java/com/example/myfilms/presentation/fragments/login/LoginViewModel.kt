@@ -3,14 +3,15 @@ package com.example.myfilms.presentation.fragments.login
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.data.repository.MovieRepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    val repository: RepositoryImpl,
-    val application: Application
+    private val movieRepository: MovieRepository,
+    private val application: Application
 ) : ViewModel() {
 
     private val _loadingState = MutableLiveData<LoadingState>()
@@ -18,11 +19,11 @@ class LoginViewModel(
         get() = _loadingState
 
     fun checkSessionId(): String {
-        return repository.getMainSession()
+        return movieRepository.getMainSession()
     }
 
     fun setSuccess() {
-        if (repository.getLoginSession() == "Access") {
+        if (movieRepository.getLoginSession() == "Access") {
             _loadingState.value = LoadingState.SUCCESS
         } else {
             _loadingState.value = LoadingState.WAIT
@@ -36,9 +37,9 @@ class LoginViewModel(
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            val session = repository.login(username, password)
+            val session = movieRepository.login(username, password)
             if (session.isNotBlank()) {
-                repository.addUser()
+                movieRepository.addUser()
                 _loadingState.value = LoadingState.FINISHED
                 _loadingState.value = LoadingState.SUCCESS
             } else {
@@ -50,17 +51,11 @@ class LoginViewModel(
 
     fun getFavorites() {
         viewModelScope.launch(Dispatchers.Default) {
-            repository.getFavorites()
-        }
-    }
-
-    fun deleteFavoriteMovies() {
-        viewModelScope.launch {
-            repository.deleteFavoriteMovies()
+            movieRepository.getFavoritesFromNetwork()
         }
     }
 
     fun deleteLoginSession() {
-        repository.deleteLoginSession()
+        movieRepository.deleteLoginSession()
     }
 }

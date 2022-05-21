@@ -3,12 +3,13 @@ package com.example.myfilms.presentation.fragments.details
 import androidx.lifecycle.*
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.models.movie.MovieVideos
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.data.repository.MovieRepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(
-    val repository: RepositoryImpl
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     private val _movie = MutableLiveData<Movie>()
@@ -29,8 +30,8 @@ class DetailsViewModel(
 
     fun getMovieById(movieId: Int) {
         viewModelScope.launch {
-            _movie.value = repository.getMovieById(movieId)
-            _trailer.value = repository.getTrailer(movieId)
+            _movie.value = movieRepository.getFavoriteMovieById(movieId)
+            _trailer.value = movieRepository.getTrailer(movieId)
             _loadingState.value = LoadingState.SUCCESS
         }
     }
@@ -38,7 +39,7 @@ class DetailsViewModel(
     fun deleteFavorites(movie: Movie) {
         viewModelScope.launch {
             movie.isFavorite = false
-            _addFavoriteState.value = repository.addOrDeleteFavorite(movie)
+            _addFavoriteState.value = movieRepository.addOrDeleteFavorite(movie)
             _addFavoriteState.value = LoadingState.IS_LOADING
         }
     }
@@ -46,7 +47,7 @@ class DetailsViewModel(
     fun addFavorite(movie: Movie) {
         viewModelScope.launch {
             movie.isFavorite = true
-            _addFavoriteState.value = repository.addOrDeleteFavorite(movie)
+            _addFavoriteState.value = movieRepository.addOrDeleteFavorite(movie)
             _addFavoriteState.value = LoadingState.IS_LOADING
         }
     }

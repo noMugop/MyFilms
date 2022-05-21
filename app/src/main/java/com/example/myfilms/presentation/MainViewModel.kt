@@ -1,14 +1,14 @@
 package com.example.myfilms.presentation
 
-import android.app.Application
 import androidx.lifecycle.*
 import com.example.myfilms.data.models.account.DbAccountDetails
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.data.repository.MovieRepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class MainViewModel(
-    val repository: RepositoryImpl
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     private val _user = MutableLiveData<DbAccountDetails?>()
@@ -16,12 +16,12 @@ class MainViewModel(
         get() = _user
 
     fun getSession(): String {
-        return repository.getMainSession()
+        return movieRepository.getMainSession()
     }
 
     fun deleteMainSession() {
         viewModelScope.launch {
-            repository.deleteMainSession()
+            movieRepository.deleteMainSession()
         }
     }
 
@@ -31,13 +31,13 @@ class MainViewModel(
 
     fun deleteFavoriteMovies() {
         viewModelScope.launch {
-            repository.deleteFavoriteMovies()
+            movieRepository.deleteFavoriteMovies()
         }
     }
 
     fun getUser() {
         viewModelScope.launch {
-            val user = repository.getUser()
+            val user = movieRepository.getUser()
             try {
                 if (user.id != null) {
                     _user.value = user

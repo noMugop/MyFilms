@@ -2,13 +2,14 @@ package com.example.myfilms.presentation.fragments.settings
 
 import androidx.lifecycle.*
 import com.example.myfilms.data.models.account.DbAccountDetails
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.data.repository.MovieRepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class SettingsViewModel(
-    val repository: RepositoryImpl
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     private val _user = MutableLiveData<DbAccountDetails?>()
@@ -21,7 +22,7 @@ class SettingsViewModel(
 
     fun getUser() {
         viewModelScope.launch {
-            val user = repository.getUser()
+            val user = movieRepository.getUser()
             try {
                 if (user.id != null) {
                     _user.value = user
@@ -50,7 +51,7 @@ class SettingsViewModel(
     fun updateUser() {
         viewModelScope.launch {
             if (_user.value?.id != null) {
-                _loadingState.value = repository.updateUser(
+                _loadingState.value = movieRepository.updateUser(
                     _user.value?.id as Int,
                     _user.value?.name as String,
                     _user.value?.avatar_uri as String

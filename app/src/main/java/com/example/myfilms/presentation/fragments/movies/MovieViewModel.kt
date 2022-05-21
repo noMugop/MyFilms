@@ -4,20 +4,20 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.data.repository.RepositoryImpl
+import com.example.myfilms.domain.MovieRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MovieViewModel(
-    val repository: RepositoryImpl
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     val moviesFlow: Flow<PagingData<Movie>> =
-        repository.getMoviesFromNetwork().cachedIn(viewModelScope)
+        movieRepository.getMoviesFromNetwork().cachedIn(viewModelScope)
 
     fun deleteMainSession() {
         viewModelScope.launch {
-            repository.deleteMainSession()
+            movieRepository.deleteMainSession()
         }
     }
 }
