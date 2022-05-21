@@ -1,17 +1,15 @@
 package com.example.myfilms.presentation.fragments.details
 
-import android.app.Application
 import androidx.lifecycle.*
 import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.models.movie.MovieVideos
-import com.example.myfilms.data.repository.Repository
+import com.example.myfilms.data.repository.RepositoryImpl
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 
-class DetailsViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val context = application
-    private val repository = Repository(context)
+class DetailsViewModel(
+    val repository: RepositoryImpl
+) : ViewModel() {
 
     private val _movie = MutableLiveData<Movie>()
     val movie: LiveData<Movie>

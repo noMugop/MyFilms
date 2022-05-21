@@ -17,6 +17,7 @@ import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.presentation.utils.LoadingState
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.myfilms.presentation.fragments.movies.MoviesFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -26,11 +27,11 @@ class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding
         get() = _binding ?: throw RuntimeException("FragmentLoginBinding is null")
 
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel by viewModel<LoginViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        initViewModel()
+
         if (viewModel.checkSessionId().isNotBlank()) {
             launchMovieFragment()
         }
@@ -57,14 +58,6 @@ class LoginFragment : Fragment() {
     private fun init() {
         viewModel.setSuccess()
         binding.ivLogo.setImageResource(R.drawable.movies_logo)
-    }
-
-    private fun initViewModel() {
-        viewModel =
-            ViewModelProvider(
-                this,
-                AndroidViewModelFactory.getInstance(requireActivity().application)
-            )[LoginViewModel::class.java]
     }
 
     private fun onLoginClick() {

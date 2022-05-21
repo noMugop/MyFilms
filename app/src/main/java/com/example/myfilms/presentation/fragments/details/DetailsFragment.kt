@@ -16,6 +16,7 @@ import com.example.myfilms.presentation.utils.LoadingState
 import com.squareup.picasso.Picasso
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.myfilms.data.models.movie.Movie
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment : Fragment() {
 
@@ -23,7 +24,7 @@ class DetailsFragment : Fragment() {
     private val binding: FragmentDetailsBinding
         get() = _binding ?: throw RuntimeException("DetailsFragment is null")
 
-    private lateinit var viewModel: DetailsViewModel
+    private val viewModel by viewModel<DetailsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,17 +42,9 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViewModel()
         getMovieById(movie.id as Int)
         onFavoriteClickListener()
         onTrailerClickListener()
-    }
-
-    private fun initViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[DetailsViewModel::class.java]
     }
 
     private fun getMovieById(movieId: Int) {

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.paging.*
+import com.example.myfilms.data.database.MovieDao
 import com.example.myfilms.data.database.MovieDatabase
 import com.example.myfilms.data.models.account.AccountDetails
 import com.example.myfilms.data.models.account.AccountUpdate
@@ -15,6 +16,7 @@ import com.example.myfilms.data.models.movie.Movie
 import com.example.myfilms.data.models.movie.MovieVideos
 import com.example.myfilms.data.models.movie.PostMovie
 import com.example.myfilms.data.network.ApiFactory
+import com.example.myfilms.data.network.ApiService
 import com.example.myfilms.data.paging_source.NetworkPagingSource
 import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.presentation.utils.LoadingState
@@ -23,15 +25,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class Repository(application: Application) {
-
-    private val apiService = ApiFactory.getInstance()
-    private val db = MovieDatabase.getInstance(application).movieDao()
-    private var prefSettings: SharedPreferences = application.getSharedPreferences(
-        APP_SETTINGS,
-        Context.MODE_PRIVATE
-    ) as SharedPreferences
-    private var editor: SharedPreferences.Editor = prefSettings.edit()
+class RepositoryImpl(
+    private val apiService: ApiService,
+    private val db: MovieDao,
+    private val prefSettings: SharedPreferences,
+    private val editor: SharedPreferences.Editor
+) {
 
     fun getFavoriteMovies(searchBy: String = ""): Flow<PagingData<Movie>> {
         return Pager(
@@ -266,7 +265,6 @@ class Repository(application: Application) {
 
     companion object {
 
-        private const val APP_SETTINGS = "Settings"
         private const val FRAGMENTS_KEY = "SESSION_FRAGMENT"
         private const val LOGIN_KEY = "SESSION_LOGIN"
         private const val CURRENT_USER_ID = "CURRENT_USER"

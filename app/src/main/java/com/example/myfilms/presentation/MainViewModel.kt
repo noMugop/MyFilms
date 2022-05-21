@@ -3,14 +3,13 @@ package com.example.myfilms.presentation
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.myfilms.data.models.account.DbAccountDetails
-import com.example.myfilms.data.repository.Repository
+import com.example.myfilms.data.repository.RepositoryImpl
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val context = application
-    private val repository = Repository(context)
+class MainViewModel(
+    val repository: RepositoryImpl
+) : ViewModel() {
 
     private val _user = MutableLiveData<DbAccountDetails?>()
     val user: LiveData<DbAccountDetails?>
