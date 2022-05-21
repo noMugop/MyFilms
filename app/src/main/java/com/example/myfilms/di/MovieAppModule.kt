@@ -8,6 +8,7 @@ import com.example.myfilms.data.network.ApiFactory
 import com.example.myfilms.data.network.ApiService
 import com.example.myfilms.data.repository.MovieRepositoryImpl
 import com.example.myfilms.domain.MovieRepository
+import com.example.myfilms.presentation.MainActivity
 import com.example.myfilms.presentation.MainViewModel
 import com.example.myfilms.presentation.fragments.details.DetailsViewModel
 import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
@@ -15,6 +16,7 @@ import com.example.myfilms.presentation.fragments.login.LoginViewModel
 import com.example.myfilms.presentation.fragments.movies.MovieViewModel
 import com.example.myfilms.presentation.fragments.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val networkModule = module {
@@ -49,7 +51,8 @@ val viewModelModule = module {
     viewModel { SettingsViewModel(movieRepository = get()) }
 }
 
-val appModule = networkModule + daoModule + repositoryModule + viewModelModule + sharedPrefsModule
+val movieAppModule = networkModule + daoModule + repositoryModule +
+        viewModelModule + sharedPrefsModule
 
 private fun getApiService(): ApiService = ApiFactory.getInstance()
 private fun getMovieDao(context: Context): MovieDao = MovieDatabase.getInstance(context).movieDao()

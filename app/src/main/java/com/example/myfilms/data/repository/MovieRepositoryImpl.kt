@@ -24,6 +24,7 @@ import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import org.koin.java.KoinJavaComponent.inject
 import java.lang.Exception
 
 class MovieRepositoryImpl(
@@ -32,6 +33,9 @@ class MovieRepositoryImpl(
     private val prefSettings: SharedPreferences,
     private val editor: SharedPreferences.Editor
 ) : MovieRepository {
+
+//    если нужно сделать inject не в Activity или Fragment
+//    private val api: ApiService by inject(ApiService::class.java)
 
     override fun getFavoritesFromDB(searchBy: String): Flow<PagingData<Movie>> {
         return Pager(
