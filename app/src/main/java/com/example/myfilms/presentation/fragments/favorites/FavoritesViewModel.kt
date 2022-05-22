@@ -11,24 +11,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
-    private val movieRepository: MovieRepository,
-    private val application: Application
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     val favoritesFlow: Flow<PagingData<Movie>> = movieRepository.getFavoritesFromDB("")
 
-    init {
-        checkSession()
-    }
-
-    private fun checkSession() {
-        if (movieRepository.getMainSession().isBlank()) {
-            Toast.makeText(
-                application,
-                "Требуется авторизация",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+    fun checkSession(): String {
+        return movieRepository.getMainSession()
     }
 
     fun deleteMainSession() {

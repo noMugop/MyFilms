@@ -76,7 +76,6 @@ class LoginFragment : Fragment() {
     private fun onGuestClick() {
         binding.btnGuest.setOnClickListener {
             hideKeyboard(requireActivity())
-//            viewModel.deleteFavoriteMovies()
             launchMovieFragment()
         }
     }
@@ -94,8 +93,9 @@ class LoginFragment : Fragment() {
                     viewModel.setWait()
                 }
                 LoadingState.WAIT -> {
-                    viewModel.deleteLoginSession()
                     binding.pbLoading.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT).show()
+                    viewModel.deleteLoginSession()
                 }
                 else -> Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
             }

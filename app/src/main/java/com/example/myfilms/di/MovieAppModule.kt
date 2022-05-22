@@ -44,9 +44,9 @@ val repositoryModule = module {
 val viewModelModule = module {
     viewModel { MainViewModel(movieRepository = get()) }
     viewModel { DetailsViewModel(movieRepository = get()) }
-    viewModel { LoginViewModel(movieRepository = get(), application = get()) }
+    viewModel { LoginViewModel(movieRepository = get()) }
     viewModel { MovieViewModel(movieRepository = get()) }
-    viewModel { FavoritesViewModel(movieRepository = get(), application = get()) }
+    viewModel { FavoritesViewModel(movieRepository = get()) }
     viewModel { SettingsViewModel(movieRepository = get()) }
 }
 

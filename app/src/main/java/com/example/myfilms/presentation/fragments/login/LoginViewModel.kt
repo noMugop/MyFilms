@@ -10,8 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val movieRepository: MovieRepository,
-    private val application: Application
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     private val _loadingState = MutableLiveData<LoadingState>()
@@ -44,7 +43,6 @@ class LoginViewModel(
                 _loadingState.value = LoadingState.SUCCESS
             } else {
                 _loadingState.value = LoadingState.WAIT
-                Toast.makeText(application, "Неверные данные", Toast.LENGTH_SHORT).show()
             }
         }
     }
