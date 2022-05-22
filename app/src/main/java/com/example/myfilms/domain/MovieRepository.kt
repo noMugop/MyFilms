@@ -19,7 +19,6 @@ interface MovieRepository {
     suspend fun getFavoriteMovieById(movieId: Int): Movie
     suspend fun deleteFavoriteMovies()
     suspend fun addOrDeleteFavorite(movie: Movie): LoadingState
-
     suspend fun getFavoritesFromNetwork()
     fun getMoviesFromNetwork(): Flow<PagingData<Movie>>
     suspend fun getTrailer(movieId: Int): MovieVideos
