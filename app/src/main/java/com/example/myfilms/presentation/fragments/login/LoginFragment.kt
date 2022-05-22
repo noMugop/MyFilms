@@ -63,18 +63,22 @@ class LoginFragment : Fragment() {
     private fun onLoginClick() {
         binding.btnLogin.setOnClickListener {
             hideKeyboard(requireActivity())
-            if (!binding.etUsername.text.isNullOrBlank() && !binding.etPassword.text.isNullOrBlank()) {
+            if (!binding.etUsername.text.isNullOrBlank()
+                && !binding.etPassword.text.isNullOrBlank()
+            ) {
                 val username = binding.etUsername.text.toString().trim()
                 val password = binding.etPassword.text.toString().trim()
                 viewModel.login(username, password)
             } else {
-                Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
     private fun onGuestClick() {
         binding.btnGuest.setOnClickListener {
+            cleanFields()
             hideKeyboard(requireActivity())
             launchMovieFragment()
         }
@@ -87,19 +91,27 @@ class LoginFragment : Fragment() {
                 LoadingState.FINISHED -> viewModel.getFavorites()
                 LoadingState.SUCCESS -> {
                 binding.pbLoading.visibility = View.GONE
-                    binding.etUsername.text = null
-                    binding.etPassword.text = null
+                    cleanFields()
                     launchMovieFragment()
                     viewModel.setWait()
                 }
                 LoadingState.WAIT -> {
                     binding.pbLoading.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT).show()
+                    if (!binding.etUsername.text.isNullOrBlank()
+                        || !binding.etPassword.text.isNullOrBlank()) {
+                        Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                     viewModel.deleteLoginSession()
                 }
-                else -> Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                else -> {}
             }
         }
+    }
+
+    private fun cleanFields() {
+        binding.etUsername.text = null
+        binding.etPassword.text = null
     }
 
     private fun launchMovieFragment() {
