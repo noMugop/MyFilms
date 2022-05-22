@@ -214,14 +214,6 @@ class MovieRepositoryImpl(
         return session
     }
 
-    private fun getCurrentUserId(): Int {
-        return try {
-            prefSettings.getInt(CURRENT_USER_ID, 0)
-        } catch (e: Exception) {
-            return 0
-        }
-    }
-
     override suspend fun deleteMainSession() {
         val session = getMainSession()
         try {
@@ -238,6 +230,15 @@ class MovieRepositoryImpl(
         try {
             editor.remove(LOGIN_SESSION_KEY).commit()
         } catch (e: Exception) {
+        }
+    }
+
+    //локальные Shared Preference методы
+    private fun getCurrentUserId(): Int {
+        return try {
+            prefSettings.getInt(CURRENT_USER_ID, 0)
+        } catch (e: Exception) {
+            return 0
         }
     }
 
