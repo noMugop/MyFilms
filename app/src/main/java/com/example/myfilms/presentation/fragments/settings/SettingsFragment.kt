@@ -86,7 +86,7 @@ class SettingsFragment : Fragment() {
                                     + binding.etSurname.text.toString()
                         )
                         viewModel.updateUser()
-                        clearData()
+                        cleanFields()
                     } else {
                         binding.progressBar.visibility = View.GONE
                         viewModel.updateUser()
@@ -249,7 +249,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-    private fun clearData() {
+    private fun cleanFields() {
         binding.etName.text = null
         binding.etSurname.text = null
     }
