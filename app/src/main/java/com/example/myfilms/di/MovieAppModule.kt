@@ -29,7 +29,7 @@ val daoModule = module {
 
 val sharedPrefsModule = module {
     single { getPrefSettings(context = get()) }
-    single { getEditor(context = get()) }
+    single { getPrefSettings(context = get()).edit() }
 }
 
 val repositoryModule = module {
@@ -59,4 +59,3 @@ private fun getPrefSettings(context: Context): SharedPreferences = context.getSh
     "Settings",
     Context.MODE_PRIVATE
 )
-private fun getEditor(context: Context): SharedPreferences.Editor = getPrefSettings(context).edit()
