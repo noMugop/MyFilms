@@ -113,8 +113,8 @@ class MovieRepositoryImpl(
                     val response = apiService.createSession(token = responseApprove.body() as Token)
                     if (response.isSuccessful) {
                         session = response.body()?.session_id as String
-                        editor.putString(FRAGMENTS_KEY, session).commit()
-                        editor.putString(LOGIN_KEY, "Access").commit()
+                        editor.putString(MAIN_SESSION_KEY, session).commit()
+                        editor.putString(LOGIN_SESSION_KEY, "Access").commit()
                     }
                 }
             }
@@ -126,7 +126,7 @@ class MovieRepositoryImpl(
     override fun getMainSession(): String {
         var session = ""
         try {
-            session = prefSettings.getString(FRAGMENTS_KEY, "") as String
+            session = prefSettings.getString(MAIN_SESSION_KEY, "") as String
         } catch (e: Exception) {
         }
         return session
@@ -135,7 +135,7 @@ class MovieRepositoryImpl(
     override fun getLoginSession(): String {
         var session = ""
         try {
-            session = prefSettings.getString(LOGIN_KEY, "") as String
+            session = prefSettings.getString(LOGIN_SESSION_KEY, "") as String
         } catch (e: Exception) {
         }
         return session
@@ -153,17 +153,17 @@ class MovieRepositoryImpl(
         val session = getMainSession()
         try {
             apiService.deleteSession(sessionId = Session(session_id = session))
-            editor.remove(FRAGMENTS_KEY).commit()
+            editor.remove(MAIN_SESSION_KEY).commit()
             deleteCurrentUserId()
         } catch (e: Exception) {
-            editor.remove(FRAGMENTS_KEY).commit()
+            editor.remove(MAIN_SESSION_KEY).commit()
             deleteCurrentUserId()
         }
     }
 
     override fun deleteLoginSession() {
         try {
-            editor.remove(LOGIN_KEY).commit()
+            editor.remove(LOGIN_SESSION_KEY).commit()
         } catch (e: Exception) {
         }
     }
@@ -267,8 +267,8 @@ class MovieRepositoryImpl(
 
     companion object {
 
-        private const val FRAGMENTS_KEY = "SESSION_FRAGMENT"
-        private const val LOGIN_KEY = "SESSION_LOGIN"
+        private const val MAIN_SESSION_KEY = "SESSION_FRAGMENT"
+        private const val LOGIN_SESSION_KEY = "SESSION_LOGIN"
         private const val CURRENT_USER_ID = "CURRENT_USER"
         private const val PAGE_SIZE = 20
     }
