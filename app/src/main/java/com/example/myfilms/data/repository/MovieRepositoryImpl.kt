@@ -267,7 +267,7 @@ class MovieRepositoryImpl(
 
     companion object {
 
-        private const val MAIN_SESSION_KEY = "SESSION_FRAGMENT"
+        private const val MAIN_SESSION_KEY = "SESSION_MAIN"
         private const val LOGIN_SESSION_KEY = "SESSION_LOGIN"
         private const val CURRENT_USER_ID = "CURRENT_USER"
         private const val PAGE_SIZE = 20
