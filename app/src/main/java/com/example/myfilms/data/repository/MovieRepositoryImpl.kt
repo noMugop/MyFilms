@@ -34,6 +34,7 @@ class MovieRepositoryImpl(
     private val editor: SharedPreferences.Editor
 ) : MovieRepository {
 
+    //работа с Room
     override fun getFavoritesFromDB(searchBy: String): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
@@ -50,54 +51,13 @@ class MovieRepositoryImpl(
         }
     }
 
-    override fun getMoviesFromNetwork(): Flow<PagingData<Movie>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { NetworkPagingSource(apiService) }
-        ).flow
-    }
-
     override suspend fun deleteFavoriteMovies() {
         withContext(Dispatchers.Default) {
             db.deleteAllMovies()
         }
     }
 
-//    suspend fun getAccountState(movie: Movie): Movie {
-//        val session = getFragmentSession()
-//        try {
-//            val response =
-//                apiService.getAccountStates(id = movie.id as Int, session_id = session)
-//            if (response.isSuccessful) {
-//                movie.isFavorite = response.body()?.favorite as Boolean
-//            }
-//        } catch (e: Exception) {
-//        }
-//        return movie
-//    }
-
-//    suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
-//        val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
-//        withContext(Dispatchers.Default) {
-//            db.movieUpdate(updateMovie)
-//        }
-//    }
-
-    override suspend fun getTrailer(movieId: Int): MovieVideos {
-        var result = MovieVideos()
-        try {
-            val responseVideo = apiService.getTrailer(movieId)
-            if (responseVideo.isSuccessful) {
-                result = responseVideo.body() as MovieVideos
-            }
-        } catch (e: Exception) {
-        }
-        return result
-    }
-
+    //работа с Retrofit и Room
     override suspend fun login(username: String, password: String): String {
         var session = ""
         try {
@@ -123,56 +83,26 @@ class MovieRepositoryImpl(
         return session
     }
 
-    override fun getMainSession(): String {
-        var session = ""
-        try {
-            session = prefSettings.getString(MAIN_SESSION_KEY, "") as String
-        } catch (e: Exception) {
-        }
-        return session
+    override fun getMoviesFromNetwork(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { NetworkPagingSource(apiService) }
+        ).flow
     }
 
-    override fun getLoginSession(): String {
-        var session = ""
+    override suspend fun getTrailer(movieId: Int): MovieVideos {
+        var result = MovieVideos()
         try {
-            session = prefSettings.getString(LOGIN_SESSION_KEY, "") as String
+            val responseVideo = apiService.getTrailer(movieId)
+            if (responseVideo.isSuccessful) {
+                result = responseVideo.body() as MovieVideos
+            }
         } catch (e: Exception) {
         }
-        return session
-    }
-
-    private fun getCurrentUserId(): Int {
-        return try {
-            prefSettings.getInt(CURRENT_USER_ID, 0)
-        } catch (e: Exception) {
-            return 0
-        }
-    }
-
-    override suspend fun deleteMainSession() {
-        val session = getMainSession()
-        try {
-            apiService.deleteSession(sessionId = Session(session_id = session))
-            editor.remove(MAIN_SESSION_KEY).commit()
-            deleteCurrentUserId()
-        } catch (e: Exception) {
-            editor.remove(MAIN_SESSION_KEY).commit()
-            deleteCurrentUserId()
-        }
-    }
-
-    override fun deleteLoginSession() {
-        try {
-            editor.remove(LOGIN_SESSION_KEY).commit()
-        } catch (e: Exception) {
-        }
-    }
-
-    private fun deleteCurrentUserId() {
-        try {
-            editor.remove(CURRENT_USER_ID).commit()
-        } catch (e: Exception) {
-        }
+        return result
     }
 
     override suspend fun getFavoritesFromNetwork() {
@@ -264,6 +194,79 @@ class MovieRepositoryImpl(
         }
         return loadingState
     }
+
+    //работа с Shared Preference
+    override fun getMainSession(): String {
+        var session = ""
+        try {
+            session = prefSettings.getString(MAIN_SESSION_KEY, "") as String
+        } catch (e: Exception) {
+        }
+        return session
+    }
+
+    override fun getLoginSession(): String {
+        var session = ""
+        try {
+            session = prefSettings.getString(LOGIN_SESSION_KEY, "") as String
+        } catch (e: Exception) {
+        }
+        return session
+    }
+
+    private fun getCurrentUserId(): Int {
+        return try {
+            prefSettings.getInt(CURRENT_USER_ID, 0)
+        } catch (e: Exception) {
+            return 0
+        }
+    }
+
+    override suspend fun deleteMainSession() {
+        val session = getMainSession()
+        try {
+            apiService.deleteSession(sessionId = Session(session_id = session))
+            editor.remove(MAIN_SESSION_KEY).commit()
+            deleteCurrentUserId()
+        } catch (e: Exception) {
+            editor.remove(MAIN_SESSION_KEY).commit()
+            deleteCurrentUserId()
+        }
+    }
+
+    override fun deleteLoginSession() {
+        try {
+            editor.remove(LOGIN_SESSION_KEY).commit()
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun deleteCurrentUserId() {
+        try {
+            editor.remove(CURRENT_USER_ID).commit()
+        } catch (e: Exception) {
+        }
+    }
+
+    //    suspend fun getAccountState(movie: Movie): Movie {
+//        val session = getFragmentSession()
+//        try {
+//            val response =
+//                apiService.getAccountStates(id = movie.id as Int, session_id = session)
+//            if (response.isSuccessful) {
+//                movie.isFavorite = response.body()?.favorite as Boolean
+//            }
+//        } catch (e: Exception) {
+//        }
+//        return movie
+//    }
+
+//    suspend fun updateMovie(movieId: Int, favoriteState: Boolean) {
+//        val updateMovie = MovieUpdate(id = movieId, isFavorite = favoriteState)
+//        withContext(Dispatchers.Default) {
+//            db.movieUpdate(updateMovie)
+//        }
+//    }
 
     companion object {
 
