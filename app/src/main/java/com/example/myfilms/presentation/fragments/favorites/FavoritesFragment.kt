@@ -6,26 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentFavoritesBinding
-import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.presentation.utils.LoadingState
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import com.example.myfilms.data.database.model.movie.MovieDbModel
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.paging.LoadState
-import androidx.paging.PagingData
 import com.example.myfilms.presentation.adapter.MoviesAdapter
 import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -81,15 +71,15 @@ class FavoritesFragment : Fragment() {
 
     private fun onMovieClickListener() {
         adapter.onFilmClickListener = object : MoviesAdapter.OnFilmClickListener {
-            override fun onFilmClick(movie: Movie) {
-                launchDetailFragment(movie)
+            override fun onFilmClick(movieDbModel: MovieDbModel) {
+                launchDetailFragment(movieDbModel)
             }
         }
     }
 
-    private fun launchDetailFragment(movie: Movie) {
+    private fun launchDetailFragment(movieDbModel: MovieDbModel) {
         val args = Bundle().apply {
-            putParcelable(DetailsFragment.KEY_MOVIE, movie)
+            putParcelable(DetailsFragment.KEY_MOVIE, movieDbModel)
         }
         findNavController().navigate(R.id.action_favoritesFragment_to_detailsFragment, args)
     }

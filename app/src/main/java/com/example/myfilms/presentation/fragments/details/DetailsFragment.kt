@@ -9,13 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentDetailsBinding
 import com.example.myfilms.presentation.utils.LoadingState
 import com.squareup.picasso.Picasso
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import com.example.myfilms.data.models.movie.Movie
+import com.example.myfilms.data.database.model.movie.MovieDbModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment : Fragment() {
@@ -54,7 +52,7 @@ class DetailsFragment : Fragment() {
             when (it) {
                 LoadingState.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
-                    viewModel.movie.observe(viewLifecycleOwner) {
+                    viewModel.movieDbModel.observe(viewLifecycleOwner) {
                         if (it != null) {
                             Picasso.get().load(IMG_URL + it.backdropPath)
                                 .into(binding.ivPoster)
@@ -145,15 +143,15 @@ class DetailsFragment : Fragment() {
     }
 
     private fun parseArgs() {
-        requireArguments().getParcelable<Movie>(KEY_MOVIE).apply {
-            movie = this as Movie
+        requireArguments().getParcelable<MovieDbModel>(KEY_MOVIE).apply {
+            movie = this as MovieDbModel
         }
     }
 
     companion object {
 
         private const val FAVORITE = true
-        private var movie = Movie()
+        private var movie = MovieDbModel()
         private var key: String = ""
         private const val YOUTUBE_URL = "https://www.youtube.com/watch?v="
         private const val TAG_WHITE = "white"

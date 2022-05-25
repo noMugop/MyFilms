@@ -3,12 +3,11 @@ package com.example.myfilms.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.ListAdapter
 import com.example.myfilms.databinding.ItemMovieBinding
-import com.example.myfilms.data.models.movie.Movie
+import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.squareup.picasso.Picasso
 
-class MoviesAdapter : PagingDataAdapter<Movie, MovieViewHolder>(MovieDiffCallback) {
+class MoviesAdapter : PagingDataAdapter<MovieDbModel, MovieViewHolder>(MovieDiffCallback) {
 
     var onFilmClickListener: OnFilmClickListener? = null
 
@@ -39,6 +38,6 @@ class MoviesAdapter : PagingDataAdapter<Movie, MovieViewHolder>(MovieDiffCallbac
 
     interface OnFilmClickListener {
 
-        fun onFilmClick(movie: Movie)
+        fun onFilmClick(movieDbModel: MovieDbModel)
     }
 }

@@ -7,21 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentMoviesBinding
 import com.example.myfilms.presentation.adapter.MoviesAdapter
-import com.example.myfilms.data.models.movie.Movie
+import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import java.lang.Exception
 import java.lang.RuntimeException
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
-import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -78,15 +73,15 @@ class MoviesFragment : Fragment() {
 
     private fun onMovieClickListener() {
         adapter.onFilmClickListener = object : MoviesAdapter.OnFilmClickListener {
-            override fun onFilmClick(movie: Movie) {
-                launchDetailFragment(movie)
+            override fun onFilmClick(movieDbModel: MovieDbModel) {
+                launchDetailFragment(movieDbModel)
             }
         }
     }
 
-    private fun launchDetailFragment(movie: Movie) {
+    private fun launchDetailFragment(movieDbModel: MovieDbModel) {
         val args = Bundle().apply {
-            putParcelable(DetailsFragment.KEY_MOVIE, movie)
+            putParcelable(DetailsFragment.KEY_MOVIE, movieDbModel)
         }
 
         findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment, args)

@@ -1,19 +1,20 @@
 package com.example.myfilms.presentation.fragments.settings
 
 import androidx.lifecycle.*
-import com.example.myfilms.data.models.account.DbAccountDetails
-import com.example.myfilms.data.repository.MovieRepositoryImpl
-import com.example.myfilms.domain.MovieRepository
+import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
+import com.example.myfilms.domain.usecase.GetUserUseCase
+import com.example.myfilms.domain.usecase.UpdateUserUseCase
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class SettingsViewModel(
-    private val movieRepository: MovieRepository
+    private val getUserUseCase: GetUserUseCase,
+    private val updateUserUseCase: UpdateUserUseCase
 ) : ViewModel() {
 
-    private val _user = MutableLiveData<DbAccountDetails?>()
-    val user: LiveData<DbAccountDetails?>
+    private val _user = MutableLiveData<AccountDetailsDbModel>()
+    val user: LiveData<AccountDetailsDbModel>
         get() = _user
 
     private val _loadingState = MutableLiveData<LoadingState>()
@@ -22,7 +23,7 @@ class SettingsViewModel(
 
     fun getUser() {
         viewModelScope.launch {
-            val user = movieRepository.getUser()
+            val user = getUserUseCase()
             try {
                 if (user.id != null) {
                     _user.value = user
@@ -51,11 +52,8 @@ class SettingsViewModel(
     fun updateUser() {
         viewModelScope.launch {
             if (_user.value?.id != null) {
-                _loadingState.value = movieRepository.updateUser(
-                    _user.value?.id as Int,
-                    _user.value?.name as String,
-                    _user.value?.avatar_uri as String
-                )
+                val user = _user.value as AccountDetailsDbModel
+                _loadingState.value = updateUserUseCase.invoke(user)
             } else {
                 _loadingState.value = LoadingState.FINISHED
             }

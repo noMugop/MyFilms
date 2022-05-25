@@ -1,10 +1,14 @@
 package com.example.myfilms.data.network
 
-import com.example.myfilms.data.models.account.AccountDetails
-import com.example.myfilms.data.models.authorization.LoginApprove
-import com.example.myfilms.data.models.authorization.Session
-import com.example.myfilms.data.models.authorization.Token
-import com.example.myfilms.data.models.movie.*
+import com.example.myfilms.data.network.model.user.AccountDetailsDto
+import com.example.myfilms.data.network.model.login.LoginApproveDto
+import com.example.myfilms.data.network.model.login.SessionDto
+import com.example.myfilms.data.network.model.login.TokenDto
+import com.example.myfilms.data.network.model.movie.AccountStatesDto
+import com.example.myfilms.data.network.model.movie.PostMovieDto
+import com.example.myfilms.data.network.model.movie.ResultFavoriteDto
+import com.example.myfilms.data.network.model.movie.ResultMoviesDto
+import com.example.myfilms.data.network.model.movie.MovieTrailerDto
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -16,7 +20,7 @@ interface ApiService {
         @Query("language") language: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
-    ):Response<ResultMovies>
+    ):Response<ResultMoviesDto>
 
 //    @GET("movie/{movie_id}")
 //    suspend fun getMovieById(
@@ -30,29 +34,29 @@ interface ApiService {
         @Path("movie_id") id: Int,
         @Query("api_key") apiKey: String = API_KEY,
         @Query("language") language: String = PARAMS_LANGUAGE
-    ): Response<MovieVideos>
+    ): Response<MovieTrailerDto>
 
     @GET("authentication/token/new")
     suspend fun getToken(
         @Query("api_key") apiKey: String = API_KEY,
-    ): Response<Token>
+    ): Response<TokenDto>
 
     @POST("authentication/token/validate_with_login")
     suspend fun approveToken(
         @Query("api_key") apiKey: String = API_KEY,
-        @Body loginApprove: LoginApprove
-    ): Response<Token>
+        @Body loginApproveDto: LoginApproveDto
+    ): Response<TokenDto>
 
     @POST("authentication/session/new")
     suspend fun createSession(
         @Query("api_key") apiKey: String = API_KEY,
-        @Body token: Token
-    ): Response<Session>
+        @Body tokenDto: TokenDto
+    ): Response<SessionDto>
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
     suspend fun deleteSession(
         @Query("api_key") apiKey: String = API_KEY,
-        @Body sessionId: Session
+        @Body sessionDtoId: SessionDto
     )
 
     @Headers(
@@ -63,8 +67,8 @@ interface ApiService {
     suspend fun addFavorite(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID,
-        @Body postMovie: PostMovie
-    ): Response<ResultFavorite>
+        @Body postMovieDto: PostMovieDto
+    ): Response<ResultFavoriteDto>
 
     @GET("account/{account_id}/favorite/movies")
     suspend fun getFavorites(
@@ -73,20 +77,20 @@ interface ApiService {
         @Query("language") language: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
-    ): Response<ResultMovies>
+    ): Response<ResultMoviesDto>
 
     @GET("movie/{movie_id}/account_states")
     suspend fun getAccountStates(
         @Path("movie_id") id: Int,
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID
-    ): Response<AccountStates>
+    ): Response<AccountStatesDto>
 
     @GET("account")
     suspend fun getAccountDetails(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID
-    ): Response<AccountDetails>
+    ): Response<AccountDetailsDto>
 
     companion object {
 

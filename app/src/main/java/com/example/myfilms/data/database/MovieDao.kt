@@ -1,10 +1,9 @@
 package com.example.myfilms.data.database
 
 import androidx.room.*
-import com.example.myfilms.data.models.movie.Movie
-import com.example.myfilms.data.models.movie.MovieUpdate
-import com.example.myfilms.data.models.account.AccountUpdate
-import com.example.myfilms.data.models.account.DbAccountDetails
+import com.example.myfilms.data.database.model.movie.MovieDbModel
+import com.example.myfilms.data.database.model.user.AccountUpdateDbModel
+import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 
 
 @Dao
@@ -20,16 +19,16 @@ interface MovieDao {
                 "ORDER BY voteAverage DESC " +
                 "LIMIT :limit OFFSET :offset"
     )
-    suspend fun getAmountOfMovies(limit: Int, offset: Int, searchBy: String = ""): List<Movie>
+    suspend fun getAmountOfMovies(limit: Int, offset: Int, searchBy: String = ""): List<MovieDbModel>
 
     @Query("SELECT * FROM movies_table WHERE id == :movieId")
-    suspend fun getMovieById(movieId: Int): Movie
+    suspend fun getMovieById(movieId: Int): MovieDbModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMovieList(movies: List<Movie>)
+    suspend fun insertMovieList(movieDbModels: List<MovieDbModel>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMovie(movie: Movie)
+    suspend fun insertMovie(movieDbModel: MovieDbModel)
 
 //    @Update(entity = Movie::class)
 //    suspend fun movieUpdate(movie: MovieUpdate)
@@ -42,11 +41,11 @@ interface MovieDao {
 
     //users_table
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: DbAccountDetails)
+    suspend fun insertUser(user: AccountDetailsDbModel)
 
     @Query("SELECT * FROM users_table WHERE id == :userId")
-    suspend fun getUserById(userId: Int): DbAccountDetails
+    suspend fun getUserById(userId: Int): AccountDetailsDbModel
 
-    @Update(entity = DbAccountDetails::class)
-    suspend fun userUpdate(user: AccountUpdate)
+    @Update(entity = AccountDetailsDbModel::class)
+    suspend fun userUpdate(user: AccountUpdateDbModel)
 }
