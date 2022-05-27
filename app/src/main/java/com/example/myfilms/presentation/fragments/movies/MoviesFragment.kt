@@ -52,7 +52,7 @@ class MoviesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        observe()
+        setObservers()
         setListeners()
         onBackPressed()
     }
@@ -71,7 +71,7 @@ class MoviesFragment : Fragment() {
         ) { adapter.retry() }
     }
 
-    private fun observe() {
+    private fun setObservers() {
         lifecycleScope.launch {
             viewModel.moviesFlow.collectLatest {
                 adapter.submitData(it)

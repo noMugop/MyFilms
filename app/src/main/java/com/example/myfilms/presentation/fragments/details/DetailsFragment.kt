@@ -41,8 +41,7 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         getMovieById(movie.id as Int)
-        onFavoriteClickListener()
-        onTrailerClickListener()
+        setListeners()
     }
 
     private fun getMovieById(movieId: Int) {
@@ -82,13 +81,11 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun onTrailerClickListener() {
+    private fun setListeners() {
         binding.clTrailer.setOnClickListener {
             getTrailer()
         }
-    }
 
-    private fun onFavoriteClickListener() {
         binding.ivAddFavorite.setOnClickListener {
             if (binding.ivAddFavorite.tag == TAG_WHITE) {
                 addFavorite()

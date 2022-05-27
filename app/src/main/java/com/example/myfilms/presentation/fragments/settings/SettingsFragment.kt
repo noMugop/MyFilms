@@ -49,8 +49,8 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        observers()
-        listeners()
+        setObservers()
+        setListeners()
     }
 
     private fun init() {
@@ -59,7 +59,7 @@ class SettingsFragment : Fragment() {
         binding.btnSave.isEnabled = false
     }
 
-    private fun observers() {
+    private fun setObservers() {
 
         viewModel.user.observe(viewLifecycleOwner) {
             if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
@@ -113,7 +113,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun listeners() {
+    private fun setListeners() {
 
         binding.etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

@@ -43,7 +43,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        observe()
+        setObservers()
         onMovieClickListener()
         onBackPressed()
     }
@@ -57,7 +57,7 @@ class FavoritesFragment : Fragment() {
         binding.rvFavorites.adapter = adapter
     }
 
-    private fun observe() {
+    private fun setObservers() {
         lifecycleScope.launch {
             viewModel.favoritesFlow.collectLatest {
                 adapter.submitData(it)
