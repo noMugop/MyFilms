@@ -15,8 +15,27 @@ class MovieViewModel(
     private val deleteMainSessionUseCase: DeleteMainSessionUseCase
 ) : ViewModel() {
 
-    val moviesFlow: Flow<PagingData<MovieDbModel>> =
-        getMoviesFromNetworkUseCase().cachedIn(viewModelScope)
+    private val dataUpdater = MutableLiveData("")
+
+    private var _moviesFlow: Flow<PagingData<MovieDbModel>>
+    val moviesFlow: Flow<PagingData<MovieDbModel>>
+        get() = _moviesFlow
+
+    init {
+        _moviesFlow = getMoviesFromNetwork()
+    }
+
+    private fun getMoviesFromNetwork(): Flow<PagingData<MovieDbModel>> {
+        return dataUpdater.asFlow()
+            .flatMapLatest {
+                getMoviesFromNetworkUseCase()
+            }
+            .cachedIn(viewModelScope)
+    }
+
+    fun onRefresh() {
+        this.dataUpdater.postValue(this.dataUpdater.value)
+    }
 
     fun deleteMainSession() {
         viewModelScope.launch {

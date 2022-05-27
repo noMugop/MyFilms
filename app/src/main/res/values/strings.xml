@@ -25,6 +25,6 @@
     <string name="name">Имя</string>
     <string name="save">Сохранить</string>
     <string name="surname">Фамилия</string>
-    <string name="load_error">ошибка</string>
     <string name="retry">Повторить</string>
+    <string name="error">Ошибка</string>
 </resources>

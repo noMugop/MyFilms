@@ -13,8 +13,8 @@ import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import androidx.lifecycle.lifecycleScope
-import com.example.myfilms.presentation.adapter.MoviesAdapter
-import com.example.myfilms.presentation.adapter.NewLoadingStateAdapter
+import com.example.myfilms.presentation.adapter.movie_adapter.MoviesAdapter
+import com.example.myfilms.presentation.adapter.loading_adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,16 +49,12 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun init() {
-
         if (viewModel.checkSession().isBlank()) {
             Toast.makeText(requireContext(), "Требуется авторизация", Toast.LENGTH_SHORT)
                 .show()
         }
-        binding.rvFavorites.adapter = adapter.withLoadStateFooter(
-            footer = NewLoadingStateAdapter {
-                adapter.retry()
-            }
-        )
+
+        binding.rvFavorites.adapter = adapter
     }
 
     private fun observe() {
