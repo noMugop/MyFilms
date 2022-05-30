@@ -1,26 +1,29 @@
 package com.example.myfilms.data.repository_impl
 
 import android.content.SharedPreferences
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.myfilms.data.database.MovieDao
-import com.example.myfilms.data.network.model.user.AccountDetailsDto
-import com.example.myfilms.data.database.model.user.AccountUpdateDbModel
+import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
+import com.example.myfilms.data.database.model.user.AccountUpdateDbModel
+import com.example.myfilms.data.network.ApiService
 import com.example.myfilms.data.network.model.login.LoginApproveDto
 import com.example.myfilms.data.network.model.login.SessionDto
 import com.example.myfilms.data.network.model.login.TokenDto
-import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.data.network.model.movie.MovieTrailerDto
 import com.example.myfilms.data.network.model.movie.PostMovieDto
-import com.example.myfilms.data.network.ApiService
+import com.example.myfilms.data.network.model.user.AccountDetailsDto
 import com.example.myfilms.data.paging_source.NetworkPagingSource
 import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.domain.repository.MovieRepository
-import com.example.myfilms.presentation.utils.LoadingState
+import com.example.myfilms.utils.LoadingState
+import com.example.myfilms.utils.getErrorCode
+import com.example.myfilms.utils.getErrorMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class MovieRepositoryImpl(
     private val apiService: ApiService,
@@ -29,7 +32,6 @@ class MovieRepositoryImpl(
     private val editor: SharedPreferences.Editor
 ) : MovieRepository {
 
-    //работа с Room
     override fun getFavoritesFromDB(searchBy: String): Flow<PagingData<MovieDbModel>> {
         return Pager(
             config = PagingConfig(
@@ -52,10 +54,8 @@ class MovieRepositoryImpl(
         }
     }
 
-    //работа с Retrofit и Room
-    override suspend fun login(username: String, password: String): String {
-        var session = ""
-        try {
+    override suspend fun login(username: String, password: String): Int {
+        return try {
             val responseGet = apiService.getToken()
             if (responseGet.isSuccessful) {
                 val loginApprove = LoginApproveDto(
@@ -65,17 +65,26 @@ class MovieRepositoryImpl(
                 )
                 val responseApprove = apiService.approveToken(loginApproveDto = loginApprove)
                 if (responseApprove.isSuccessful) {
-                    val response = apiService.createSession(tokenDto = responseApprove.body() as TokenDto)
+                    val response =
+                        apiService.createSession(tokenDto = responseApprove.body() as TokenDto)
                     if (response.isSuccessful) {
-                        session = response.body()?.session_id as String
+                        val session = response.body()?.session_id as String
                         editor.putString(MAIN_SESSION_KEY, session).commit()
                         editor.putString(LOGIN_SESSION_KEY, "Access").commit()
+                        SUCCESS_CODE
+                    } else {
+                        response.code()
                     }
+                } else {
+                    responseApprove.code()
                 }
+            } else {
+                responseGet.code()
             }
         } catch (e: Exception) {
+            e.printStackTrace()
+            getErrorCode(e)
         }
-        return session
     }
 
     override fun getMoviesFromNetwork(): Flow<PagingData<MovieDbModel>> {
@@ -127,7 +136,8 @@ class MovieRepositoryImpl(
     override suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): LoadingState {
         var loadingState = LoadingState.FINISHED
         val session = getMainSession()
-        val postMovie = PostMovieDto(media_id = movieDbModel.id as Int, isFavorite = movieDbModel.isFavorite)
+        val postMovie =
+            PostMovieDto(media_id = movieDbModel.id as Int, isFavorite = movieDbModel.isFavorite)
         try {
             val response = apiService.addFavorite(
                 session_id = session,
@@ -178,38 +188,35 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun updateUser(user: AccountDetailsDbModel): LoadingState {
-        var loadingState = LoadingState.FINISHED
         val updatedUserInfo = AccountUpdateDbModel(
             id = user.id as Int,
             name = user.name as String,
-            avatar_uri = user.avatar_uri as String)
-        withContext(Dispatchers.Default) {
+            avatar_uri = user.avatar_uri as String
+        )
+        return withContext(Dispatchers.Default) {
             try {
                 db.userUpdate(updatedUserInfo)
-                loadingState = LoadingState.SUCCESS
+                LoadingState.SUCCESS
             } catch (e: Exception) {
+                LoadingState.FINISHED
             }
         }
-        return loadingState
     }
 
-    //работа с Shared Preference
     override fun getMainSession(): String {
-        var session = ""
-        try {
-            session = prefSettings.getString(MAIN_SESSION_KEY, "") as String
+        return try {
+            prefSettings.getString(MAIN_SESSION_KEY, "") as String
         } catch (e: Exception) {
+            ERROR
         }
-        return session
     }
 
     override fun getLoginSession(): String {
-        var session = ""
-        try {
-            session = prefSettings.getString(LOGIN_SESSION_KEY, "") as String
+        return try {
+            prefSettings.getString(LOGIN_SESSION_KEY, "") as String
         } catch (e: Exception) {
+            ERROR
         }
-        return session
     }
 
     override suspend fun deleteMainSession() {
@@ -231,12 +238,11 @@ class MovieRepositoryImpl(
         }
     }
 
-    //локальные Shared Preference методы
     private fun getCurrentUserId(): Int {
         return try {
             prefSettings.getInt(CURRENT_USER_ID, 0)
         } catch (e: Exception) {
-            return 0
+            0
         }
     }
 
@@ -247,7 +253,7 @@ class MovieRepositoryImpl(
         }
     }
 
-    //    suspend fun getAccountState(movie: Movie): Movie {
+//        suspend fun getAccountState(movie: Movie): Movie {
 //        val session = getFragmentSession()
 //        try {
 //            val response =
@@ -273,5 +279,7 @@ class MovieRepositoryImpl(
         private const val LOGIN_SESSION_KEY = "SESSION_LOGIN"
         private const val CURRENT_USER_ID = "CURRENT_USER"
         private const val PAGE_SIZE = 20
+        private const val SUCCESS_CODE = 200
+        private const val ERROR = ""
     }
 }

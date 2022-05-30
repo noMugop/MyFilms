@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentDetailsBinding
-import com.example.myfilms.presentation.utils.LoadingState
+import com.example.myfilms.utils.LoadingState
 import com.squareup.picasso.Picasso
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import org.koin.androidx.viewmodel.ext.android.viewModel

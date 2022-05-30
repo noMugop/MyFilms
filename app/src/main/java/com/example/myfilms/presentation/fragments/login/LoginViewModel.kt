@@ -1,11 +1,15 @@
 package com.example.myfilms.presentation.fragments.login
 
 import androidx.lifecycle.*
-import com.example.myfilms.domain.repository.MovieRepository
 import com.example.myfilms.domain.usecase.*
-import com.example.myfilms.presentation.utils.LoadingState
+import com.example.myfilms.utils.ErrorStatus
+import com.example.myfilms.utils.LoadingState
+import com.example.myfilms.utils.getErrorCode
+import com.example.myfilms.utils.getErrorMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.concurrent.CancellationException
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
@@ -26,24 +30,25 @@ class LoginViewModel(
         if (getLoginSessionUseCase() == "Access") {
             _loadingState.value = LoadingState.SUCCESS
         } else {
-            _loadingState.value = LoadingState.WAIT
+            _loadingState.value = LoadingState.WARNING
         }
     }
 
     fun setWait() {
-        _loadingState.value = LoadingState.WAIT
+        _loadingState.value = LoadingState.WARNING
     }
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.IS_LOADING
-            val session = loginUseCase(username, password)
-            if (session.isNotBlank()) {
+            val result = loginUseCase(username, password)
+            if (result == SUCCESS_CODE) {
                 addUserUseCase()
                 _loadingState.value = LoadingState.FINISHED
                 _loadingState.value = LoadingState.SUCCESS
             } else {
-                _loadingState.value = LoadingState.WAIT
+                errorMsg = getErrorMessage(result)
+                _loadingState.value = LoadingState.WARNING
             }
         }
     }
@@ -56,5 +61,11 @@ class LoginViewModel(
 
     fun deleteLoginSession() {
         deleteLoginSessionUseCase()
+    }
+
+    companion object {
+
+        var errorMsg = ""
+        private const val SUCCESS_CODE = 200
     }
 }

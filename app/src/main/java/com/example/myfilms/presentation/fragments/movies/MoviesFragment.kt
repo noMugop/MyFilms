@@ -6,15 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import com.example.myfilms.R
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.databinding.FragmentMoviesBinding
@@ -22,11 +18,9 @@ import com.example.myfilms.presentation.adapter.loading_adapter.LoadStateViewHol
 import com.example.myfilms.presentation.adapter.loading_adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.adapter.movie_adapter.MoviesAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import com.example.myfilms.utils.getErrorCode
+import com.example.myfilms.utils.getErrorMessage
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -78,7 +72,7 @@ class MoviesFragment : Fragment() {
             }
         }
 
-        //следить за текущим LoadState в NetworkPagingSource и передавать его в LoadStateViewHolder.bind()
+        //следить за текущим LoadState в NetworkPagingSource (при помощи RemoteMediator) и передавать его в LoadStateViewHolder.bind()
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest {
                 loadStateViewHolder.bind(it.refresh)
@@ -104,8 +98,9 @@ class MoviesFragment : Fragment() {
                 llError.isVisible = loadState.refresh is LoadState.Error
 
                 if (loadState.refresh is LoadState.Error) {
-                    val error = (loadState.refresh as LoadState.Error).error.message
-                    tvError.text = error
+                    val exception = (loadState.refresh as LoadState.Error).error
+                    val errorMsg = getErrorMessage(getErrorCode(exception))
+                    tvError.text = errorMsg
                 }
 
                 btnRetry.setOnClickListener {

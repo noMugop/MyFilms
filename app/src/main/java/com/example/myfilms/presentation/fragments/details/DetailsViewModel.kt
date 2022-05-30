@@ -3,11 +3,10 @@ package com.example.myfilms.presentation.fragments.details
 import androidx.lifecycle.*
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.data.network.model.movie.MovieTrailerDto
-import com.example.myfilms.domain.repository.MovieRepository
 import com.example.myfilms.domain.usecase.AddOrDeleteFavoriteUseCase
 import com.example.myfilms.domain.usecase.GetFavoriteMovieByIdUseCase
 import com.example.myfilms.domain.usecase.GetTrailerUseCase
-import com.example.myfilms.presentation.utils.LoadingState
+import com.example.myfilms.utils.LoadingState
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(

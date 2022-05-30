@@ -10,15 +10,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentLoginBinding
-import com.example.myfilms.presentation.utils.LoadingState
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import com.example.myfilms.presentation.fragments.movies.MoviesFragment
+import com.example.myfilms.utils.LoadingState
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.lang.Exception
 import java.lang.RuntimeException
 
 class LoginFragment : Fragment() {
@@ -95,11 +91,11 @@ class LoginFragment : Fragment() {
                     launchMovieFragment()
                     viewModel.setWait()
                 }
-                LoadingState.WAIT -> {
+                LoadingState.WARNING -> {
                     binding.pbLoading.visibility = View.GONE
                     if (!binding.etUsername.text.isNullOrBlank()
                         || !binding.etPassword.text.isNullOrBlank()) {
-                        Toast.makeText(requireContext(), "Неверные данные", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(), LoginViewModel.errorMsg, Toast.LENGTH_SHORT)
                             .show()
                     }
                     viewModel.deleteLoginSession()

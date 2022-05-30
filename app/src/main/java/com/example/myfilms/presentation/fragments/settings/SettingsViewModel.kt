@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 import com.example.myfilms.domain.usecase.GetUserUseCase
 import com.example.myfilms.domain.usecase.UpdateUserUseCase
-import com.example.myfilms.presentation.utils.LoadingState
+import com.example.myfilms.utils.LoadingState
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -46,7 +46,7 @@ class SettingsViewModel(
     }
 
     fun waitState() {
-        _loadingState.value = LoadingState.WAIT
+        _loadingState.value = LoadingState.WARNING
     }
 
     fun updateUser() {

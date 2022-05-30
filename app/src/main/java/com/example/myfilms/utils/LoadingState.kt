@@ -1,10 +1,10 @@
-package com.example.myfilms.presentation.utils
+package com.example.myfilms.utils
 
 enum class LoadingState {
     SUCCESS,
     IS_LOADING,
     FINISHED,
-    WAIT
+    WARNING
 }
 
 
