@@ -20,7 +20,6 @@ import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.domain.repository.MovieRepository
 import com.example.myfilms.utils.LoadingState
 import com.example.myfilms.utils.getErrorCode
-import com.example.myfilms.utils.getErrorMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

@@ -1,9 +1,5 @@
 package com.example.myfilms.utils
 
-import retrofit2.HttpException
-import java.io.IOException
-import java.net.SocketTimeoutException
-
 fun getErrorMessage(code: Int): String {
     return when (code) {
         ErrorStatus.BAD_REQUEST.code -> ErrorStatus.BAD_REQUEST.message
@@ -15,20 +11,5 @@ fun getErrorMessage(code: Int): String {
         ErrorStatus.SERVICE_UNAVAILABLE.code -> ErrorStatus.SERVICE_UNAVAILABLE.message
         ErrorStatus.GATEWAY_TIMEOUT.code -> ErrorStatus.GATEWAY_TIMEOUT.message
         else -> ErrorStatus.UNKNOWN_ERROR.message
-    }
-}
-
-fun getErrorCode(throwable: Throwable): Int {
-    return when (throwable) {
-        is HttpException -> {
-            throwable.code()
-        }
-        is SocketTimeoutException -> {
-            ErrorStatus.TIMEOUT.code
-        }
-        is IOException -> {
-            ErrorStatus.NO_CONNECTION.code
-        }
-        else -> ErrorStatus.UNKNOWN_ERROR.code
     }
 }
