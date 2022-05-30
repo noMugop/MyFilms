@@ -42,7 +42,7 @@ class SettingsViewModel(
     }
 
     fun isLoadingState() {
-        _loadingState.value = LoadingState.IS_LOADING
+        _loadingState.value = LoadingState.LOADING
     }
 
     fun waitState() {
@@ -55,7 +55,7 @@ class SettingsViewModel(
                 val user = _user.value as AccountDetailsDbModel
                 _loadingState.value = updateUserUseCase.invoke(user)
             } else {
-                _loadingState.value = LoadingState.FINISHED
+                _loadingState.value = LoadingState.DONE
             }
         }
     }

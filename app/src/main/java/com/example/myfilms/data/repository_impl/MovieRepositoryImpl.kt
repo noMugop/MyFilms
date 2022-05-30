@@ -69,7 +69,7 @@ class MovieRepositoryImpl(
                     if (response.isSuccessful) {
                         val session = response.body()?.session_id as String
                         editor.putString(MAIN_SESSION_KEY, session).commit()
-                        editor.putString(LOGIN_SESSION_KEY, "Access").commit()
+                        editor.putString(LOGIN_SESSION_KEY, ACCESS).commit()
                         SUCCESS_CODE
                     } else {
                         response.code()
@@ -133,11 +133,10 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): LoadingState {
-        var loadingState = LoadingState.FINISHED
         val session = getMainSession()
         val postMovie =
             PostMovieDto(media_id = movieDbModel.id as Int, isFavorite = movieDbModel.isFavorite)
-        try {
+        return try {
             val response = apiService.addFavorite(
                 session_id = session,
                 postMovieDto = postMovie
@@ -148,11 +147,13 @@ class MovieRepositoryImpl(
                 } else {
                     db.insertMovie(movieDbModel)
                 }
-                loadingState = LoadingState.SUCCESS
+                LoadingState.SUCCESS
+            } else {
+                LoadingState.DONE
             }
         } catch (e: Exception) {
+            LoadingState.DONE
         }
-        return loadingState
     }
 
     override suspend fun addUser() {
@@ -197,7 +198,7 @@ class MovieRepositoryImpl(
                 db.userUpdate(updatedUserInfo)
                 LoadingState.SUCCESS
             } catch (e: Exception) {
-                LoadingState.FINISHED
+                LoadingState.DONE
             }
         }
     }
@@ -280,5 +281,6 @@ class MovieRepositoryImpl(
         private const val PAGE_SIZE = 20
         private const val SUCCESS_CODE = 200
         private const val ERROR = ""
+        private const val ACCESS = "Access"
     }
 }

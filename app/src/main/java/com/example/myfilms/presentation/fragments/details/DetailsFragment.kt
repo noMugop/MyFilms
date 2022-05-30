@@ -103,7 +103,7 @@ class DetailsFragment : Fragment() {
                     binding.ivAddFavorite.setImageResource(R.drawable.ic_star_white)
                     binding.ivAddFavorite.tag = TAG_WHITE
                 }
-                LoadingState.FINISHED -> {
+                LoadingState.DONE -> {
                     Toast.makeText(context, "Требуется авторизация", Toast.LENGTH_SHORT).show()
                 }
                 else -> Log.d("Message", "Message")
@@ -119,7 +119,7 @@ class DetailsFragment : Fragment() {
                     binding.ivAddFavorite.setImageResource(R.drawable.ic_star_yellow)
                     binding.ivAddFavorite.tag = TAG_YELLOW
                 }
-                LoadingState.FINISHED -> {
+                LoadingState.DONE -> {
                     Toast.makeText(context, "Требуется авторизация", Toast.LENGTH_SHORT).show()
                 }
                 else -> Log.d("Message", "Message")

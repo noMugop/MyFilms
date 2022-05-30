@@ -1,9 +1,9 @@
 package com.example.myfilms.utils
 
 enum class LoadingState {
+    LOADING,
+    DONE,
     SUCCESS,
-    IS_LOADING,
-    FINISHED,
     WARNING
 }
 

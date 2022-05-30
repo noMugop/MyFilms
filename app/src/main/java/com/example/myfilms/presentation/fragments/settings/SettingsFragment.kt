@@ -72,7 +72,7 @@ class SettingsFragment : Fragment() {
 
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
-                LoadingState.IS_LOADING -> {
+                LoadingState.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
                     hideKeyboard(requireActivity())
                     if (!binding.etName.text.isNullOrBlank()
@@ -90,7 +90,7 @@ class SettingsFragment : Fragment() {
                         viewModel.updateUser()
                     }
                 }
-                LoadingState.FINISHED -> {
+                LoadingState.DONE -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),

@@ -83,13 +83,13 @@ class LoginFragment : Fragment() {
     private fun observeLoadingState() {
         viewModel.loadingState.observe(viewLifecycleOwner) {
             when (it) {
-                LoadingState.IS_LOADING -> binding.pbLoading.visibility = View.VISIBLE
-                LoadingState.FINISHED -> viewModel.getFavorites()
+                LoadingState.LOADING -> binding.pbLoading.visibility = View.VISIBLE
+                LoadingState.DONE -> viewModel.getFavorites()
                 LoadingState.SUCCESS -> {
                 binding.pbLoading.visibility = View.GONE
                     cleanFields()
                     launchMovieFragment()
-                    viewModel.setWait()
+                    viewModel.setWarning()
                 }
                 LoadingState.WARNING -> {
                     binding.pbLoading.visibility = View.GONE

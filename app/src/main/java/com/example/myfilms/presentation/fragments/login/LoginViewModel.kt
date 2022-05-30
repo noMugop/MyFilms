@@ -23,24 +23,24 @@ class LoginViewModel(
     fun checkSessionId() = getMainSessionUseCase()
 
     fun setSuccess() {
-        if (getLoginSessionUseCase() == "Access") {
+        if (getLoginSessionUseCase() == ACCESS) {
             _loadingState.value = LoadingState.SUCCESS
         } else {
             _loadingState.value = LoadingState.WARNING
         }
     }
 
-    fun setWait() {
+    fun setWarning() {
         _loadingState.value = LoadingState.WARNING
     }
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
-            _loadingState.value = LoadingState.IS_LOADING
+            _loadingState.value = LoadingState.LOADING
             val result = loginUseCase(username, password)
             if (result == SUCCESS_CODE) {
                 addUserUseCase()
-                _loadingState.value = LoadingState.FINISHED
+                _loadingState.value = LoadingState.DONE
                 _loadingState.value = LoadingState.SUCCESS
             } else {
                 errorMsg = getErrorMessage(result)
@@ -63,5 +63,6 @@ class LoginViewModel(
 
         var errorMsg = ""
         private const val SUCCESS_CODE = 200
+        private const val ACCESS = "Access"
     }
 }

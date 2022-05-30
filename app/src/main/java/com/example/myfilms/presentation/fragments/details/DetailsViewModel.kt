@@ -43,7 +43,7 @@ class DetailsViewModel(
         viewModelScope.launch {
             movieDbModel.isFavorite = false
             _addFavoriteState.value = addOrDeleteFavoriteUseCase.invoke(movieDbModel)
-            _addFavoriteState.value = LoadingState.IS_LOADING
+            _addFavoriteState.value = LoadingState.LOADING
         }
     }
 
@@ -51,7 +51,7 @@ class DetailsViewModel(
         viewModelScope.launch {
             movieDbModel.isFavorite = true
             _addFavoriteState.value = addOrDeleteFavoriteUseCase.invoke(movieDbModel)
-            _addFavoriteState.value = LoadingState.IS_LOADING
+            _addFavoriteState.value = LoadingState.LOADING
         }
     }
 }
