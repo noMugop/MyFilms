@@ -21,7 +21,7 @@ fun getErrorMessage(code: Int): String {
 fun getErrorCode(throwable: Throwable): Int {
     return when (throwable) {
         is HttpException -> {
-            checkHttpCode(throwable.code())
+            throwable.code()
         }
         is SocketTimeoutException -> {
             ErrorStatus.TIMEOUT.code
@@ -29,18 +29,6 @@ fun getErrorCode(throwable: Throwable): Int {
         is IOException -> {
             ErrorStatus.NO_CONNECTION.code
         }
-        else -> ErrorStatus.UNKNOWN_ERROR.code
-    }
-}
-
-private fun checkHttpCode(code: Int): Int {
-    return when (code) {
-        ErrorStatus.BAD_REQUEST.code -> ErrorStatus.BAD_REQUEST.code
-        ErrorStatus.UNAUTHORIZED.code -> ErrorStatus.UNAUTHORIZED.code
-        ErrorStatus.NOT_FOUND.code -> ErrorStatus.NOT_FOUND.code
-        ErrorStatus.INTERNAL_SERVER_ERROR.code -> ErrorStatus.INTERNAL_SERVER_ERROR.code
-        ErrorStatus.SERVICE_UNAVAILABLE.code -> ErrorStatus.SERVICE_UNAVAILABLE.code
-        ErrorStatus.GATEWAY_TIMEOUT.code -> ErrorStatus.GATEWAY_TIMEOUT.code
         else -> ErrorStatus.UNKNOWN_ERROR.code
     }
 }

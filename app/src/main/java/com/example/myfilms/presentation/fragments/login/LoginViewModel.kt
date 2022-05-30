@@ -2,14 +2,10 @@ package com.example.myfilms.presentation.fragments.login
 
 import androidx.lifecycle.*
 import com.example.myfilms.domain.usecase.*
-import com.example.myfilms.utils.ErrorStatus
 import com.example.myfilms.utils.LoadingState
-import com.example.myfilms.utils.getErrorCode
 import com.example.myfilms.utils.getErrorMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import java.util.concurrent.CancellationException
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
