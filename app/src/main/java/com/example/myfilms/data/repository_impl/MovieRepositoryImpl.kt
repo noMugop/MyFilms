@@ -18,11 +18,12 @@ import com.example.myfilms.data.network.model.user.AccountDetailsDto
 import com.example.myfilms.data.paging_source.NetworkPagingSource
 import com.example.myfilms.data.paging_source.RoomPagingSource
 import com.example.myfilms.domain.repository.MovieRepository
-import com.example.myfilms.utils.LoadingState
-import com.example.myfilms.utils.getErrorCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
+import java.net.SocketTimeoutException
 
 class MovieRepositoryImpl(
     private val apiService: ApiService,
@@ -70,7 +71,7 @@ class MovieRepositoryImpl(
                         val session = response.body()?.session_id as String
                         editor.putString(MAIN_SESSION_KEY, session).commit()
                         editor.putString(LOGIN_SESSION_KEY, ACCESS).commit()
-                        SUCCESS_CODE
+                        response.code()
                     } else {
                         response.code()
                     }
@@ -81,7 +82,6 @@ class MovieRepositoryImpl(
                 responseGet.code()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
             getErrorCode(e)
         }
     }
@@ -132,7 +132,7 @@ class MovieRepositoryImpl(
         }
     }
 
-    override suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): LoadingState {
+    override suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): Int {
         val session = getMainSession()
         val postMovie =
             PostMovieDto(media_id = movieDbModel.id as Int, isFavorite = movieDbModel.isFavorite)
@@ -147,12 +147,12 @@ class MovieRepositoryImpl(
                 } else {
                     db.insertMovie(movieDbModel)
                 }
-                LoadingState.SUCCESS
+                response.code()
             } else {
-                LoadingState.DONE
+                response.code()
             }
         } catch (e: Exception) {
-            LoadingState.DONE
+            getErrorCode(e)
         }
     }
 
@@ -187,7 +187,7 @@ class MovieRepositoryImpl(
         return db.getUserById(userId)
     }
 
-    override suspend fun updateUser(user: AccountDetailsDbModel): LoadingState {
+    override suspend fun updateUser(user: AccountDetailsDbModel): Int {
         val updatedUserInfo = AccountUpdateDbModel(
             id = user.id as Int,
             name = user.name as String,
@@ -196,9 +196,9 @@ class MovieRepositoryImpl(
         return withContext(Dispatchers.Default) {
             try {
                 db.userUpdate(updatedUserInfo)
-                LoadingState.SUCCESS
+                SUCCESS_CODE
             } catch (e: Exception) {
-                LoadingState.DONE
+                getErrorCode(e)
             }
         }
     }
@@ -253,6 +253,21 @@ class MovieRepositoryImpl(
         }
     }
 
+    private fun getErrorCode(throwable: Throwable): Int {
+        return when (throwable) {
+            is HttpException -> {
+                throwable.code()
+            }
+            is SocketTimeoutException -> {
+                TIMEOUT
+            }
+            is IOException -> {
+                NO_CONNECTION
+            }
+            else -> UNKNOWN_ERROR
+        }
+    }
+
 //        suspend fun getAccountState(movie: Movie): Movie {
 //        val session = getFragmentSession()
 //        try {
@@ -279,8 +294,11 @@ class MovieRepositoryImpl(
         private const val LOGIN_SESSION_KEY = "SESSION_LOGIN"
         private const val CURRENT_USER_ID = "CURRENT_USER"
         private const val PAGE_SIZE = 20
-        private const val SUCCESS_CODE = 200
         private const val ERROR = ""
         private const val ACCESS = "Access"
+        private const val TIMEOUT = 408
+        private const val NO_CONNECTION = 502
+        private const val UNKNOWN_ERROR = 0
+        private const val SUCCESS_CODE = 200
     }
 }

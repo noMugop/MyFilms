@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.data.network.model.movie.MovieTrailerDto
-import com.example.myfilms.utils.LoadingState
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
@@ -17,10 +16,10 @@ interface MovieRepository {
     fun getMoviesFromNetwork(): Flow<PagingData<MovieDbModel>>
     suspend fun getTrailer(movieId: Int): MovieTrailerDto
     suspend fun getFavoritesFromNetwork()
-    suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): LoadingState
+    suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): Int
     suspend fun addUser()
     suspend fun getUser(): AccountDetailsDbModel
-    suspend fun updateUser(user: AccountDetailsDbModel): LoadingState
+    suspend fun updateUser(user: AccountDetailsDbModel): Int
 
     fun getMainSession(): String
     suspend fun deleteMainSession()

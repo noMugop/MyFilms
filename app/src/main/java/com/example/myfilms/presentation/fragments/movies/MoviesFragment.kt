@@ -18,8 +18,8 @@ import com.example.myfilms.presentation.adapter.loading_adapter.LoadStateViewHol
 import com.example.myfilms.presentation.adapter.loading_adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.adapter.movie_adapter.MoviesAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
-import com.example.myfilms.utils.getErrorCode
-import com.example.myfilms.utils.getErrorMessage
+import com.example.myfilms.domain.utils.getErrorCode
+import com.example.myfilms.domain.utils.getErrorMessage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

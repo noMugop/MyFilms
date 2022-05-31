@@ -2,8 +2,9 @@ package com.example.myfilms.presentation.fragments.login
 
 import androidx.lifecycle.*
 import com.example.myfilms.domain.usecase.*
-import com.example.myfilms.utils.LoadingState
-import com.example.myfilms.utils.getErrorMessage
+import com.example.myfilms.presentation.utils.ExceptionStatus
+import com.example.myfilms.presentation.utils.LoadingState
+import com.example.myfilms.domain.utils.getErrorMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -37,13 +38,15 @@ class LoginViewModel(
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.LOADING
-            val result = loginUseCase(username, password)
-            if (result == SUCCESS_CODE) {
+            val resultCode = loginUseCase(username, password)
+            if (resultCode < ExceptionStatus.SUCCESS_CODE.code &&
+                resultCode != ExceptionStatus.UNKNOWN_EXCEPTION.code
+            ) {
                 addUserUseCase()
                 _loadingState.value = LoadingState.DONE
                 _loadingState.value = LoadingState.SUCCESS
             } else {
-                errorMsg = getErrorMessage(result)
+                errorMsg = getErrorMessage(resultCode)
                 _loadingState.value = LoadingState.WARNING
             }
         }
@@ -62,7 +65,6 @@ class LoginViewModel(
     companion object {
 
         var errorMsg = ""
-        private const val SUCCESS_CODE = 200
         private const val ACCESS = "Access"
     }
 }

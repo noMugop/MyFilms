@@ -13,7 +13,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentLoginBinding
-import com.example.myfilms.utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.RuntimeException
 

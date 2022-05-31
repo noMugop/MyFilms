@@ -6,7 +6,8 @@ import com.example.myfilms.data.network.model.movie.MovieTrailerDto
 import com.example.myfilms.domain.usecase.AddOrDeleteFavoriteUseCase
 import com.example.myfilms.domain.usecase.GetFavoriteMovieByIdUseCase
 import com.example.myfilms.domain.usecase.GetTrailerUseCase
-import com.example.myfilms.utils.LoadingState
+import com.example.myfilms.presentation.utils.ExceptionStatus
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(
@@ -42,7 +43,14 @@ class DetailsViewModel(
     fun deleteFavorites(movieDbModel: MovieDbModel) {
         viewModelScope.launch {
             movieDbModel.isFavorite = false
-            _addFavoriteState.value = addOrDeleteFavoriteUseCase.invoke(movieDbModel)
+            val resultCode = addOrDeleteFavoriteUseCase.invoke(movieDbModel)
+            if (resultCode < ExceptionStatus.SUCCESS_CODE.code &&
+                resultCode != ExceptionStatus.UNKNOWN_EXCEPTION.code
+            ) {
+                _addFavoriteState.value = LoadingState.SUCCESS
+            } else {
+                _addFavoriteState.value = LoadingState.DONE
+            }
             _addFavoriteState.value = LoadingState.LOADING
         }
     }
@@ -50,7 +58,14 @@ class DetailsViewModel(
     fun addFavorite(movieDbModel: MovieDbModel) {
         viewModelScope.launch {
             movieDbModel.isFavorite = true
-            _addFavoriteState.value = addOrDeleteFavoriteUseCase.invoke(movieDbModel)
+            val resultCode = addOrDeleteFavoriteUseCase.invoke(movieDbModel)
+            if (resultCode < ExceptionStatus.SUCCESS_CODE.code &&
+                resultCode != ExceptionStatus.UNKNOWN_EXCEPTION.code
+            ) {
+                _addFavoriteState.value = LoadingState.SUCCESS
+            } else {
+                _addFavoriteState.value = LoadingState.DONE
+            }
             _addFavoriteState.value = LoadingState.LOADING
         }
     }

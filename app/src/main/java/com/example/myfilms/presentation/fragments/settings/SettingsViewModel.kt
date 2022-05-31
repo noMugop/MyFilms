@@ -4,7 +4,8 @@ import androidx.lifecycle.*
 import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 import com.example.myfilms.domain.usecase.GetUserUseCase
 import com.example.myfilms.domain.usecase.UpdateUserUseCase
-import com.example.myfilms.utils.LoadingState
+import com.example.myfilms.presentation.utils.ExceptionStatus
+import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -45,17 +46,24 @@ class SettingsViewModel(
         _loadingState.value = LoadingState.LOADING
     }
 
-    fun waitState() {
-        _loadingState.value = LoadingState.WARNING
+    fun doneState() {
+        _loadingState.value = LoadingState.DONE
     }
 
     fun updateUser() {
         viewModelScope.launch {
             if (_user.value?.id != null) {
                 val user = _user.value as AccountDetailsDbModel
-                _loadingState.value = updateUserUseCase.invoke(user)
+                val resultCode = updateUserUseCase.invoke(user)
+                if (resultCode < ExceptionStatus.SUCCESS_CODE.code &&
+                    resultCode != ExceptionStatus.UNKNOWN_EXCEPTION.code
+                ) {
+                    _loadingState.value = LoadingState.SUCCESS
+                } else {
+                    _loadingState.value = LoadingState.WARNING
+                }
             } else {
-                _loadingState.value = LoadingState.DONE
+                _loadingState.value = LoadingState.WARNING
             }
         }
     }

@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentSettingsBinding
-import com.example.myfilms.utils.LoadingState
+import com.example.myfilms.presentation.utils.LoadingState
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.squareup.picasso.Picasso
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -83,19 +83,21 @@ class SettingsFragment : Fragment() {
                             binding.etName.text.toString() + " "
                                     + binding.etSurname.text.toString()
                         )
-                        viewModel.updateUser()
                         cleanFields()
+                        viewModel.updateUser()
                     } else {
                         binding.progressBar.visibility = View.GONE
                         viewModel.updateUser()
                     }
                 }
-                LoadingState.DONE -> {
+                LoadingState.WARNING -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
                         "Требуется авторизация", Toast.LENGTH_SHORT
                     ).show()
+                    findNavController().popBackStack()
+                    viewModel.doneState()
                 }
                 LoadingState.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
@@ -104,7 +106,7 @@ class SettingsFragment : Fragment() {
                         "Изменения сохранены", Toast.LENGTH_SHORT
                     ).show()
                     findNavController().popBackStack()
-                    viewModel.waitState()
+                    viewModel.doneState()
                 }
                 else -> {}
             }
