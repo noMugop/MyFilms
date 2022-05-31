@@ -1,13 +1,15 @@
 package com.example.myfilms.presentation.fragments.settings
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 import com.example.myfilms.domain.usecase.GetUserUseCase
 import com.example.myfilms.domain.usecase.UpdateUserUseCase
 import com.example.myfilms.presentation.utils.ExceptionStatus
 import com.example.myfilms.presentation.utils.LoadingState
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class SettingsViewModel(
     private val getUserUseCase: GetUserUseCase,

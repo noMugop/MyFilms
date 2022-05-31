@@ -1,6 +1,9 @@
 package com.example.myfilms.presentation.fragments.details
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import com.example.myfilms.data.network.model.movie.MovieTrailerDto
 import com.example.myfilms.domain.usecase.AddOrDeleteFavoriteUseCase

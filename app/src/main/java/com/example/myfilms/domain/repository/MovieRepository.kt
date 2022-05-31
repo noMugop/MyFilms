@@ -1,8 +1,8 @@
 package com.example.myfilms.domain.repository
 
 import androidx.paging.PagingData
-import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 import com.example.myfilms.data.database.model.movie.MovieDbModel
+import com.example.myfilms.data.database.model.user.AccountDetailsDbModel
 import com.example.myfilms.data.network.model.movie.MovieTrailerDto
 import kotlinx.coroutines.flow.Flow
 
