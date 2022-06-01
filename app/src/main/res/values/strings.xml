@@ -1,16 +1,13 @@
 <resources>
     <string name="app_name">MyFilms</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="movie_name">MovieName</string>
     <string name="main">Main</string>
     <string name="favorites">Избранные</string>
     <string name="add_to_favorite">Добавить в избранные</string>
-    <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Авторизация</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
     <string name="tag_white">white</string>
     <string name="tag_yellow">yellow</string>
     <string name="launch_trailer">Запустить трейлер</string>

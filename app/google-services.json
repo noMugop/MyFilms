@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "565270905400",
+    "project_id": "myfilms-4ef24",
+    "storage_bucket": "myfilms-4ef24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565270905400:android:25beaf520012e8550a9ccd",
+        "android_client_info": {
+          "package_name": "com.example.myfilms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "565270905400-upn6qrth465teht6bdoosckkj1qkjj4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz7fCkbEnZDkPsuVY6n-pXVOinuNctx7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "565270905400-upn6qrth465teht6bdoosckkj1qkjj4u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
