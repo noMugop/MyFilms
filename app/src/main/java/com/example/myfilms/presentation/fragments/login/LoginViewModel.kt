@@ -49,7 +49,7 @@ class LoginViewModel(
                 _loadingState.value = LoadingState.DONE
                 _loadingState.value = LoadingState.SUCCESS
             } else {
-                errorMsg = getErrorMessage(resultCode)
+                errorRes = getErrorMessage(resultCode)
                 _loadingState.value = LoadingState.WARNING
             }
         }
@@ -67,7 +67,7 @@ class LoginViewModel(
 
     companion object {
 
-        var errorMsg = ""
+        var errorRes: Int? = null
         private const val ACCESS = "Access"
     }
 }

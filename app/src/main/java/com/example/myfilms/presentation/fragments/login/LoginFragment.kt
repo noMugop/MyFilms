@@ -102,7 +102,7 @@ class LoginFragment : Fragment() {
                     ) {
                         Toast.makeText(
                             requireContext(),
-                            LoginViewModel.errorMsg,
+                            getString(LoginViewModel.errorRes as Int),
                             Toast.LENGTH_SHORT
                         )
                             .show()

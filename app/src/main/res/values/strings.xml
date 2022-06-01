@@ -36,4 +36,14 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="no_data">Введите данные</string>
+    <string name="success">Успех</string>
+    <string name="bad_request">Неверный запрос</string>
+    <string name="unauthorized">Не зарегистрированный пользователь</string>
+    <string name="user_not_found">Пользователь не найден</string>
+    <string name="timeout">Время ожидания вышло</string>
+    <string name="internal_server_exception">Ошибка сервера</string>
+    <string name="no_connection">Проверьте подключение к интеренету</string>
+    <string name="service_unavailable">Сервис недоступен</string>
+    <string name="gateway_timeout">Превышено время ожидания сервера</string>
+    <string name="unknown_exception">Неизвестная ошибка</string>
 </resources>

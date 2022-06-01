@@ -98,8 +98,8 @@ class MoviesFragment : Fragment() {
                 llError.isVisible = loadState.refresh is LoadState.Error
                 if (loadState.refresh is LoadState.Error) {
                     val exception = (loadState.refresh as LoadState.Error).error
-                    val errorMsg = getErrorMessage(getErrorCode(exception))
-                    tvError.text = errorMsg
+                    val errorRes = getErrorMessage(getErrorCode(exception))
+                    tvError.text = getString(errorRes)
                 }
 
                 btnRetry.setOnClickListener {
