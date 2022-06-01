@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "565270905400",
-    "project_id": "myfilms-4ef24",
-    "storage_bucket": "myfilms-4ef24.appspot.com"
+    "project_number": "453623844333",
+    "project_id": "firstproject-410b2",
+    "storage_bucket": "firstproject-410b2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:565270905400:android:25beaf520012e8550a9ccd",
+        "mobilesdk_app_id": "1:453623844333:android:7093701cf36a5063c5ebe4",
         "android_client_info": {
           "package_name": "com.example.myfilms"
         }
       },
       "oauth_client": [
         {
-          "client_id": "565270905400-upn6qrth465teht6bdoosckkj1qkjj4u.apps.googleusercontent.com",
+          "client_id": "453623844333-d2bh82abumih4s4418ebovsotp96c7la.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAz7fCkbEnZDkPsuVY6n-pXVOinuNctx7c"
+          "current_key": "AIzaSyBXIRr0vsdnSN8uVUXKtkOaelqODFujbi0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "565270905400-upn6qrth465teht6bdoosckkj1qkjj4u.apps.googleusercontent.com",
+              "client_id": "453623844333-d2bh82abumih4s4418ebovsotp96c7la.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

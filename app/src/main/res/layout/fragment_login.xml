@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginBottom="64dp"
-        android:backgroundTint="#215CF3"
+        android:backgroundTint="@color/blue"
         android:enabled="true"
         android:text="@string/action_sign_in"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:backgroundTint="#215CF3"
+        android:backgroundTint="@color/blue"
         android:enabled="true"
         android:text="@string/guest"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -79,6 +79,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin"
         app:layout_constraintVertical_bias="0.038" />
+
+    <Button
+        android:id="@+id/btnCrash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crashlytics test"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGuest" />
 
     <ProgressBar
         android:id="@+id/pb_loading"

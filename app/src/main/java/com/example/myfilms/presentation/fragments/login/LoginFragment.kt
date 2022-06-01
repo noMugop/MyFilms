@@ -14,6 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentLoginBinding
 import com.example.myfilms.presentation.utils.LoadingState
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.RuntimeException
 
@@ -48,6 +51,7 @@ class LoginFragment : Fragment() {
         onLoginClick()
         onGuestClick()
         observeLoadingState()
+        onCrashTestClick()
         onBackPressed()
     }
 
@@ -81,6 +85,12 @@ class LoginFragment : Fragment() {
             cleanFields()
             hideKeyboard(requireActivity())
             launchMovieFragment()
+        }
+    }
+
+    private fun onCrashTestClick() {
+        binding.btnCrash.setOnClickListener {
+            throw RuntimeException("Test Crash")
         }
     }
 
