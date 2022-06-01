@@ -60,6 +60,19 @@ class MainActivity : AppCompatActivity() {
         observeAccountDetails()
     }
 
+    private fun init() {
+        navController = findNavController(R.id.main_container)
+        bottomNavigation = binding.contentMain.bottomNavigation
+        toolbarLayout = binding.contentMain.toolbarLayout
+        toolbar = binding.contentMain.topToolbar
+        drawerLayout = binding.drawerMainActivity
+        sideBar = binding.sideNavigation
+        //получить доступ к side_nav_header.xml
+        val header = sideBar.getHeaderView(0)
+        userName = header.findViewById(R.id.tvName)
+        userAvatar = header.findViewById(R.id.iv_avatar)
+    }
+
     private fun setActivity() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
@@ -96,22 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun init() {
-
-        navController = findNavController(R.id.main_container)
-        bottomNavigation = binding.contentMain.bottomNavigation
-        toolbarLayout = binding.contentMain.toolbarLayout
-        toolbar = binding.contentMain.topToolbar
-        drawerLayout = binding.drawerMainActivity
-        sideBar = binding.sideNavigation
-        //получить доступ к side_nav_header.xml
-        val header = sideBar.getHeaderView(0)
-        userName = header.findViewById(R.id.tvName)
-        userAvatar = header.findViewById(R.id.iv_avatar)
-    }
-
     private fun observeAccountDetails() {
-
         viewModel.user.observe(this) {
             if (!it?.name.isNullOrBlank()) {
                 userName.text = it?.name
@@ -131,7 +129,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sideBarInit() {
-
         setSupportActionBar(toolbar)
         appBarConfiguration = AppBarConfiguration(
             setOf(
