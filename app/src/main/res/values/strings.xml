@@ -27,4 +27,13 @@
     <string name="surname">Фамилия</string>
     <string name="retry">Повторить</string>
     <string name="error">Ошибка</string>
+    <string name="authorization_required">Требуется авторизация</string>
+    <string name="changes_saved">Изменения сохранены</string>
+    <string name="no_permission">Требуется разрешение%s%s%s</string>
+    <string name="camera">\" камера \"</string>
+    <string name="gallery">\" галерея \"</string>
+    <string name="quit_question">Выйти?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="no_data">Введите данные</string>
 </resources>

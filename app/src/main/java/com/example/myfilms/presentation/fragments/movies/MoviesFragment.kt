@@ -96,7 +96,6 @@ class MoviesFragment : Fragment() {
 
             with(binding.errorView) {
                 llError.isVisible = loadState.refresh is LoadState.Error
-
                 if (loadState.refresh is LoadState.Error) {
                     val exception = (loadState.refresh as LoadState.Error).error
                     val errorMsg = getErrorMessage(getErrorCode(exception))
@@ -116,8 +115,8 @@ class MoviesFragment : Fragment() {
                 requireContext().let {
                     AlertDialog
                         .Builder(it)
-                        .setMessage("Выйти?")
-                        .setPositiveButton("Да") { dialogInterface, i ->
+                        .setMessage(R.string.quit_question)
+                        .setPositiveButton(R.string.yes) { _, _ ->
                             try {
                                 viewModel.deleteMainSession()
                                 findNavController().popBackStack()
@@ -125,7 +124,7 @@ class MoviesFragment : Fragment() {
                                 findNavController().popBackStack()
                             }
                         }
-                        .setNegativeButton("Нет") { dialogInterface, i -> }
+                        .setNegativeButton(R.string.no) { _, _ -> }
                         .create()
                         .show()
                 }
@@ -138,7 +137,6 @@ class MoviesFragment : Fragment() {
         val args = Bundle().apply {
             putParcelable(DetailsFragment.KEY_MOVIE, movieDbModel)
         }
-
         findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment, args)
     }
 }

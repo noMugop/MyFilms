@@ -66,7 +66,11 @@ class LoginFragment : Fragment() {
                 val password = binding.etPassword.text.toString().trim()
                 viewModel.login(username, password)
             } else {
-                Toast.makeText(requireContext(), "Введите данные", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_data),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
@@ -86,7 +90,7 @@ class LoginFragment : Fragment() {
                 LoadingState.LOADING -> binding.pbLoading.visibility = View.VISIBLE
                 LoadingState.DONE -> viewModel.getFavorites()
                 LoadingState.SUCCESS -> {
-                binding.pbLoading.visibility = View.GONE
+                    binding.pbLoading.visibility = View.GONE
                     cleanFields()
                     launchMovieFragment()
                     viewModel.setWarning()
@@ -94,8 +98,13 @@ class LoginFragment : Fragment() {
                 LoadingState.WARNING -> {
                     binding.pbLoading.visibility = View.GONE
                     if (!binding.etUsername.text.isNullOrBlank()
-                        || !binding.etPassword.text.isNullOrBlank()) {
-                        Toast.makeText(requireContext(), LoginViewModel.errorMsg, Toast.LENGTH_SHORT)
+                        || !binding.etPassword.text.isNullOrBlank()
+                    ) {
+                        Toast.makeText(
+                            requireContext(),
+                            LoginViewModel.errorMsg,
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                     }
                     viewModel.deleteLoginSession()

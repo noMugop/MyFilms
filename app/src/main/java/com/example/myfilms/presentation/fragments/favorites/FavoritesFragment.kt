@@ -14,7 +14,6 @@ import com.example.myfilms.databinding.FragmentFavoritesBinding
 import com.example.myfilms.data.database.model.movie.MovieDbModel
 import androidx.lifecycle.lifecycleScope
 import com.example.myfilms.presentation.adapter.movie_adapter.MoviesAdapter
-import com.example.myfilms.presentation.adapter.loading_adapter.NewLoadingStateAdapter
 import com.example.myfilms.presentation.fragments.details.DetailsFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,10 +49,13 @@ class FavoritesFragment : Fragment() {
 
     private fun init() {
         if (viewModel.checkSession().isBlank()) {
-            Toast.makeText(requireContext(), "Требуется авторизация", Toast.LENGTH_SHORT)
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.authorization_required),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
-
         binding.rvFavorites.adapter = adapter
     }
 
@@ -86,8 +88,8 @@ class FavoritesFragment : Fragment() {
                 requireContext().let {
                     AlertDialog
                         .Builder(it)
-                        .setMessage("Выйти?")
-                        .setPositiveButton("Да") { dialogInterface, i ->
+                        .setMessage(getString(R.string.quit_question))
+                        .setPositiveButton(getString(R.string.yes)) { _, _ ->
                             try {
                                 viewModel.deleteMainSession()
                                 findNavController().popBackStack()
@@ -95,7 +97,7 @@ class FavoritesFragment : Fragment() {
                                 findNavController().popBackStack()
                             }
                         }
-                        .setNegativeButton("Нет") { dialogInterface, i -> }
+                        .setNegativeButton(getString(R.string.no)) { _, _ -> }
                         .create()
                         .show()
                 }

@@ -3,7 +3,6 @@ package com.example.myfilms.presentation.fragments.details
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,9 +103,13 @@ class DetailsFragment : Fragment() {
                     binding.ivAddFavorite.tag = TAG_WHITE
                 }
                 LoadingState.DONE -> {
-                    Toast.makeText(context, "Требуется авторизация", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.authorization_required),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-                else -> Log.d("Message", "Message")
+                else -> {}
             }
         }
     }
@@ -120,9 +123,13 @@ class DetailsFragment : Fragment() {
                     binding.ivAddFavorite.tag = TAG_YELLOW
                 }
                 LoadingState.DONE -> {
-                    Toast.makeText(context, "Требуется авторизация", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.authorization_required),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-                else -> Log.d("Message", "Message")
+                else -> {}
             }
         }
     }
@@ -147,7 +154,6 @@ class DetailsFragment : Fragment() {
 
     companion object {
 
-        private const val FAVORITE = true
         private var movie = MovieDbModel()
         private var key: String = ""
         private const val YOUTUBE_URL = "https://www.youtube.com/watch?v="

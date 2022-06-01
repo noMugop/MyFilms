@@ -94,7 +94,8 @@ class SettingsFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
-                        "Требуется авторизация", Toast.LENGTH_SHORT
+                        getString(R.string.authorization_required),
+                        Toast.LENGTH_SHORT
                     ).show()
                     findNavController().popBackStack()
                     viewModel.doneState()
@@ -103,7 +104,8 @@ class SettingsFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
-                        "Изменения сохранены", Toast.LENGTH_SHORT
+                        getString(R.string.changes_saved),
+                        Toast.LENGTH_SHORT
                     ).show()
                     findNavController().popBackStack()
                     viewModel.doneState()
@@ -222,17 +224,17 @@ class SettingsFragment : Fragment() {
     private val requestMultiplePermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
 
-            val cameraPerm = "android.permission.CAMERA"
-            val galleryPerm = "android.permission.READ_EXTERNAL_STORAGE"
+            val cameraPerm = CAMERA_PERMISSION
+            val galleryPerm = GALLERY_PERMISSION
             var camText = ""
             var galText = ""
             var comma = ","
 
             permissions.forEach {
                 if (it.key == cameraPerm && !it.value) {
-                    camText = " камера "
+                    camText = getString(R.string.camera)
                 } else if (it.key == galleryPerm && !it.value) {
-                    galText = " галерея "
+                    galText = getString(R.string.gallery)
                 } else {
                     comma = ""
                 }
@@ -241,7 +243,7 @@ class SettingsFragment : Fragment() {
             if (camText.isNotBlank() || galText.isNotBlank()) {
                 Toast.makeText(
                     requireContext(),
-                    "Требуется разрешние$camText$comma$galText",
+                    getString(R.string.no_permission, camText, comma, galText),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -266,5 +268,7 @@ class SettingsFragment : Fragment() {
     companion object {
 
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
+        private const val CAMERA_PERMISSION = "android.permission.CAMERA"
+        private const val GALLERY_PERMISSION = "android.permission.READ_EXTERNAL_STORAGE"
     }
 }
