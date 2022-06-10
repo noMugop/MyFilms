@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -97,7 +98,6 @@ class SettingsFragment : Fragment() {
                         getString(R.string.authorization_required),
                         Toast.LENGTH_SHORT
                     ).show()
-                    findNavController().popBackStack()
                     viewModel.doneState()
                 }
                 LoadingState.SUCCESS -> {
@@ -107,7 +107,6 @@ class SettingsFragment : Fragment() {
                         getString(R.string.changes_saved),
                         Toast.LENGTH_SHORT
                     ).show()
-                    findNavController().popBackStack()
                     viewModel.doneState()
                 }
                 else -> {}
@@ -175,6 +174,23 @@ class SettingsFragment : Fragment() {
             binding.btnSave.setBackgroundColor(
                 ContextCompat.getColor(requireContext(), R.color.grey)
             )
+        }
+
+        binding.btnLogout.setOnClickListener {
+            requireContext().let {
+                AlertDialog
+                    .Builder(it)
+                    .setMessage(R.string.quit_question)
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        try {
+                            findNavController().navigate(R.id.action_settingsFragment_to_loginFragment)
+                        } catch (e: Exception) {
+                        }
+                    }
+                    .setNegativeButton(R.string.no) { _, _ -> }
+                    .create()
+                    .show()
+            }
         }
     }
 

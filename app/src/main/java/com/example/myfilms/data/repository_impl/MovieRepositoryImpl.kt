@@ -70,7 +70,6 @@ class MovieRepositoryImpl(
                     if (response.isSuccessful) {
                         val session = response.body()?.session_id as String
                         editor.putString(MAIN_SESSION_KEY, session).commit()
-                        editor.putString(LOGIN_SESSION_KEY, ACCESS).commit()
                         response.code()
                     } else {
                         response.code()
@@ -211,14 +210,6 @@ class MovieRepositoryImpl(
         }
     }
 
-    override fun getLoginSession(): String {
-        return try {
-            prefSettings.getString(LOGIN_SESSION_KEY, "") as String
-        } catch (e: Exception) {
-            ERROR
-        }
-    }
-
     override suspend fun deleteMainSession() {
         val session = getMainSession()
         try {
@@ -228,13 +219,6 @@ class MovieRepositoryImpl(
         } catch (e: Exception) {
             editor.remove(MAIN_SESSION_KEY).commit()
             deleteCurrentUserId()
-        }
-    }
-
-    override fun deleteLoginSession() {
-        try {
-            editor.remove(LOGIN_SESSION_KEY).commit()
-        } catch (e: Exception) {
         }
     }
 

@@ -44,7 +44,6 @@ class FavoritesFragment : Fragment() {
         init()
         setObservers()
         onMovieClickListener()
-        onBackPressed()
     }
 
     private fun init() {
@@ -80,29 +79,5 @@ class FavoritesFragment : Fragment() {
             putParcelable(DetailsFragment.KEY_MOVIE, movieDbModel)
         }
         findNavController().navigate(R.id.action_favoritesFragment_to_detailsFragment, args)
-    }
-
-    private fun onBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                requireContext().let {
-                    AlertDialog
-                        .Builder(it)
-                        .setMessage(getString(R.string.quit_question))
-                        .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                            try {
-                                viewModel.deleteMainSession()
-                                findNavController().popBackStack()
-                            } catch (e: Exception) {
-                                findNavController().popBackStack()
-                            }
-                        }
-                        .setNegativeButton(getString(R.string.no)) { _, _ -> }
-                        .create()
-                        .show()
-                }
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }

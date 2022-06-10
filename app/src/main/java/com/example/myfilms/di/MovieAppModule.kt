@@ -46,12 +46,10 @@ val useCaseModule = module {
     single { AddOrDeleteFavoriteUseCase(movieRepository = get()) }
     single { AddUserUseCase(movieRepository = get()) }
     single { DeleteFavoriteMoviesUseCase(movieRepository = get()) }
-    single { DeleteLoginSessionUseCase(movieRepository = get()) }
     single { DeleteMainSessionUseCase(movieRepository = get()) }
     single { GetFavoriteMovieByIdUseCase(movieRepository = get()) }
     single { GetFavoritesFromDbUseCase(movieRepository = get()) }
     single { GetFavoritesFromNetworkUseCase(movieRepository = get()) }
-    single { GetLoginSessionUseCase(movieRepository = get()) }
     single { GetMainSessionUseCase(movieRepository = get()) }
     single { GetMoviesFromNetworkUseCase(movieRepository = get()) }
     single { GetTrailerUseCase(movieRepository = get()) }
@@ -74,9 +72,7 @@ val viewModelModule = module {
             loginUseCase = get(),
             addUserUseCase = get(),
             getFavoritesFromNetworkUseCase = get(),
-            getMainSessionUseCase = get(),
-            getLoginSessionUseCase = get(),
-            deleteLoginSessionUseCase = get()
+            getMainSessionUseCase = get()
         )
     }
     viewModel {

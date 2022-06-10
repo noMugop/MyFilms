@@ -36,4 +36,6 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="no_data">Введите данные</string>
+    <string name="account">Аккаунт</string>
+    <string name="movies">Фильмы</string>
 </resources>

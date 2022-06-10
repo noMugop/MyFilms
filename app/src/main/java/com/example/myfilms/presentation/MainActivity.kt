@@ -2,6 +2,7 @@ package com.example.myfilms.presentation
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -48,6 +49,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sideBar: NavigationView
     private lateinit var userName: TextView
     private lateinit var userAvatar: ImageView
+    private var favoritesFragment: Int? = null
+    private var loginFragment: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,11 +84,7 @@ class MainActivity : AppCompatActivity() {
                     toolbarLayout.visibility = View.GONE
                 }
                 R.id.loginFragment -> {
-                    drawerLayout.closeDrawers()
-                    if (viewModel.getSession().isBlank()) {
-                        deleteAll()
-                    }
-                    bottomNavigation.visibility = View.GONE
+                    bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.GONE
                 }
                 R.id.settingsFragment -> {
@@ -137,8 +136,8 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.movies_nav,
                 R.id.favorites_nav,
-                R.id.settings,
                 R.id.login_nav,
+                R.id.exit,
                 R.id.about,
                 R.id.rate_us
             ), drawerLayout
@@ -152,35 +151,39 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawers()
             it.isCheckable = false
 
+            val currentFragment = findCurrentFragmentId()
+
             when (it.itemId) {
                 R.id.movies_nav -> {
-                    val current = findCurrentFragmentId()
-                    if (current != R.id.moviesFragment) {
-                        navController.popBackStack(R.id.loginFragment, false)
-                        navController.navigate(R.id.movies_nav)
+                    if (currentFragment != R.id.moviesFragment) {
+                        navController.popBackStack(R.id.moviesFragment, false)
                     }
                 }
                 R.id.favorites_nav -> {
-                    val current = findCurrentFragmentId()
-                    if (current != R.id.favoritesFragment) {
-                        navController.popBackStack(R.id.loginFragment, false)
+                    if (currentFragment != R.id.favoritesFragment) {
+                        navController.popBackStack(R.id.moviesFragment, false)
                         navController.navigate(R.id.favorites_nav)
                     }
                 }
-                R.id.settings -> {
-                    val current = findCurrentFragmentId()
-                    if (current != R.id.settingsFragment) {
+                R.id.login_nav -> {
+                    if (currentFragment != R.id.loginFragment
+                        && viewModel.getSession().isBlank()
+                    ) {
+                        navController.popBackStack(R.id.moviesFragment, false)
+                        navController.navigate(R.id.login_nav)
+                    } else {
+                        navController.popBackStack(R.id.moviesFragment, false)
                         navController.navigate(R.id.settings_nav)
                     }
                 }
-                R.id.login_nav -> {
+                R.id.exit -> {
                     this.let {
                         AlertDialog
                             .Builder(it)
                             .setMessage("Выйти?")
                             .setPositiveButton("Да") { dialogInterface, i ->
                                 viewModel.deleteMainSession()
-                                navController.popBackStack()
+                                finish()
                             }
                             .setNegativeButton("Нет") { dialogInterface, i -> }
                             .create()
@@ -216,19 +219,32 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setupWithNavController(navController)
 
         bottomNavigation.setOnItemSelectedListener {
+
+            val currentFragment = findCurrentFragmentId()
+
             when (it.itemId) {
                 R.id.movies_nav -> {
-                    val current = findCurrentFragmentId()
-                    if (current != R.id.moviesFragment) {
-                        navController.popBackStack(R.id.loginFragment, false)
-                        navController.navigate(R.id.movies_nav)
+                    if (currentFragment != R.id.moviesFragment) {
+                        navController.popBackStack(R.id.moviesFragment, false)
                     }
                 }
                 R.id.favorites_nav -> {
-                    val current = findCurrentFragmentId()
-                    if (current != R.id.favoritesFragment) {
-                        navController.popBackStack(R.id.loginFragment, false)
+                    if (currentFragment != R.id.favoritesFragment) {
+                        navController.popBackStack(R.id.moviesFragment, false)
                         navController.navigate(R.id.favorites_nav)
+                    }
+                }
+                R.id.login_nav -> {
+                    if (currentFragment != R.id.loginFragment
+                        && viewModel.getSession().isBlank()
+                    ) {
+                        navController.popBackStack(R.id.moviesFragment, false)
+                        navController.navigate(R.id.login_nav)
+                    } else if (currentFragment != R.id.settingsFragment
+                        && viewModel.getSession().isNotBlank()
+                    ) {
+                        navController.popBackStack(R.id.moviesFragment, false)
+                        navController.navigate(R.id.settings_nav)
                     }
                 }
             }

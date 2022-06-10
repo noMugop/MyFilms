@@ -23,6 +23,4 @@ interface MovieRepository {
 
     fun getMainSession(): String
     suspend fun deleteMainSession()
-    fun getLoginSession(): String
-    fun deleteLoginSession()
 }

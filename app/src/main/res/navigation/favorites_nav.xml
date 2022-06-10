@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.myfilms.presentation.fragments.favorites.FavoritesFragment"
-        android:label="Favorites">
+        android:label="@string/favorites">
         <action
             android:id="@+id/action_favoritesFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />

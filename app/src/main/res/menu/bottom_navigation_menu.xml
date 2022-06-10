@@ -5,14 +5,21 @@
     <item
         android:id="@+id/movies_nav"
         android:enabled="true"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/ic_baseline_play_circle_outline_24"
         android:title="@string/main"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/favorites_nav"
         android:enabled="true"
-        android:icon="@drawable/ic_menu"
+        android:icon="@drawable/ic_baseline_favorite_border_24"
         android:title="@string/favorites"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/login_nav"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_account_circle_24"
+        android:title="@string/account"
         app:showAsAction="ifRoom" />
 </menu>

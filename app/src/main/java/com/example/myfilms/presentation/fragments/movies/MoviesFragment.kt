@@ -119,9 +119,9 @@ class MoviesFragment : Fragment() {
                         .setPositiveButton(R.string.yes) { _, _ ->
                             try {
                                 viewModel.deleteMainSession()
-                                findNavController().popBackStack()
+                                requireActivity().finish()
                             } catch (e: Exception) {
-                                findNavController().popBackStack()
+                                requireActivity().finish()
                             }
                         }
                         .setNegativeButton(R.string.no) { _, _ -> }

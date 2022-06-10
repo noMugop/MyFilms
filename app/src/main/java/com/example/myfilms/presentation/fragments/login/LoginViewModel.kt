@@ -15,27 +15,19 @@ class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val addUserUseCase: AddUserUseCase,
     private val getFavoritesFromNetworkUseCase: GetFavoritesFromNetworkUseCase,
-    private val getMainSessionUseCase: GetMainSessionUseCase,
-    private val getLoginSessionUseCase: GetLoginSessionUseCase,
-    private val deleteLoginSessionUseCase: DeleteLoginSessionUseCase
+    private val getMainSessionUseCase: GetMainSessionUseCase
 ) : ViewModel() {
 
     private val _loadingState = MutableLiveData<LoadingState>()
     val loadingState: LiveData<LoadingState>
         get() = _loadingState
 
-    fun checkSessionId() = getMainSessionUseCase()
-
     fun setSuccess() {
-        if (getLoginSessionUseCase() == ACCESS) {
+        if (getMainSessionUseCase.invoke().isNotBlank()) {
             _loadingState.value = LoadingState.SUCCESS
         } else {
             _loadingState.value = LoadingState.WARNING
         }
-    }
-
-    fun setWarning() {
-        _loadingState.value = LoadingState.WARNING
     }
 
     fun login(username: String, password: String) {
@@ -61,13 +53,8 @@ class LoginViewModel(
         }
     }
 
-    fun deleteLoginSession() {
-        deleteLoginSessionUseCase()
-    }
-
     companion object {
 
         var errorMsg = ""
-        private const val ACCESS = "Access"
     }
 }
