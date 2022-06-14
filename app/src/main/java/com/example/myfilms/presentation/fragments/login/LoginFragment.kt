@@ -156,6 +156,17 @@ class LoginFragment : Fragment() {
     }
 
     private fun setObservers() {
+        viewModel.user.observe(viewLifecycleOwner) {
+            if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
+                Picasso.get().load(IMG_URL + it?.avatar).into(binding.ivAvatar)
+            } else if (!it?.avatar_uri.isNullOrBlank()) {
+                val uri = Uri.parse(it?.avatar_uri)
+                binding.ivAvatar.setImageURI(uri)
+            } else {
+                Picasso.get().load(R.drawable.empty_avatar).into(binding.ivAvatar)
+            }
+        }
+
         viewModel.loginLoadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.LOADING -> binding.pbLoading.visibility = View.VISIBLE
@@ -182,17 +193,6 @@ class LoginFragment : Fragment() {
                     }
                 }
                 else -> {}
-            }
-        }
-
-        viewModel.user.observe(viewLifecycleOwner) {
-            if (!it?.avatar.isNullOrBlank() && it?.avatar_uri.isNullOrBlank()) {
-                Picasso.get().load(IMG_URL + it?.avatar).into(binding.ivAvatar)
-            } else if (!it?.avatar_uri.isNullOrBlank()) {
-                val uri = Uri.parse(it?.avatar_uri)
-                binding.ivAvatar.setImageURI(uri)
-            } else {
-                Picasso.get().load(R.drawable.empty_avatar).into(binding.ivAvatar)
             }
         }
 
