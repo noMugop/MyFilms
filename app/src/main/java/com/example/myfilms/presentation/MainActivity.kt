@@ -49,8 +49,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sideBar: NavigationView
     private lateinit var userName: TextView
     private lateinit var userAvatar: ImageView
-    private var favoritesFragment: Int? = null
-    private var loginFragment: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +74,11 @@ class MainActivity : AppCompatActivity() {
                     toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.favoritesFragment -> {
+                    if (viewModel.getSession().isNotBlank()) {
+                        viewModel.getUser()
+                    } else {
+                        deleteAll()
+                    }
                     bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.VISIBLE
                 }
@@ -166,14 +169,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.login_nav -> {
-                    if (currentFragment != R.id.loginFragment
-                        && viewModel.getSession().isBlank()
-                    ) {
+                    if (currentFragment != R.id.loginFragment) {
                         navController.popBackStack(R.id.moviesFragment, false)
                         navController.navigate(R.id.login_nav)
-                    } else {
-                        navController.popBackStack(R.id.moviesFragment, false)
-                        navController.navigate(R.id.settings_nav)
                     }
                 }
                 R.id.exit -> {
@@ -235,16 +233,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.login_nav -> {
-                    if (currentFragment != R.id.loginFragment
-                        && viewModel.getSession().isBlank()
-                    ) {
+                    if (currentFragment != R.id.loginFragment) {
                         navController.popBackStack(R.id.moviesFragment, false)
                         navController.navigate(R.id.login_nav)
-                    } else if (currentFragment != R.id.settingsFragment
-                        && viewModel.getSession().isNotBlank()
-                    ) {
-                        navController.popBackStack(R.id.moviesFragment, false)
-                        navController.navigate(R.id.settings_nav)
                     }
                 }
             }
@@ -256,7 +247,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.cleanUser()
         userAvatar.setImageResource(R.drawable.empty_avatar)
 //        Picasso.get().load(R.drawable.empty_avatar).into(userAvatar)
-        viewModel.deleteFavoriteMovies()
     }
 
     override fun onSupportNavigateUp(): Boolean {

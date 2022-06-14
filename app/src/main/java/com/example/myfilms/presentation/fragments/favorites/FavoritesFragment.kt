@@ -42,11 +42,11 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        setObservers()
         onMovieClickListener()
     }
 
     private fun init() {
+        binding.rvFavorites.adapter = adapter
         if (viewModel.checkSession().isBlank()) {
             Toast.makeText(
                 requireContext(),
@@ -54,8 +54,9 @@ class FavoritesFragment : Fragment() {
                 Toast.LENGTH_SHORT
             )
                 .show()
+        } else {
+            setObservers()
         }
-        binding.rvFavorites.adapter = adapter
     }
 
     private fun setObservers() {

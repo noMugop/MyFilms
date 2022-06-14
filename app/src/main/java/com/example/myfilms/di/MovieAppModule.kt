@@ -14,7 +14,6 @@ import com.example.myfilms.presentation.fragments.details.DetailsViewModel
 import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
 import com.example.myfilms.presentation.fragments.login.LoginViewModel
 import com.example.myfilms.presentation.fragments.movies.MovieViewModel
-import com.example.myfilms.presentation.fragments.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -63,8 +62,7 @@ val viewModelModule = module {
         MainViewModel(
             getUserUseCase = get(),
             getMainSessionUseCase = get(),
-            deleteMainSessionUseCase = get(),
-            deleteFavoriteMoviesUseCase = get()
+            deleteMainSessionUseCase = get()
         )
     }
     viewModel {
@@ -72,7 +70,11 @@ val viewModelModule = module {
             loginUseCase = get(),
             addUserUseCase = get(),
             getFavoritesFromNetworkUseCase = get(),
-            getMainSessionUseCase = get()
+            getMainSessionUseCase = get(),
+            deleteMainSessionUseCase = get(),
+            deleteFavoriteMoviesUseCase = get(),
+            getUserUseCase = get(),
+            updateUserUseCase = get()
         )
     }
     viewModel {
@@ -93,12 +95,6 @@ val viewModelModule = module {
             getFavoriteMovieByIdUseCase = get(),
             getTrailerUseCase = get(),
             addOrDeleteFavoriteUseCase = get()
-        )
-    }
-    viewModel {
-        SettingsViewModel(
-            getUserUseCase = get(),
-            updateUserUseCase = get()
         )
     }
 }

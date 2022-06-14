@@ -10,8 +10,7 @@ import java.lang.Exception
 class MainViewModel(
     private val getUserUseCase: GetUserUseCase,
     private val getMainSessionUseCase: GetMainSessionUseCase,
-    private val deleteMainSessionUseCase: DeleteMainSessionUseCase,
-    private val deleteFavoriteMoviesUseCase: DeleteFavoriteMoviesUseCase
+    private val deleteMainSessionUseCase: DeleteMainSessionUseCase
 ) : ViewModel() {
 
     private val _user = MutableLiveData<AccountDetailsDbModel?>()
@@ -28,12 +27,6 @@ class MainViewModel(
 
     fun cleanUser() {
         _user.value = null
-    }
-
-    fun deleteFavoriteMovies() {
-        viewModelScope.launch {
-            deleteFavoriteMoviesUseCase()
-        }
     }
 
     fun getUser() {
