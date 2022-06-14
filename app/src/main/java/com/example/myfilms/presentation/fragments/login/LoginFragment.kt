@@ -169,10 +169,10 @@ class LoginFragment : Fragment() {
 
         viewModel.loginLoadingState.observe(viewLifecycleOwner) {
             when (it) {
-                LoadingState.LOADING -> binding.pbLoading.visibility = View.VISIBLE
+                LoadingState.LOADING -> binding.progressBar.visibility = View.VISIBLE
                 LoadingState.DONE -> viewModel.getFavorites()
                 LoadingState.SUCCESS -> {
-                    binding.pbLoading.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                     cleanLoginFields()
                     binding.clLogin.visibility = View.GONE
                     binding.clSettings.visibility = View.VISIBLE
@@ -180,7 +180,7 @@ class LoginFragment : Fragment() {
                     binding.btnSave.isEnabled = false
                 }
                 LoadingState.WARNING -> {
-                    binding.pbLoading.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                     if (!binding.etUsername.text.isNullOrBlank()
                         || !binding.etPassword.text.isNullOrBlank()
                     ) {
