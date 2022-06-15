@@ -20,6 +20,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.myfilms.R
 import com.example.myfilms.databinding.FragmentLoginBinding
@@ -127,7 +129,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnSave.setOnClickListener {
-            viewModel.isLoadingState()
+            viewModel.setLoading()
             binding.btnSave.isEnabled = false
 //            binding.btnSave.setBackgroundColor(Color.parseColor("#1A424242"))
             binding.btnSave.setBackgroundColor(
@@ -170,14 +172,13 @@ class LoginFragment : Fragment() {
         viewModel.loginLoadingState.observe(viewLifecycleOwner) {
             when (it) {
                 LoadingState.LOADING -> binding.progressBar.visibility = View.VISIBLE
-                LoadingState.DONE -> viewModel.getFavorites()
                 LoadingState.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     cleanLoginFields()
-                    binding.clLogin.visibility = View.GONE
-                    binding.clSettings.visibility = View.VISIBLE
                     viewModel.getUser()
                     binding.btnSave.isEnabled = false
+                    binding.clLogin.visibility = View.GONE
+                    binding.clSettings.visibility = View.VISIBLE
                 }
                 LoadingState.WARNING -> {
                     binding.progressBar.visibility = View.GONE
@@ -223,7 +224,7 @@ class LoginFragment : Fragment() {
                         getString(R.string.authorization_required),
                         Toast.LENGTH_SHORT
                     ).show()
-                    viewModel.doneState()
+                    viewModel.setDone()
                 }
                 LoadingState.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
@@ -232,7 +233,7 @@ class LoginFragment : Fragment() {
                         getString(R.string.changes_saved),
                         Toast.LENGTH_SHORT
                     ).show()
-                    viewModel.doneState()
+                    viewModel.setDone()
                 }
                 else -> {}
             }

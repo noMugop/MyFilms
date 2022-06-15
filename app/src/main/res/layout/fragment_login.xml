@@ -15,7 +15,7 @@
         android:id="@+id/clLogin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <EditText
             android:id="@+id/et_username"
@@ -66,7 +66,7 @@
         android:id="@+id/clSettings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_avatar"

@@ -62,14 +62,14 @@ val viewModelModule = module {
         MainViewModel(
             getUserUseCase = get(),
             getMainSessionUseCase = get(),
-            deleteMainSessionUseCase = get()
+            deleteMainSessionUseCase = get(),
+            getFavoritesFromNetworkUseCase = get(),
         )
     }
     viewModel {
         LoginViewModel(
             loginUseCase = get(),
             addUserUseCase = get(),
-            getFavoritesFromNetworkUseCase = get(),
             getMainSessionUseCase = get(),
             deleteMainSessionUseCase = get(),
             deleteFavoriteMoviesUseCase = get(),
@@ -86,8 +86,7 @@ val viewModelModule = module {
     viewModel {
         FavoritesViewModel(
             getFavoritesFromDbUseCase = get(),
-            getMainSessionUseCase = get(),
-            deleteMainSessionUseCase = get()
+            getMainSessionUseCase = get()
         )
     }
     viewModel {

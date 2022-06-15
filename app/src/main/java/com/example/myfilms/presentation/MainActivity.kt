@@ -20,6 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.myfilms.R
 import com.example.myfilms.data.network.ApiService
 import com.example.myfilms.databinding.ActivityMainBinding
+import com.example.myfilms.presentation.utils.LoadingState
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -65,22 +66,33 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
                 R.id.moviesFragment -> {
+                    bottomNavigation.visibility = View.VISIBLE
+                    toolbarLayout.visibility = View.VISIBLE
                     if (viewModel.getSession().isNotBlank()) {
                         viewModel.getUser()
                     } else {
                         deleteAll()
                     }
-                    bottomNavigation.visibility = View.VISIBLE
-                    toolbarLayout.visibility = View.VISIBLE
                 }
                 R.id.favoritesFragment -> {
-                    if (viewModel.getSession().isNotBlank()) {
-                        viewModel.getUser()
-                    } else {
-                        deleteAll()
-                    }
                     bottomNavigation.visibility = View.VISIBLE
                     toolbarLayout.visibility = View.VISIBLE
+                    if (viewModel.getSession().isNotBlank()
+                        && !FAVORITES_LOADED
+                    ) {
+                        viewModel.getUser()
+                        viewModel.setLoading()
+                        viewModel.loadingState.observe(this) {
+                            when (it) {
+                                LoadingState.LOADING -> viewModel.getFavorites()
+                                LoadingState.SUCCESS -> FAVORITES_LOADED = true
+                                else -> {}
+                            }
+                        }
+                    } else if (viewModel.getSession().isBlank()) {
+                        deleteAll()
+                        FAVORITES_LOADED = false
+                    }
                 }
                 R.id.detailsFragment -> {
                     bottomNavigation.visibility = View.GONE
@@ -88,10 +100,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.loginFragment -> {
                     bottomNavigation.visibility = View.VISIBLE
-                    toolbarLayout.visibility = View.GONE
-                }
-                R.id.settingsFragment -> {
-                    bottomNavigation.visibility = View.GONE
                     toolbarLayout.visibility = View.GONE
                 }
             }
@@ -256,5 +264,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
 
         private const val IMG_URL = "https://image.tmdb.org/t/p/w500"
+        private var FAVORITES_LOADED = false
     }
 }

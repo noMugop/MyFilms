@@ -107,7 +107,7 @@ class MovieRepositoryImpl(
         return result
     }
 
-    override suspend fun getFavoritesFromNetwork() {
+    override suspend fun getFavoritesFromNetwork(): String {
         val session = getMainSession()
         var page = 1
         val movies = mutableListOf<MovieDbModel>()
@@ -123,11 +123,15 @@ class MovieRepositoryImpl(
                     page = 0
                 }
             } catch (e: Exception) {
+                page = 0
             }
         }
-        if (!movies.isNullOrEmpty()) {
+        return if (movies.isNotEmpty()) {
             db.insertMovieList(movies)
             movies.clear()
+            SUCCESS
+        } else {
+            ERROR
         }
     }
 
@@ -275,11 +279,10 @@ class MovieRepositoryImpl(
     companion object {
 
         private const val MAIN_SESSION_KEY = "SESSION_MAIN"
-        private const val LOGIN_SESSION_KEY = "SESSION_LOGIN"
         private const val CURRENT_USER_ID = "CURRENT_USER"
         private const val PAGE_SIZE = 20
         private const val ERROR = ""
-        private const val ACCESS = "Access"
+        private const val SUCCESS = "SUCCESS"
         private const val TIMEOUT = 408
         private const val NO_CONNECTION = 502
         private const val UNKNOWN_ERROR = 0

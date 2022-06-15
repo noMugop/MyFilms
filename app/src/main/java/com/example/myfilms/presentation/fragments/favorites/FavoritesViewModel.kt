@@ -12,17 +12,10 @@ import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
     private val getFavoritesFromDbUseCase: GetFavoritesFromDbUseCase,
-    private val getMainSessionUseCase: GetMainSessionUseCase,
-    private val deleteMainSessionUseCase: DeleteMainSessionUseCase
+    private val getMainSessionUseCase: GetMainSessionUseCase
 ) : ViewModel() {
 
     val favoritesFlow: Flow<PagingData<MovieDbModel>> = getFavoritesFromDbUseCase("")
 
     fun checkSession() = getMainSessionUseCase()
-
-    fun deleteMainSession() {
-        viewModelScope.launch {
-            deleteMainSessionUseCase()
-        }
-    }
 }

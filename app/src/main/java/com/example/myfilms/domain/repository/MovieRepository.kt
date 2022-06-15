@@ -15,7 +15,7 @@ interface MovieRepository {
     suspend fun login(username: String, password: String): Int
     fun getMoviesFromNetwork(): Flow<PagingData<MovieDbModel>>
     suspend fun getTrailer(movieId: Int): MovieTrailerDto
-    suspend fun getFavoritesFromNetwork()
+    suspend fun getFavoritesFromNetwork(): String
     suspend fun addOrDeleteFavorite(movieDbModel: MovieDbModel): Int
     suspend fun addUser()
     suspend fun getUser(): AccountDetailsDbModel

@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val addUserUseCase: AddUserUseCase,
-    private val getFavoritesFromNetworkUseCase: GetFavoritesFromNetworkUseCase,
     private val getMainSessionUseCase: GetMainSessionUseCase,
     private val deleteMainSessionUseCase: DeleteMainSessionUseCase,
     private val deleteFavoriteMoviesUseCase: DeleteFavoriteMoviesUseCase,
@@ -51,18 +50,11 @@ class LoginViewModel(
                 resultCode != ExceptionStatus.UNKNOWN_EXCEPTION.code
             ) {
                 addUserUseCase()
-                _loginLoadingState.value = LoadingState.DONE
                 _loginLoadingState.value = LoadingState.SUCCESS
             } else {
                 errorMsg = getErrorMessage(resultCode)
                 _loginLoadingState.value = LoadingState.WARNING
             }
-        }
-    }
-
-    fun getFavorites() {
-        viewModelScope.launch(Dispatchers.Default) {
-            getFavoritesFromNetworkUseCase()
         }
     }
 
@@ -86,11 +78,11 @@ class LoginViewModel(
         _user.value?.name = name
     }
 
-    fun isLoadingState() {
+    fun setLoading() {
         _settingsLoadingState.value = LoadingState.LOADING
     }
 
-    fun doneState() {
+    fun setDone() {
         _settingsLoadingState.value = LoadingState.DONE
     }
 
