@@ -74,7 +74,7 @@ interface ApiService {
     suspend fun getFavorites(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID,
-        @Query("language") language: String = PARAMS_LANGUAGE,
+        @Query("language") lang: String = PARAMS_LANGUAGE,
         @Query("sort_by") sort_by: String = SORT_BY_POPULARITY,
         @Query("page") page: Int = PARAMS_PAGE
     ): Response<ResultMoviesDto>
@@ -91,6 +91,13 @@ interface ApiService {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") session_id: String = SESSION_ID
     ): Response<AccountDetailsDto>
+
+    @GET("/3/search/movie")
+    suspend fun searchMovie(
+        @Query("api_key") key: String= API_KEY,
+        @Query("language") lang: String = PARAMS_LANGUAGE,
+        @Query("query") query: String
+    ): Response<ResultMoviesDto>
 
     companion object {
 

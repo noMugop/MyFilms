@@ -20,6 +20,7 @@ interface MovieRepository {
     suspend fun addUser()
     suspend fun getUser(): AccountDetailsDbModel
     suspend fun updateUser(user: AccountDetailsDbModel): Int
+    fun searchMovies(query: String): Flow<PagingData<MovieDbModel>>
 
     fun getMainSession(): String
     suspend fun deleteMainSession()

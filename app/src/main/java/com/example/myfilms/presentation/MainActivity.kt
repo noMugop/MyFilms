@@ -246,6 +246,12 @@ class MainActivity : AppCompatActivity() {
                         navController.navigate(R.id.login_nav)
                     }
                 }
+                R.id.search_nav -> {
+                    if (currentFragment != R.id.searchFragment) {
+                        navController.popBackStack(R.id.moviesFragment, false)
+                        navController.navigate(R.id.search_nav)
+                    }
+                }
             }
             return@setOnItemSelectedListener true
         }

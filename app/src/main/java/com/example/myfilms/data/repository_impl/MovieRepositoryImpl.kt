@@ -17,6 +17,7 @@ import com.example.myfilms.data.network.model.movie.PostMovieDto
 import com.example.myfilms.data.network.model.user.AccountDetailsDto
 import com.example.myfilms.data.paging_source.NetworkPagingSource
 import com.example.myfilms.data.paging_source.RoomPagingSource
+import com.example.myfilms.data.paging_source.SearchPagingSource
 import com.example.myfilms.domain.repository.MovieRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -254,6 +255,16 @@ class MovieRepositoryImpl(
             }
             else -> UNKNOWN_ERROR
         }
+    }
+
+    override fun searchMovies(query: String): Flow<PagingData<MovieDbModel>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { SearchPagingSource(apiService, query) }
+        ).flow
     }
 
 //        suspend fun getAccountState(movie: Movie): Movie {

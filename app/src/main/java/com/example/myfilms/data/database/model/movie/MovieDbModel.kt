@@ -16,12 +16,6 @@ data class MovieDbModel(
     @SerializedName("id")
     var id: Int? = null,
 
-    @SerializedName("vote_count")
-    val voteCount: Int? = null,
-
-    @SerializedName("vote_average")
-    val voteAverage: Float? = null,
-
     @SerializedName("title")
     val title: String? = null,
 
@@ -48,6 +42,12 @@ data class MovieDbModel(
 
     @SerializedName("tagline")
     val tagline: String? = null,
+
+    @SerializedName("vote_count")
+    val voteCount: Int? = null,
+
+    @SerializedName("vote_average")
+    val voteAverage: Float? = null,
 
     var isFavorite: Boolean = false
 

@@ -14,6 +14,7 @@ import com.example.myfilms.presentation.fragments.details.DetailsViewModel
 import com.example.myfilms.presentation.fragments.favorites.FavoritesViewModel
 import com.example.myfilms.presentation.fragments.login.LoginViewModel
 import com.example.myfilms.presentation.fragments.movies.MovieViewModel
+import com.example.myfilms.presentation.fragments.search.SearchViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -55,6 +56,7 @@ val useCaseModule = module {
     single { GetUserUseCase(movieRepository = get()) }
     single { LoginUseCase(movieRepository = get()) }
     single { UpdateUserUseCase(movieRepository = get()) }
+    single { SearchMoviesUseCase(movieRepository = get()) }
 }
 
 val viewModelModule = module {
@@ -94,6 +96,11 @@ val viewModelModule = module {
             getFavoriteMovieByIdUseCase = get(),
             getTrailerUseCase = get(),
             addOrDeleteFavoriteUseCase = get()
+        )
+    }
+    viewModel {
+        SearchViewModel(
+            searchMoviesUseCase = get()
         )
     }
 }
